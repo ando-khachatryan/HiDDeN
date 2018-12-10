@@ -10,7 +10,7 @@ import utils
 from options import *
 from model.hidden import Hidden
 from noise_layers.noiser import Noiser
-from tensorboard_logger import TensorBoardLogger
+
 
 
 def train(model: Hidden,
@@ -18,7 +18,7 @@ def train(model: Hidden,
           hidden_config: HiDDenConfiguration,
           train_options: TrainingOptions,
           this_run_folder: str,
-          tb_logger: TensorBoardLogger):
+          tb_logger):
     """
     Trains the HiDDeN model
     :param model: The model
@@ -90,7 +90,7 @@ def train(model: Hidden,
 
 
 def main():
-    device = torch.device('cuda')
+    device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
     parser = argparse.ArgumentParser(description='Training of HiDDeN nets')
     parser.add_argument('--size', '-s', default=128, type=int)
@@ -101,8 +101,10 @@ def main():
     parser.add_argument('--epochs', '-e', default=400, type=int)
     parser.add_argument('--batch-size', '-b', required=True, type=int)
     parser.add_argument('--continue-from-folder', '-c', default='', type=str)
+    parser.add_argument('--enable-tensorboard', default=True, type=bool)
 
     args = parser.parse_args()
+
 
     checkpoint = None
     if args.continue_from_folder != '':
@@ -144,7 +146,13 @@ def main():
             pickle.dump(hidden_config, f)
 
     noiser = Noiser(noise_config, device)
-    tb_logger = TensorBoardLogger(os.path.join(this_run_folder, 'tb-logs'))
+
+    if args.enable_tensorboard:
+        from tensorboard_logger import TensorBoardLogger
+        tb_logger = TensorBoardLogger(os.path.join(this_run_folder, 'tb-logs'))
+    else:
+        tb_logger = None
+
     model = Hidden(hidden_config, device, noiser, tb_logger)
 
     if args.continue_from_folder != '':
