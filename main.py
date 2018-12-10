@@ -123,11 +123,12 @@ def main():
             runs_folder=os.path.join('.', 'runs'),
             start_epoch=start_epoch)
 
-        noise_config = [
-            {
-                'type': 'resize',
-                'resize_ratio': 0.4
-        }]
+        # noise_config = [
+        #     {
+        #         'type': 'resize',
+        #         'resize_ratio': 0.4
+        # }]
+        noise_config = []
         hidden_config = HiDDenConfiguration(H=args.size, W=args.size,
                                             message_length=args.message,
                                             encoder_blocks=4, encoder_channels=64,
