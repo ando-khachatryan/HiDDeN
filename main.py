@@ -101,10 +101,11 @@ def main():
     parser.add_argument('--epochs', '-e', default=400, type=int)
     parser.add_argument('--batch-size', '-b', required=True, type=int)
     parser.add_argument('--continue-from-folder', '-c', default='', type=str)
-    parser.add_argument('--enable-tensorboard', default=True, type=bool)
+    parser.add_argument('--tensorboard', dest='tensorboard', action='store_true')
+    parser.add_argument('--no-tensorboard', dest='tensorboard', action='store_false')
+    parser.set_defaults(tensorboard=True)
 
     args = parser.parse_args()
-
 
     checkpoint = None
     if args.continue_from_folder != '':
@@ -147,7 +148,8 @@ def main():
 
     noiser = Noiser(noise_config, device)
 
-    if args.enable_tensorboard:
+    if args.tensorboard:
+        print('Tensorboard is enabled. Creating logger.')
         from tensorboard_logger import TensorBoardLogger
         tb_logger = TensorBoardLogger(os.path.join(this_run_folder, 'tb-logs'))
     else:
