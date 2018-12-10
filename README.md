@@ -7,7 +7,7 @@ We have tested this on Pytorch 1.0. Note that this is a work in progress, and I 
 
 ## Requirements
 
-To run, you need Pytorch 1.0 and TensorboardX which in turn requires Tensorboard. This allows to use a subset of Tensorboard functionality to visualize the training. I plan to make this optional.
+To run, you need Pytorch 1.0. Optionally, you can use TensorboardX which in turn requires Tensorboard. This allows to use a subset of Tensorboard functionality to visualize the training. 
 
 ## Data
 
@@ -37,6 +37,8 @@ You will need to install the dependencies, then run
 ```
 python main.py --data-dir <data_root> --batch-size <b>
 ```
+To disable Tensorboard/TensorboardX logging, run with the ```--enable-tensorboard False``` switch.
+
 There are additional parameters for main.py, see the code. I will add their description here over time.
 
 Each run creates a folder in ./runs/<date-and-time> and stores all the info about the run in there.
