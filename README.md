@@ -3,11 +3,11 @@ Pytorch implementation of paper "HiDDeN: Hiding Data With Deep Networks" by Jire
 
 The authors have Lua+Torch implementation here: https://github.com/jirenz/HiDDeN
 
-We have tested this on Pytorch 1.0. Note that this is a work in progress, and I was not yet able to fully reproduce the results of the original paper.
+I have tested this on Pytorch 1.0. Note that this is a work in progress, and I was not yet able to fully reproduce the results of the original paper.
 
 ## Requirements
 
-To run, you need Pytorch 1.0. Optionally, you can use TensorboardX which in turn requires Tensorboard. This allows to use a subset of Tensorboard functionality to visualize the training. 
+You can use Tensorboard, for this you need to install TensorboardX and Tensorboard. This allows to use a subset of Tensorboard functionality to visualize the training. 
 
 ## Data
 
