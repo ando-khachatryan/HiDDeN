@@ -7,7 +7,8 @@ I have tested this on Pytorch 1.0. Note that this is a work in progress, and I w
 
 ## Requirements
 
-You can use Tensorboard, for this you need to install TensorboardX and Tensorboard. This allows to use a subset of Tensorboard functionality to visualize the training. 
+You need Pytorch 1.0 and TorchVision to run this, and some other common python libs to run this.
+If you want to use Tensorboard, you need to install TensorboardX and Tensorboard. This allows to use a subset of Tensorboard functionality to visualize the training. However, this is optional.
 
 ## Data
 
