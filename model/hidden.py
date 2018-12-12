@@ -92,15 +92,21 @@ class Hidden:
 
             g_loss_dec = self.mse_loss(decoded_messages, messages)
 
+
             g_loss = self.config.adversarial_loss * g_loss_adv + self.config.encoder_loss * g_loss_enc \
                      + self.config.decoder_loss * g_loss_dec
             g_loss.backward()
             self.optimizer_enc_dec.step()
 
+        decoded_rounded = decoded_messages.detach().cpu().numpy().round().clip(0, 1)
+        bitwise_avg_err = np.sum(np.abs(decoded_rounded - messages.detach().cpu().numpy()))/(batch_size * messages.shape[1])
+
+
         return {
             'loss           ': g_loss.item(),
             'encoder_mse    ': g_loss_enc.item(),
             'dec_mse        ': g_loss_dec.item(),
+            'bitwise-error  ': bitwise_avg_err,
             'adversarial_bce': g_loss_adv.item(),
             'discr_cover_bce': d_loss_on_cover.item(),
             'discr_encod_bce': d_loss_on_encoded.item()
@@ -153,10 +159,14 @@ class Hidden:
             g_loss = self.config.adversarial_loss * g_loss_adv + self.config.encoder_loss * g_loss_enc \
                      + self.config.decoder_loss * g_loss_dec
 
+        decoded_rounded = decoded_messages.detach().cpu().numpy().round().clip(0, 1)
+        bitwise_avg_err = np.sum(np.abs(decoded_rounded - messages.detach().cpu().numpy()))/(batch_size * messages.shape[1])
+
         return {
             'loss           ': g_loss.item(),
             'encoder_mse    ': g_loss_enc.item(),
             'dec_mse        ': g_loss_dec.item(),
+            'bitwise-error  ': bitwise_avg_err,
             'adversarial_bce': g_loss_adv.item(),
             'discr_cover_bce': d_loss_on_cover.item(),
             'discr_encod_bce': d_loss_on_encoded.item()
