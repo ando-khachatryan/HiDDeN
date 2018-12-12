@@ -69,7 +69,7 @@ class Hidden:
             d_loss_on_cover.backward()
 
             # train on fake
-            encoded_images, noised_image, decoded_messages = self.encoder_decoder(images, messages)
+            encoded_images, noised_images, decoded_messages = self.encoder_decoder(images, messages)
             d_target_label_encoded = torch.full((batch_size, 1), self.encoded_label, device=self.device)
             d_on_encoded = self.discriminator(encoded_images.detach())
             d_loss_on_encoded = self.bce_with_logits_loss(d_on_encoded, d_target_label_encoded)
@@ -102,7 +102,7 @@ class Hidden:
         bitwise_avg_err = np.sum(np.abs(decoded_rounded - messages.detach().cpu().numpy()))/(batch_size * messages.shape[1])
 
 
-        return {
+        losses = {
             'loss           ': g_loss.item(),
             'encoder_mse    ': g_loss_enc.item(),
             'dec_mse        ': g_loss_dec.item(),
@@ -111,6 +111,7 @@ class Hidden:
             'discr_cover_bce': d_loss_on_cover.item(),
             'discr_encod_bce': d_loss_on_encoded.item()
         }
+        return losses, (encoded_images, noised_images, decoded_messages)
 
 
     def validate_on_batch(self, batch: list):
@@ -162,7 +163,7 @@ class Hidden:
         decoded_rounded = decoded_messages.detach().cpu().numpy().round().clip(0, 1)
         bitwise_avg_err = np.sum(np.abs(decoded_rounded - messages.detach().cpu().numpy()))/(batch_size * messages.shape[1])
 
-        return {
+        losses = {
             'loss           ': g_loss.item(),
             'encoder_mse    ': g_loss_enc.item(),
             'dec_mse        ': g_loss_dec.item(),
@@ -171,6 +172,7 @@ class Hidden:
             'discr_cover_bce': d_loss_on_cover.item(),
             'discr_encod_bce': d_loss_on_encoded.item()
         }
+        return losses, (encoded_images, noised_images, decoded_messages)
 
     def to_stirng(self):
         return '{}\n{}'.format(str(self.encoder_decoder), str(self.discriminator))

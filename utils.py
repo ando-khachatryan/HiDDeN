@@ -4,12 +4,16 @@ import re
 import csv
 import time
 import matplotlib.pyplot as plt
+import pickle
+
 import torch
 from torchvision import datasets, transforms
+import torchvision.utils
 from torch.utils import data
+import torch.nn.functional as F
+
 from options import HiDDenConfiguration, TrainingOptions
 from model.hidden import Hidden
-import pickle
 
 
 def image_to_tensor(image):
@@ -42,6 +46,24 @@ def show_images(images, labels):
         axarr[i].imshow(images[i])
         axarr[i].set_title(labels[i])
     plt.show()
+
+
+def save_images(original_images, watermarked_images, epoch, folder, resize_to=None):
+
+    images = original_images[:original_images.shape[0], :, :, :].cpu()
+    watermarked_images = watermarked_images[:watermarked_images.shape[0], :, :, :].cpu()
+
+    # scale values to range [0, 1] from original range of [-1, 1]
+    images = (images + 1) / 2
+    watermarked_images = (watermarked_images + 1) / 2
+
+    if resize_to is not None:
+        images = F.interpolate(images, size=resize_to)
+        watermarked_images = F.interpolate(watermarked_images, size=resize_to)
+
+    stacked_images = torch.cat([images, watermarked_images], dim=0)
+    filename = os.path.join(folder, 'epoch-{}.png'.format(epoch))
+    torchvision.utils.save_image(stacked_images, filename, original_images.shape[0], normalize=False)
 
 
 def sorted_nicely(l):
@@ -122,7 +144,7 @@ def get_data_loaders(hidden_config: HiDDenConfiguration, train_options: Training
     transform it into tensor, and normalize it."""
     data_transforms = {
         'train': transforms.Compose([
-            transforms.CenterCrop((hidden_config.H, hidden_config.W)),
+            transforms.RandomCrop((hidden_config.H, hidden_config.W)),
             transforms.ToTensor(),
             transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])
         ]),
@@ -156,6 +178,7 @@ def create_folder_for_run(options: TrainingOptions):
     this_run_folder = os.path.join(options.runs_folder, this_run_folder)
     os.makedirs(this_run_folder)
     os.makedirs(os.path.join(this_run_folder, 'checkpoints'))
+    os.makedirs(os.path.join(this_run_folder, 'images'))
 
     return this_run_folder
 

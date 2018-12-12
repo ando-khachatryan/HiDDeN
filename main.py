@@ -12,7 +12,6 @@ from model.hidden import Hidden
 from noise_layers.noiser import Noiser
 
 
-
 def train(model: Hidden,
           device: torch.device,
           hidden_config: HiDDenConfiguration,
@@ -40,6 +39,8 @@ def train(model: Hidden,
         steps_in_epoch = file_count // train_options.batch_size + 1
 
     print_each = 10
+    images_to_save = 8
+    saved_images_size = (512, 512)
 
     for epoch in range(train_options.start_epoch, train_options.number_of_epochs + 1):
         print('\nStarting epoch {}/{}'.format(epoch, train_options.number_of_epochs))
@@ -50,7 +51,7 @@ def train(model: Hidden,
         for image, _ in train_data:
             image = image.to(device)
             message = torch.Tensor(np.random.choice([0, 1], (image.shape[0], hidden_config.message_length))).to(device)
-            losses = model.train_on_batch([image, message])
+            losses, _ = model.train_on_batch([image, message])
             if not losses_accu: # dict is empty, initialize
                 for name in losses:
                     losses_accu[name] = []
@@ -72,17 +73,25 @@ def train(model: Hidden,
             tb_logger.save_grads(epoch)
             tb_logger.save_tensors(epoch)
 
+        first_iteration = True
+
         print('Running validation for epoch {}/{}'.format(epoch, train_options.number_of_epochs))
         for image, _ in val_data:
             image = image.to(device)
             message = torch.Tensor(np.random.choice([0, 1], (image.shape[0], hidden_config.message_length))).to(device)
-            losses = model.validate_on_batch([image, message])
+            losses, (encoded_images, noised_images, decoded_messages) = model.validate_on_batch([image, message])
             if not losses_accu: # dict is empty, initialize
                 for name in losses:
                     losses_accu[name] = []
             for name, loss in losses.items():
                 losses_accu[name].append(loss)
-            step += 1
+            if first_iteration:
+                utils.save_images(image.cpu()[:images_to_save, :, :, :],
+                                  encoded_images[:images_to_save, :, :, :].cpu(),
+                                  epoch,
+                                  os.path.join(this_run_folder, 'images'), resize_to=saved_images_size)
+                first_iteration = False
+
         utils.print_progress(losses_accu)
         print('-' * 40)
         utils.save_checkpoint(model, epoch, losses_accu, os.path.join(this_run_folder, 'checkpoints'))
