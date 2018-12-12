@@ -6,11 +6,10 @@ from model.discriminator import Discriminator
 from model.encoder_decoder import EncoderDecoder
 from vgg_loss import VGGLoss
 from noise_layers.noiser import Noiser
-from tensorboard_logger import TensorBoardLogger
 
 
 class Hidden:
-    def __init__(self, configuration: HiDDenConfiguration, device: torch.device, noiser: Noiser, tb_logger: TensorBoardLogger):
+    def __init__(self, configuration: HiDDenConfiguration, device: torch.device, noiser: Noiser, tb_logger):
         """
         :param configuration: Configuration for the net, such as the size of the input image, number of channels in the intermediate layers, etc.
         :param device: torch.device object, CPU or GPU
@@ -43,6 +42,7 @@ class Hidden:
 
         self.tb_logger = tb_logger
         if tb_logger is not None:
+            from tensorboard_logger import TensorBoardLogger
             encoder_final = self.encoder_decoder.encoder._modules['final_layer']
             encoder_final.weight.register_hook(tb_logger.grad_hook_by_name('grads/encoder_out'))
             decoder_final = self.encoder_decoder.decoder._modules['linear']

@@ -7,8 +7,9 @@ I have tested this on Pytorch 1.0. Note that this is a work in progress, and I w
 
 ## Requirements
 
-You need Pytorch 1.0 and TorchVision to run this, and some other common python libs to run this.
+You need Pytorch 1.0 with TorchVision to run this, and matplotlib.
 If you want to use Tensorboard, you need to install TensorboardX and Tensorboard. This allows to use a subset of Tensorboard functionality to visualize the training. However, this is optional.
+The code has been tested and runs on Ubuntu 16.04 and Windows 10. 
 
 ## Data
 
@@ -38,7 +39,9 @@ You will need to install the dependencies, then run
 ```
 python main.py --data-dir <data_root> --batch-size <b>
 ```
-To disable Tensorboard/TensorboardX logging, run with the ```--enable-tensorboard False``` switch.
+By default, tensorboard logging is enabled. To use this, you need to install Tensorboard and TensorboardX. 
+However, if you don't want to use Tensorboard, you don't need to install Tensorboard/TensorboardX. Simply run with the 
+```--no-tensorboard``` switch.
 
 There are additional parameters for main.py, see the code. I will add their description here over time.
 
