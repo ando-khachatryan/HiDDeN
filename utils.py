@@ -144,7 +144,7 @@ def get_data_loaders(hidden_config: HiDDenConfiguration, train_options: Training
     transform it into tensor, and normalize it."""
     data_transforms = {
         'train': transforms.Compose([
-            transforms.RandomCrop((hidden_config.H, hidden_config.W)),
+            transforms.RandomCrop((hidden_config.H, hidden_config.W), pad_if_needed=True),
             transforms.ToTensor(),
             transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])
         ]),
