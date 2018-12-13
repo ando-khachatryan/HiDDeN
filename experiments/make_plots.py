@@ -112,7 +112,7 @@ for metric_name, metric_csv_column in metrics:
                 yaxis=dict(title = metric_name, range = [min_value, 1.1 * max_value], zeroline=True, showline=True))
 
     fig = dict(data=[validation_scatter], layout=layout)
-    filename = '{}.pdf'.format(metric_name)
+    filename = '{}.png'.format(metric_name)
     print(filename)
     pio.write_image(fig, filename)
 
@@ -140,7 +140,7 @@ layout = dict(title = 'Discriminator Binary Cross-Entropy',
             yaxis=dict(title = 'BCE', range = [min_value, 1.1 * max_value], zeroline=True, showline=True))
 
 fig = dict(data=scatters, layout=layout)
-pio.write_image(fig, 'Discriminator cross-entropy.pdf')
+pio.write_image(fig, 'Discriminator cross-entropy.png')
 
 
 
