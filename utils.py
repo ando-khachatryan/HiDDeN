@@ -138,7 +138,6 @@ def load_options(run_folder, options_file_name = 'options-and-config.pickle'):
     return train_options, hidden_config, noise_config
 
 
-
 def get_data_loaders(hidden_config: HiDDenConfiguration, train_options: TrainingOptions):
     """ Get torch data loaders for training and validation. The data loaders take a crop of the image,
     transform it into tensor, and normalize it."""
@@ -162,6 +161,7 @@ def get_data_loaders(hidden_config: HiDDenConfiguration, train_options: Training
     validation_loader = torch.utils.data.DataLoader(validation_images, batch_size=train_options.batch_size, shuffle=False, num_workers=4)
 
     return train_loader, validation_loader
+
 
 def print_progress(losses_accu):
     max_len = max([len(loss_name) for loss_name in losses_accu])
