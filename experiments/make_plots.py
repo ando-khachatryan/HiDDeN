@@ -87,6 +87,7 @@ import os
 # output_folder = './'
 # validation_or_train = 'validation'
 
+extension = 'jpg'
 
 data = pd.read_csv('validation.csv')
 num_epochs = max(data['epoch'])
@@ -112,7 +113,7 @@ for metric_name, metric_csv_column in metrics:
                 yaxis=dict(title = metric_name, range = [min_value, 1.1 * max_value], zeroline=True, showline=True))
 
     fig = dict(data=[validation_scatter], layout=layout)
-    filename = '{}.png'.format(metric_name)
+    filename = '{}.{}'.format(metric_csv_column, extension)
     print(filename)
     pio.write_image(fig, filename)
 
@@ -140,7 +141,7 @@ layout = dict(title = 'Discriminator Binary Cross-Entropy',
             yaxis=dict(title = 'BCE', range = [min_value, 1.1 * max_value], zeroline=True, showline=True))
 
 fig = dict(data=scatters, layout=layout)
-pio.write_image(fig, 'Discriminator cross-entropy.png')
+pio.write_image(fig, 'Discriminator cross-entropy.{}'.format(extension))
 
 
 
