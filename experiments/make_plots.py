@@ -87,7 +87,7 @@ import os
 # output_folder = './'
 # validation_or_train = 'validation'
 
-extension = 'jpg'
+extension = 'pdf'
 
 data = pd.read_csv('validation.csv')
 num_epochs = max(data['epoch'])
