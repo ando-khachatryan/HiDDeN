@@ -87,30 +87,29 @@ import os
 # output_folder = './'
 # validation_or_train = 'validation'
 
-extension = 'pdf'
+extension = 'svg'
 
 data = pd.read_csv('validation.csv')
 num_epochs = max(data['epoch'])
 
-metrics = [('Bitwise error', 'bitwise-error'),
-        ('Encoder Mean Square Error', 'encoder_mse'), 
-        ('Adversarial Binary Cross-Entropy', 'adversarial_bce'),
+metrics = [('Bitwise Error of the Decoder', 'Bitwise error', 'bitwise-error'),
+            ('Encoder Mean Square Error', 'MSE', 'encoder_mse'),
+            ('Encoder Binary Cross-Entropy', 'BCE', 'adversarial_bce'),
         ]
 
-for metric_name, metric_csv_column in metrics:
+for plot_title, y_axis_title, metric_csv_column in metrics:
     max_value = max(data[metric_csv_column])
     min_value = min(min(data[metric_csv_column]), 0)
 
     validation_scatter = go.Scatter(
         x=data['epoch'],
         y=data[metric_csv_column],
-        name='{}, {}'.format(metric_name, 'validation'),
         line = dict(
             width = 2)
         )
-    layout = dict(title = metric_name,
+    layout = dict(title = plot_title,
                 xaxis=dict(title = 'Epoch', range=[0, num_epochs], zeroline=True, showline=True),
-                yaxis=dict(title = metric_name, range = [min_value, 1.1 * max_value], zeroline=True, showline=True))
+                yaxis=dict(title = y_axis_title, range = [min_value, 1.1 * max_value], zeroline=True, showline=True))
 
     fig = dict(data=[validation_scatter], layout=layout)
     filename = '{}.{}'.format(metric_csv_column, extension)
@@ -141,7 +140,9 @@ layout = dict(title = 'Discriminator Binary Cross-Entropy',
             yaxis=dict(title = 'BCE', range = [min_value, 1.1 * max_value], zeroline=True, showline=True))
 
 fig = dict(data=scatters, layout=layout)
-pio.write_image(fig, 'Discriminator cross-entropy.{}'.format(extension))
+filename = 'discriminator_bce.{}'.format(extension)
+print(filename)
+pio.write_image(fig, filename)
 
 
 
