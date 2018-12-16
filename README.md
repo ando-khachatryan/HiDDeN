@@ -49,5 +49,24 @@ There are additional parameters for main.py, see the code. I will add their desc
 Each run creates a folder in ./runs/<date-and-time> and stores all the info about the run in there.
 
 ## Experiments
+The data for some of the experiments are stored in 'HiDDeN/experiments/<name of the experiment> folder. This includes: figures, detailed training and validation losses, all the settings in *pickle* format, and the checkpoint file of the trained model. Here, we provide summary of the experiments.
 
-I will post experimental runs in here.
+### Setup.
+We try to follow the experimental setup of the original paper as closely as possibly.
+We train the network on 10,000 random images from [COCO dataset](http://cocodataset.org/#home). We use 200-400 epochs for training and validation.
+The validation is on 1,000 images. During training, we take randomly positioned center crops of the images. This makes sure that there is very low chance the network will see the exact same cropped image during training. For validation, we take center crops which are not random, therefore we can exactly compare metrics from one epoch to another. 
+
+Due to random cropping, we observed no overfitting, and our train and validation metrics (mean square error, binary cross-entropy) were extremely close. For this reason, we only show the validation metrics here. 
+
+When measuring the decoder accuracy, we do not use error-correcting codes like in the paper. We take the decoder output, clip it to range [0, 1], then round it up. We call this "Decoder bitwise error". We also report mean squate error of of the decoder for consistency with the paper.
+
+
+### Default settings, no noise layers
+
+This experiment is with default settings from the paper, and no noise layers.
+
+|Experiment name | Combined loss  | Encoder MSE    | Decoder bitwise error  | Decoder MSE |     Epochs     |
+|----------------|----------------|----------------|------------------------|-------------|----------------|
+| No noise       |0.0143          | 0.0021         | 0.0007                 | 0.0112      | 200            |
+
+
