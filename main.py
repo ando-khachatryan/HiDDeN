@@ -10,6 +10,10 @@ import utils
 from options import *
 from model.hidden import Hidden
 from noise_layers.noiser import Noiser
+from noise_argparser import NoiseArgParser
+
+def parse_noise_layers(args):
+    print(args)
 
 
 def train(model: Hidden,
@@ -112,9 +116,17 @@ def main():
     parser.add_argument('--continue-from-folder', '-c', default='', type=str)
     parser.add_argument('--tensorboard', dest='tensorboard', action='store_true')
     parser.add_argument('--no-tensorboard', dest='tensorboard', action='store_false')
-    parser.set_defaults(tensorboard=True)
 
+    parser.add_argument('--noise', nargs='*', action=NoiseArgParser)
+
+    parser.set_defaults(tensorboard=True)
     args = parser.parse_args()
+    
+    # args = parser.parse_args(['-d', '/data/', '-b', '12', '--noise', 
+    #     'crop((0.2, 0.3), (0.4, 0.5)) + cropout((0.11, 0.22), (0.33, 0.44)) +dropout(0.2, 0.3) + jpeg() + identity()'])
+    # print(args)
+    # print(args.noise)
+    # exit(0)
 
     checkpoint = None
     if args.continue_from_folder != '':
@@ -132,12 +144,7 @@ def main():
             runs_folder=os.path.join('.', 'runs'),
             start_epoch=start_epoch)
 
-        # noise_config = [
-        #     {
-        #         'type': 'resize',
-        #         'resize_ratio': 0.4
-        # }]
-        noise_config = []
+        noise_config = args.noise
         hidden_config = HiDDenConfiguration(H=args.size, W=args.size,
                                             message_length=args.message,
                                             encoder_blocks=4, encoder_channels=64,
