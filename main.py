@@ -106,22 +106,23 @@ def main():
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
     parser = argparse.ArgumentParser(description='Training of HiDDeN nets')
-    parser.add_argument('--size', '-s', default=128, type=int)
-    parser.add_argument('--data-dir', '-d', required=True, type=str)
+    parser.add_argument('--size', '-s', default=128, type=int, help='The size of the images (images are square so this is height and width).')
+    parser.add_argument('--data-dir', '-d', required=True, type=str, help='The directory where the data is stored.')
 
-    parser.add_argument('--runs-folder', '-sf', default=os.path.join('.', 'runs'), type=str)
-    parser.add_argument('--message', '-m', default=30, type=int)
-    parser.add_argument('--epochs', '-e', default=400, type=int)
-    parser.add_argument('--batch-size', '-b', required=True, type=int)
-    parser.add_argument('--continue-from-folder', '-c', default='', type=str)
-    parser.add_argument('--tensorboard', dest='tensorboard', action='store_true')
-    parser.add_argument('--no-tensorboard', dest='tensorboard', action='store_false')
+    parser.add_argument('--runs-folder', '-sf', default=os.path.join('.', 'runs'), type=str, help='The root folder where data about experiments are stored.')
+    parser.add_argument('--message', '-m', default=30, type=int, help='The length in bits of the watermark.')
+    parser.add_argument('--epochs', '-e', default=400, type=int, help='Number of epochs to run the simulation.')
+    parser.add_argument('--batch-size', '-b', required=True, type=int, help='The batch size.')
+    parser.add_argument('--continue-from-folder', '-c', default='', type=str, help='The folder from where to continue a previous run. Leave blank if you are starting a new experiment.')
+    parser.add_argument('--tensorboard', dest='tensorboard', action='store_true', help='If specified, use adds a Tensorboard log. On by default')
+    parser.add_argument('--no-tensorboard', dest='tensorboard', action='store_false', help='Use to switch off Tensorboard logging.')
 
-    parser.add_argument('--noise', nargs='*', action=NoiseArgParser)
+    parser.add_argument('--noise', nargs='*', action=NoiseArgParser, help="Noise layers configuration. Use quotes when specifying configuration, e.g. 'cropout((0.55, 0.6), (0.55, 0.6))'")
 
     parser.set_defaults(tensorboard=True)
     args = parser.parse_args()
-    
+    # print(args.noise)
+    # exit(0)
     # args = parser.parse_args(['-d', '/data/', '-b', '12', '--noise', 
     #     'crop((0.2, 0.3), (0.4, 0.5)) + cropout((0.11, 0.22), (0.33, 0.44)) +dropout(0.2, 0.3) + jpeg() + identity()'])
     # print(args)
