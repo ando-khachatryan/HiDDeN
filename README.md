@@ -83,12 +83,20 @@ Due to random cropping, we observed no overfitting, and our train and validation
 When measuring the decoder accuracy, we do not use error-correcting codes like in the paper. We take the decoder output, clip it to range [0, 1], then round it up. We call this "Decoder bitwise error". We also report mean squate error of of the decoder for consistency with the paper.
 
 
-### Default settings, no noise layers
+### Experimental runs 
 
-This experiment is with default settings from the paper, and no noise layers.
+This table summarizes experimental runs. Detailed information about the runs can be found in ./experiments folder.
 
-|Experiment name | Combined loss  | Encoder MSE    | Decoder bitwise error  | Decoder MSE |     Epochs     |
-|----------------|----------------|----------------|------------------------|-------------|----------------|
-| No noise       |0.0143          | 0.0021         | 0.0007                 | 0.0112      | 200            |
+|Experiment name              | Combined loss  | Encoder MSE    | Decoder bitwise error  | Decoder MSE |     Epochs     |
+|-----------------------------|----------------|----------------|------------------------|-------------|----------------|
+|No noise                     |0.0143          | 0.0021         | 0.0007                 | 0.0112      |200             |
+|Crop((0.2,0.25),...)         |0.0519          | 0.0026         | 0.0622                 | 0.0479      |300             |
+|Cropout((0.55,0.6),...)      |0.0754          | 0.0017         | 0.0704                 | 0.0704	     |300             |
+|Jpeg                         |0.0362          | 0.0038         | 0.0127                 | 0.0308	     |300             |
+
+* **No noise** means no noise layers.
+* **Crop((0.2,0.25),...)** is shorthand for Crop((0.2,0.25),(0.2,0.25)). This means that the height and the weight of the cropped image have the expected value of (0.25 + 0.2)/2 = 0.225. Therefore, the ratio of (expected) area of the  Cropped image against the original image is 0.225x0.225 ≈ 0.05. The paper used p = 0.035.
+* **Cropout((0.55,0.6),...)** is a shorhand for Cropout((0.55,0.6),(0.55,0.6)). Similar to Crop(...), this translates to ratio of Cropped vs original image areas with p ≈ 0.33. The paper used p = 0.3
+* **Jpeg** the same as the Jpeg layer from the paper. It is a differentiable approximation of Jpeg compression with the highest compression coefficient.
 
 
