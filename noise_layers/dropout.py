@@ -24,9 +24,7 @@ class Dropout(nn.Module):
         # mask_tensor.unsqueeze_(0)
         # mask_tensor.unsqueeze_(0)
         mask_tensor = mask_tensor.expand_as(noised_image)
-        noised_and_cover =  noised_image * mask_tensor + cover_image * (1-mask_tensor)
-        return noised_and_cover
-
-
+        noised_image = noised_image * mask_tensor + cover_image * (1-mask_tensor)
+        return [noised_image, cover_image]
 
 
