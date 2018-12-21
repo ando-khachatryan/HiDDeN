@@ -57,16 +57,16 @@ Each run creates a folder in ./runs/<date-and-time> and stores all the informati
 You can specify noise layers configuration. To do so, use the ```--noise``` switch, following by configuration of noise layer or layers.
 For instance, the command 
 ```
-python main.py --no-tensorboard --data-dir /data/ --batch-size 12 --noise  'crop((0.2, 0.3), (0.4, 0.5)) + cropout((0
-.11, 0.22), (0.33, 0.44)) +dropout(0.2, 0.3) + jpeg()'
+python main.py --no-tensorboard --data-dir /data/ --batch-size 12 --noise  'crop((0.2,0.3),(0.4,0.5))+cropout((0
+.11,0.22),(0.33,0.44))+dropout(0.2,0.3)+jpeg()'
 ```
-runs the training with the following noise layers applied to each watermarked image: crop, then cropout, then dropout, then jpeg compression. The parameters of the layers are explained below. **It is important to use the quotes around the noise configuration.** If you want to stack several noise layers, specify them using + in the noise configuration, as shown in the example. 
+runs the training with the following noise layers applied to each watermarked image: crop, then cropout, then dropout, then jpeg compression. The parameters of the layers are explained below. **It is important to use the quotes around the noise configuration. Also, avoid redundant spaces** If you want to stack several noise layers, specify them using + in the noise configuration, as shown in the example. 
 
 ### Noise Layer paremeters
-* _Crop((height_min, height_max), (width_min, width_max))_, where **_(height_min, height_max)_** is a range from which we draw a random number and keep that fraction of the height of the original image. **_(width_min, width_max)_** controls the same for the width of the image. 
-Put it another way, given an image with dimensions **_H x W,_** the Crop() will randomly crop this into dimensions **_H' x W'_**, where **_H'/H_** is in the range **_(height_min, height_max)_**, and **_W'/W_** is in the range **_(width_min, width_max)_**. In the paper, the authors use a single parameter **_p_** which shows the ratio **_(H' * W')/ (H * W)_**, i.e., which fraction of the are to keep. In our setting, you can obtain the appropriate **_p_** by picking **_height_min_**, **_height_max_**  **_width_min_**, **_width_max_** to be all equal to **_sqrt(p)_**
-*  _Cropout((height_min, height_max), (width_min, width_max))_, the parameters have the same meaning as in case of _Crop_. 
-* _Dropout_(keep_min, keep_max)_ : where the ratio of the pixels to keep from the watermarked image, **_keep_ratio_**, is drawn uniformly from the range **_(keep_min, keep_max)_**.
+* _Crop((height_min,height_max),(width_min,width_max))_, where **_(height_min,height_max)_** is a range from which we draw a random number and keep that fraction of the height of the original image. **_(width_min,width_max)_** controls the same for the width of the image. 
+Put it another way, given an image with dimensions **_H x W,_** the Crop() will randomly crop this into dimensions **_H' x W'_**, where **_H'/H_** is in the range **_(height_min,height_max)_**, and **_W'/W_** is in the range **_(width_min,width_max)_**. In the paper, the authors use a single parameter **_p_** which shows the ratio **_(H' * W')/ (H * W)_**, i.e., which fraction of the are to keep. In our setting, you can obtain the appropriate **_p_** by picking **_height_min_**, **_height_max_**  **_width_min_**, **_width_max_** to be all equal to **_sqrt(p)_**
+*  _Cropout((height_min,height_max), (width_min,width_max))_, the parameters have the same meaning as in case of _Crop_. 
+* _Dropout_(keep_min, keep_max)_ : where the ratio of the pixels to keep from the watermarked image, **_keep_ratio_**, is drawn uniformly from the range **_(keep_min,keep_max)_**.
 * _Jpeg_ does not have any parameters. 
 
 
