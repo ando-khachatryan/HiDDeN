@@ -54,6 +54,17 @@ def parse_dropout(dropout_command):
         'keep_ratio_range': (keep_min, keep_max)
     }
 
+def parse_resize(resize_command):
+    matches = re.match(r'resize\((\d+\.*\d*,\d+\.*\d*)\)', resize_command)
+    ratios = matches.groups()[0].split(',')
+    min_ratio = float(ratios[0])
+    max_ratio = float(ratios[1])
+    return {
+        'type': 'resize',
+        'resize_ratio_range': (min_ratio, max_ratio)
+    }
+
+
 
 class NoiseArgParser(argparse.Action):
     def __init__(self,
@@ -107,6 +118,9 @@ class NoiseArgParser(argparse.Action):
             elif command[:len('dropout')] == 'dropout':
                 dropout_descriptor = parse_dropout(command)
                 layers.append(dropout_descriptor)
+            elif command[:len('resize')] == 'resize':
+                resize_descriptor = parse_resize(command)
+                layers.append(resize_descriptor)
             elif command[:len('jpeg')] == 'jpeg':
                 layers.append({
                     'type': 'jpeg_compression'

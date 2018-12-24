@@ -32,9 +32,9 @@ class Noiser(nn.Module):
                 noise_layers.append(Dropout(noise_layer_config['keep_ratio_range']))
             elif layer_type == 'resize':
                 if 'interpolation_method' in noise_layer_config:
-                    noise_layers.append(Resize(noise_layer_config['resize_ratio'], noise_layer_config['interpolation_method']))
+                    noise_layers.append(Resize(noise_layer_config['resize_ratio_range'], noise_layer_config['interpolation_method']))
                 else:
-                    noise_layers.append(Resize(noise_layer_config['resize_ratio']))
+                    noise_layers.append(Resize(noise_layer_config['resize_ratio_range']))
             elif layer_type == 'rotate':
                 pass
             elif layer_type == 'identity':
