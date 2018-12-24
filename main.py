@@ -34,7 +34,6 @@ def train(model: Hidden,
     :return:
     """
 
-
     train_data, val_data = utils.get_data_loaders(hidden_config, train_options)
     file_count = len(train_data.dataset)
     if file_count % train_options.batch_size == 0:
@@ -134,7 +133,7 @@ def main():
         this_run_folder = args.continue_from_folder
         train_options, hidden_config, noise_config = utils.load_options(this_run_folder)
         checkpoint = utils.load_last_checkpoint(os.path.join(this_run_folder, 'checkpoints'))
-        train_options.start_epoch = checkpoint['epoch']
+        train_options.start_epoch = checkpoint['epoch']+1
     else:
         start_epoch = 1
         train_options = TrainingOptions(
