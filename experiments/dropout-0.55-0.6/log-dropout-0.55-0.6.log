@@ -1,0 +1,3456 @@
+=> loading checkpoint './runs/dropout-0.55-0.6/checkpoints/291-loss=0.0399 enc=0.0029 dec=0.0336 adv=4.2821 discr-cov=0.0435 discr-enc=0.0423.pyt'
+=> loaded checkpoint './runs/dropout-0.55-0.6/checkpoints/291-loss=0.0399 enc=0.0029 dec=0.0336 adv=4.2821 discr-cov=0.0435 discr-enc=0.0423.pyt' (epoch 291)
+Tensorboard is enabled. Creating logger.
+HiDDeN model: EncoderDecoder(
+  (encoder): Encoder(
+    (conv_layers): Sequential(
+      (0): ConvBNRelu(
+        (layers): Sequential(
+          (0): Conv2d(3, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU(inplace)
+        )
+      )
+      (1): ConvBNRelu(
+        (layers): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU(inplace)
+        )
+      )
+      (2): ConvBNRelu(
+        (layers): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU(inplace)
+        )
+      )
+      (3): ConvBNRelu(
+        (layers): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU(inplace)
+        )
+      )
+    )
+    (after_concat_layer): ConvBNRelu(
+      (layers): Sequential(
+        (0): Conv2d(97, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU(inplace)
+      )
+    )
+    (final_layer): Conv2d(64, 3, kernel_size=(1, 1), stride=(1, 1))
+  )
+  (noiser): Noiser(
+    (noise_layers): Sequential(
+      (0): Dropout()
+    )
+  )
+  (decoder): Decoder(
+    (layers): Sequential(
+      (0): ConvBNRelu(
+        (layers): Sequential(
+          (0): Conv2d(3, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU(inplace)
+        )
+      )
+      (1): ConvBNRelu(
+        (layers): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU(inplace)
+        )
+      )
+      (2): ConvBNRelu(
+        (layers): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU(inplace)
+        )
+      )
+      (3): ConvBNRelu(
+        (layers): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU(inplace)
+        )
+      )
+      (4): ConvBNRelu(
+        (layers): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU(inplace)
+        )
+      )
+      (5): ConvBNRelu(
+        (layers): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU(inplace)
+        )
+      )
+      (6): ConvBNRelu(
+        (layers): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU(inplace)
+        )
+      )
+      (7): ConvBNRelu(
+        (layers): Sequential(
+          (0): Conv2d(64, 30, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): BatchNorm2d(30, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU(inplace)
+        )
+      )
+      (8): AdaptiveAvgPool2d(output_size=(1, 1))
+    )
+    (linear): Linear(in_features=30, out_features=30, bias=True)
+  )
+)
+Discriminator(
+  (before_linear): Sequential(
+    (0): ConvBNRelu(
+      (layers): Sequential(
+        (0): Conv2d(3, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU(inplace)
+      )
+    )
+    (1): ConvBNRelu(
+      (layers): Sequential(
+        (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU(inplace)
+      )
+    )
+    (2): ConvBNRelu(
+      (layers): Sequential(
+        (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU(inplace)
+      )
+    )
+    (3): AdaptiveAvgPool2d(output_size=(1, 1))
+  )
+  (linear): Linear(in_features=64, out_features=1, bias=True)
+)
+
+Model Configuration:
+
+{'H': 128,
+ 'W': 128,
+ 'adversarial_loss': 0.001,
+ 'decoder_blocks': 7,
+ 'decoder_channels': 64,
+ 'decoder_loss': 1,
+ 'discriminator_blocks': 3,
+ 'discriminator_channels': 64,
+ 'encoder_blocks': 4,
+ 'encoder_channels': 64,
+ 'encoder_loss': 0.7,
+ 'message_length': 30,
+ 'use_discriminator': True,
+ 'use_vgg': False}
+
+Noise configuration:
+
+"[{'type': 'dropout', 'keep_ratio_range': (0.55, 0.6)}]"
+
+Training train_options:
+
+{'batch_size': 48,
+ 'number_of_epochs': 400,
+ 'runs_folder': './runs',
+ 'start_epoch': 292,
+ 'train_folder': '/data/coco/10K/train',
+ 'validation_folder': '/data/coco/10K/val'}
+
+
+Starting epoch 292/400
+Batch size = 48
+Steps in epoch = 209
+Epoch: 292/400 Step: 10/209
+loss               0.0408
+encoder_mse        0.0031
+dec_mse            0.0335
+bitwise-error      0.0088
+adversarial_bce    5.1532
+discr_cover_bce    0.0081
+discr_encod_bce    0.0102
+----------------------------------------
+Epoch: 292/400 Step: 20/209
+loss               0.0403
+encoder_mse        0.0028
+dec_mse            0.0337
+bitwise-error      0.0093
+adversarial_bce    4.5895
+discr_cover_bce    0.0180
+discr_encod_bce    0.0350
+----------------------------------------
+Epoch: 292/400 Step: 30/209
+loss               0.0408
+encoder_mse        0.0030
+dec_mse            0.0339
+bitwise-error      0.0092
+adversarial_bce    4.7550
+discr_cover_bce    0.0553
+discr_encod_bce    0.0369
+----------------------------------------
+Epoch: 292/400 Step: 40/209
+loss               0.0406
+encoder_mse        0.0029
+dec_mse            0.0341
+bitwise-error      0.0094
+adversarial_bce    4.4782
+discr_cover_bce    0.0859
+discr_encod_bce    0.0814
+----------------------------------------
+Epoch: 292/400 Step: 50/209
+loss               0.0403
+encoder_mse        0.0028
+dec_mse            0.0343
+bitwise-error      0.0098
+adversarial_bce    4.1177
+discr_cover_bce    0.1163
+discr_encod_bce    0.1052
+----------------------------------------
+Epoch: 292/400 Step: 60/209
+loss               0.0401
+encoder_mse        0.0027
+dec_mse            0.0340
+bitwise-error      0.0096
+adversarial_bce    4.1729
+discr_cover_bce    0.1190
+discr_encod_bce    0.1014
+----------------------------------------
+Epoch: 292/400 Step: 70/209
+loss               0.0402
+encoder_mse        0.0029
+dec_mse            0.0340
+bitwise-error      0.0094
+adversarial_bce    4.1705
+discr_cover_bce    0.1198
+discr_encod_bce    0.1091
+----------------------------------------
+Epoch: 292/400 Step: 80/209
+loss               0.0397
+encoder_mse        0.0029
+dec_mse            0.0336
+bitwise-error      0.0091
+adversarial_bce    4.0904
+discr_cover_bce    0.1084
+discr_encod_bce    0.1058
+----------------------------------------
+Epoch: 292/400 Step: 90/209
+loss               0.0398
+encoder_mse        0.0029
+dec_mse            0.0337
+bitwise-error      0.0093
+adversarial_bce    4.1239
+discr_cover_bce    0.1039
+discr_encod_bce    0.0979
+----------------------------------------
+Epoch: 292/400 Step: 100/209
+loss               0.0399
+encoder_mse        0.0029
+dec_mse            0.0338
+bitwise-error      0.0096
+adversarial_bce    4.0726
+discr_cover_bce    0.0984
+discr_encod_bce    0.0996
+----------------------------------------
+Epoch: 292/400 Step: 110/209
+loss               0.0400
+encoder_mse        0.0029
+dec_mse            0.0339
+bitwise-error      0.0097
+adversarial_bce    4.1169
+discr_cover_bce    0.0940
+discr_encod_bce    0.0922
+----------------------------------------
+Epoch: 292/400 Step: 120/209
+loss               0.0400
+encoder_mse        0.0029
+dec_mse            0.0339
+bitwise-error      0.0097
+adversarial_bce    4.1471
+discr_cover_bce    0.0888
+discr_encod_bce    0.0866
+----------------------------------------
+Epoch: 292/400 Step: 130/209
+loss               0.0402
+encoder_mse        0.0029
+dec_mse            0.0340
+bitwise-error      0.0099
+adversarial_bce    4.2348
+discr_cover_bce    0.0861
+discr_encod_bce    0.0836
+----------------------------------------
+Epoch: 292/400 Step: 140/209
+loss               0.0401
+encoder_mse        0.0029
+dec_mse            0.0338
+bitwise-error      0.0098
+adversarial_bce    4.2321
+discr_cover_bce    0.0816
+discr_encod_bce    0.0818
+----------------------------------------
+Epoch: 292/400 Step: 150/209
+loss               0.0402
+encoder_mse        0.0029
+dec_mse            0.0340
+bitwise-error      0.0100
+adversarial_bce    4.2126
+discr_cover_bce    0.0809
+discr_encod_bce    0.0788
+----------------------------------------
+Epoch: 292/400 Step: 160/209
+loss               0.0402
+encoder_mse        0.0030
+dec_mse            0.0340
+bitwise-error      0.0100
+adversarial_bce    4.1940
+discr_cover_bce    0.0792
+discr_encod_bce    0.0771
+----------------------------------------
+Epoch: 292/400 Step: 170/209
+loss               0.0403
+encoder_mse        0.0029
+dec_mse            0.0340
+bitwise-error      0.0101
+adversarial_bce    4.1912
+discr_cover_bce    0.0804
+discr_encod_bce    0.0788
+----------------------------------------
+Epoch: 292/400 Step: 180/209
+loss               0.0403
+encoder_mse        0.0029
+dec_mse            0.0340
+bitwise-error      0.0100
+adversarial_bce    4.1512
+discr_cover_bce    0.0794
+discr_encod_bce    0.0797
+----------------------------------------
+Epoch: 292/400 Step: 190/209
+loss               0.0402
+encoder_mse        0.0029
+dec_mse            0.0341
+bitwise-error      0.0100
+adversarial_bce    4.1551
+discr_cover_bce    0.0778
+discr_encod_bce    0.0773
+----------------------------------------
+Epoch: 292/400 Step: 200/209
+loss               0.0403
+encoder_mse        0.0029
+dec_mse            0.0340
+bitwise-error      0.0099
+adversarial_bce    4.2411
+discr_cover_bce    0.0750
+discr_encod_bce    0.0739
+----------------------------------------
+Epoch: 292/400 Step: 209/209
+loss               0.0404
+encoder_mse        0.0029
+dec_mse            0.0341
+bitwise-error      0.0101
+adversarial_bce    4.2565
+discr_cover_bce    0.0722
+discr_encod_bce    0.0717
+----------------------------------------
+Epoch 292 training duration 90.33 sec
+----------------------------------------
+Running validation for epoch 292/400
+loss               0.0404
+encoder_mse        0.0029
+dec_mse            0.0341
+bitwise-error      0.0100
+adversarial_bce    4.3072
+discr_cover_bce    0.0702
+discr_encod_bce    0.0665
+----------------------------------------
+Saving checkpoint to ./runs/dropout-0.55-0.6/checkpoints/292-loss=0.0404 enc=0.0029 dec=0.0341 adv=4.3072 discr-cov=0.0702 discr-enc=0.0665.pyt
+Saving checkpoint done.
+
+Starting epoch 293/400
+Batch size = 48
+Steps in epoch = 209
+Epoch: 293/400 Step: 10/209
+loss               0.0403
+encoder_mse        0.0028
+dec_mse            0.0332
+bitwise-error      0.0090
+adversarial_bce    5.1264
+discr_cover_bce    0.0289
+discr_encod_bce    0.0139
+----------------------------------------
+Epoch: 293/400 Step: 20/209
+loss               0.0398
+encoder_mse        0.0026
+dec_mse            0.0331
+bitwise-error      0.0093
+adversarial_bce    4.8689
+discr_cover_bce    0.0169
+discr_encod_bce    0.0180
+----------------------------------------
+Epoch: 293/400 Step: 30/209
+loss               0.0400
+encoder_mse        0.0026
+dec_mse            0.0331
+bitwise-error      0.0096
+adversarial_bce    5.0552
+discr_cover_bce    0.0131
+discr_encod_bce    0.0148
+----------------------------------------
+Epoch: 293/400 Step: 40/209
+loss               0.0399
+encoder_mse        0.0026
+dec_mse            0.0329
+bitwise-error      0.0095
+adversarial_bce    5.1447
+discr_cover_bce    0.0116
+discr_encod_bce    0.0129
+----------------------------------------
+Epoch: 293/400 Step: 50/209
+loss               0.0399
+encoder_mse        0.0027
+dec_mse            0.0329
+bitwise-error      0.0095
+adversarial_bce    5.1502
+discr_cover_bce    0.0101
+discr_encod_bce    0.0124
+----------------------------------------
+Epoch: 293/400 Step: 60/209
+loss               0.0402
+encoder_mse        0.0027
+dec_mse            0.0331
+bitwise-error      0.0097
+adversarial_bce    5.2410
+discr_cover_bce    0.0091
+discr_encod_bce    0.0115
+----------------------------------------
+Epoch: 293/400 Step: 70/209
+loss               0.0401
+encoder_mse        0.0027
+dec_mse            0.0329
+bitwise-error      0.0095
+adversarial_bce    5.2901
+discr_cover_bce    0.0086
+discr_encod_bce    0.0107
+----------------------------------------
+Epoch: 293/400 Step: 80/209
+loss               0.0400
+encoder_mse        0.0028
+dec_mse            0.0328
+bitwise-error      0.0093
+adversarial_bce    5.2467
+discr_cover_bce    0.0087
+discr_encod_bce    0.0112
+----------------------------------------
+Epoch: 293/400 Step: 90/209
+loss               0.0399
+encoder_mse        0.0027
+dec_mse            0.0327
+bitwise-error      0.0092
+adversarial_bce    5.2520
+discr_cover_bce    0.0081
+discr_encod_bce    0.0115
+----------------------------------------
+Epoch: 293/400 Step: 100/209
+loss               0.0399
+encoder_mse        0.0028
+dec_mse            0.0327
+bitwise-error      0.0092
+adversarial_bce    5.2982
+discr_cover_bce    0.0085
+discr_encod_bce    0.0111
+----------------------------------------
+Epoch: 293/400 Step: 110/209
+loss               0.0399
+encoder_mse        0.0029
+dec_mse            0.0326
+bitwise-error      0.0090
+adversarial_bce    5.2714
+discr_cover_bce    0.0079
+discr_encod_bce    0.0115
+----------------------------------------
+Epoch: 293/400 Step: 120/209
+loss               0.0399
+encoder_mse        0.0029
+dec_mse            0.0326
+bitwise-error      0.0089
+adversarial_bce    5.2552
+discr_cover_bce    0.0084
+discr_encod_bce    0.0117
+----------------------------------------
+Epoch: 293/400 Step: 130/209
+loss               0.0398
+encoder_mse        0.0029
+dec_mse            0.0326
+bitwise-error      0.0090
+adversarial_bce    5.2376
+discr_cover_bce    0.0081
+discr_encod_bce    0.0120
+----------------------------------------
+Epoch: 293/400 Step: 140/209
+loss               0.0399
+encoder_mse        0.0029
+dec_mse            0.0326
+bitwise-error      0.0091
+adversarial_bce    5.2528
+discr_cover_bce    0.0090
+discr_encod_bce    0.0121
+----------------------------------------
+Epoch: 293/400 Step: 150/209
+loss               0.0399
+encoder_mse        0.0029
+dec_mse            0.0327
+bitwise-error      0.0091
+adversarial_bce    5.2353
+discr_cover_bce    0.0118
+discr_encod_bce    0.0136
+----------------------------------------
+Epoch: 293/400 Step: 160/209
+loss               0.0398
+encoder_mse        0.0029
+dec_mse            0.0326
+bitwise-error      0.0091
+adversarial_bce    5.1466
+discr_cover_bce    0.0152
+discr_encod_bce    0.0221
+----------------------------------------
+Epoch: 293/400 Step: 170/209
+loss               0.0399
+encoder_mse        0.0029
+dec_mse            0.0327
+bitwise-error      0.0091
+adversarial_bce    5.1427
+discr_cover_bce    0.0192
+discr_encod_bce    0.0219
+----------------------------------------
+Epoch: 293/400 Step: 180/209
+loss               0.0398
+encoder_mse        0.0029
+dec_mse            0.0327
+bitwise-error      0.0091
+adversarial_bce    5.0898
+discr_cover_bce    0.0200
+discr_encod_bce    0.0241
+----------------------------------------
+Epoch: 293/400 Step: 190/209
+loss               0.0398
+encoder_mse        0.0029
+dec_mse            0.0327
+bitwise-error      0.0091
+adversarial_bce    5.1005
+discr_cover_bce    0.0194
+discr_encod_bce    0.0234
+----------------------------------------
+Epoch: 293/400 Step: 200/209
+loss               0.0398
+encoder_mse        0.0029
+dec_mse            0.0326
+bitwise-error      0.0091
+adversarial_bce    5.0916
+discr_cover_bce    0.0188
+discr_encod_bce    0.0229
+----------------------------------------
+Epoch: 293/400 Step: 209/209
+loss               0.0397
+encoder_mse        0.0029
+dec_mse            0.0326
+bitwise-error      0.0090
+adversarial_bce    5.0998
+discr_cover_bce    0.0188
+discr_encod_bce    0.0227
+----------------------------------------
+Epoch 293 training duration 89.21 sec
+----------------------------------------
+Running validation for epoch 293/400
+loss               0.0399
+encoder_mse        0.0030
+dec_mse            0.0326
+bitwise-error      0.0089
+adversarial_bce    5.2069
+discr_cover_bce    0.0240
+discr_encod_bce    0.0209
+----------------------------------------
+Saving checkpoint to ./runs/dropout-0.55-0.6/checkpoints/293-loss=0.0399 enc=0.0030 dec=0.0326 adv=5.2069 discr-cov=0.0240 discr-enc=0.0209.pyt
+Saving checkpoint done.
+
+Starting epoch 294/400
+Batch size = 48
+Steps in epoch = 209
+Epoch: 294/400 Step: 10/209
+loss               0.0402
+encoder_mse        0.0032
+dec_mse            0.0328
+bitwise-error      0.0082
+adversarial_bce    5.1404
+discr_cover_bce    0.0103
+discr_encod_bce    0.0105
+----------------------------------------
+Epoch: 294/400 Step: 20/209
+loss               0.0403
+encoder_mse        0.0036
+dec_mse            0.0328
+bitwise-error      0.0089
+adversarial_bce    4.9350
+discr_cover_bce    0.0142
+discr_encod_bce    0.0194
+----------------------------------------
+Epoch: 294/400 Step: 30/209
+loss               0.0400
+encoder_mse        0.0036
+dec_mse            0.0328
+bitwise-error      0.0087
+adversarial_bce    4.7428
+discr_cover_bce    0.0175
+discr_encod_bce    0.0198
+----------------------------------------
+Epoch: 294/400 Step: 40/209
+loss               0.0405
+encoder_mse        0.0037
+dec_mse            0.0329
+bitwise-error      0.0086
+adversarial_bce    5.0015
+discr_cover_bce    0.0157
+discr_encod_bce    0.0218
+----------------------------------------
+Epoch: 294/400 Step: 50/209
+loss               0.0404
+encoder_mse        0.0036
+dec_mse            0.0328
+bitwise-error      0.0088
+adversarial_bce    5.1020
+discr_cover_bce    0.0182
+discr_encod_bce    0.0193
+----------------------------------------
+Epoch: 294/400 Step: 60/209
+loss               0.0406
+encoder_mse        0.0037
+dec_mse            0.0328
+bitwise-error      0.0089
+adversarial_bce    5.2650
+discr_cover_bce    0.0153
+discr_encod_bce    0.0170
+----------------------------------------
+Epoch: 294/400 Step: 70/209
+loss               0.0409
+encoder_mse        0.0037
+dec_mse            0.0330
+bitwise-error      0.0090
+adversarial_bce    5.3433
+discr_cover_bce    0.0133
+discr_encod_bce    0.0158
+----------------------------------------
+Epoch: 294/400 Step: 80/209
+loss               0.0409
+encoder_mse        0.0036
+dec_mse            0.0330
+bitwise-error      0.0090
+adversarial_bce    5.4062
+discr_cover_bce    0.0117
+discr_encod_bce    0.0155
+----------------------------------------
+Epoch: 294/400 Step: 90/209
+loss               0.0411
+encoder_mse        0.0035
+dec_mse            0.0330
+bitwise-error      0.0092
+adversarial_bce    5.5637
+discr_cover_bce    0.0119
+discr_encod_bce    0.0146
+----------------------------------------
+Epoch: 294/400 Step: 100/209
+loss               0.0410
+encoder_mse        0.0035
+dec_mse            0.0331
+bitwise-error      0.0093
+adversarial_bce    5.5020
+discr_cover_bce    0.0134
+discr_encod_bce    0.0167
+----------------------------------------
+Epoch: 294/400 Step: 110/209
+loss               0.0411
+encoder_mse        0.0034
+dec_mse            0.0331
+bitwise-error      0.0093
+adversarial_bce    5.5477
+discr_cover_bce    0.0166
+discr_encod_bce    0.0208
+----------------------------------------
+Epoch: 294/400 Step: 120/209
+loss               0.0411
+encoder_mse        0.0034
+dec_mse            0.0331
+bitwise-error      0.0094
+adversarial_bce    5.5765
+discr_cover_bce    0.0171
+discr_encod_bce    0.0217
+----------------------------------------
+Epoch: 294/400 Step: 130/209
+loss               0.0412
+encoder_mse        0.0034
+dec_mse            0.0331
+bitwise-error      0.0094
+adversarial_bce    5.7727
+discr_cover_bce    0.0174
+discr_encod_bce    0.0201
+----------------------------------------
+Epoch: 294/400 Step: 140/209
+loss               0.0412
+encoder_mse        0.0034
+dec_mse            0.0331
+bitwise-error      0.0095
+adversarial_bce    5.7394
+discr_cover_bce    0.0166
+discr_encod_bce    0.0212
+----------------------------------------
+Epoch: 294/400 Step: 150/209
+loss               0.0413
+encoder_mse        0.0034
+dec_mse            0.0332
+bitwise-error      0.0094
+adversarial_bce    5.7617
+discr_cover_bce    0.0169
+discr_encod_bce    0.0201
+----------------------------------------
+Epoch: 294/400 Step: 160/209
+loss               0.0413
+encoder_mse        0.0034
+dec_mse            0.0332
+bitwise-error      0.0095
+adversarial_bce    5.6918
+discr_cover_bce    0.0187
+discr_encod_bce    0.0205
+----------------------------------------
+Epoch: 294/400 Step: 170/209
+loss               0.0412
+encoder_mse        0.0033
+dec_mse            0.0332
+bitwise-error      0.0095
+adversarial_bce    5.6605
+discr_cover_bce    0.0180
+discr_encod_bce    0.0199
+----------------------------------------
+Epoch: 294/400 Step: 180/209
+loss               0.0411
+encoder_mse        0.0033
+dec_mse            0.0332
+bitwise-error      0.0095
+adversarial_bce    5.5872
+discr_cover_bce    0.0202
+discr_encod_bce    0.0212
+----------------------------------------
+Epoch: 294/400 Step: 190/209
+loss               0.0410
+encoder_mse        0.0032
+dec_mse            0.0332
+bitwise-error      0.0095
+adversarial_bce    5.5563
+discr_cover_bce    0.0203
+discr_encod_bce    0.0225
+----------------------------------------
+Epoch: 294/400 Step: 200/209
+loss               0.0409
+encoder_mse        0.0032
+dec_mse            0.0331
+bitwise-error      0.0094
+adversarial_bce    5.5377
+discr_cover_bce    0.0196
+discr_encod_bce    0.0220
+----------------------------------------
+Epoch: 294/400 Step: 209/209
+loss               0.0410
+encoder_mse        0.0032
+dec_mse            0.0332
+bitwise-error      0.0095
+adversarial_bce    5.5401
+discr_cover_bce    0.0207
+discr_encod_bce    0.0218
+----------------------------------------
+Epoch 294 training duration 89.19 sec
+----------------------------------------
+Running validation for epoch 294/400
+loss               0.0410
+encoder_mse        0.0031
+dec_mse            0.0332
+bitwise-error      0.0094
+adversarial_bce    5.5829
+discr_cover_bce    0.0215
+discr_encod_bce    0.0201
+----------------------------------------
+Saving checkpoint to ./runs/dropout-0.55-0.6/checkpoints/294-loss=0.0410 enc=0.0031 dec=0.0332 adv=5.5829 discr-cov=0.0215 discr-enc=0.0201.pyt
+Saving checkpoint done.
+
+Starting epoch 295/400
+Batch size = 48
+Steps in epoch = 209
+Epoch: 295/400 Step: 10/209
+loss               0.0388
+encoder_mse        0.0034
+dec_mse            0.0320
+bitwise-error      0.0086
+adversarial_bce    4.4601
+discr_cover_bce    0.0157
+discr_encod_bce    0.0263
+----------------------------------------
+Epoch: 295/400 Step: 20/209
+loss               0.0396
+encoder_mse        0.0029
+dec_mse            0.0331
+bitwise-error      0.0092
+adversarial_bce    4.5207
+discr_cover_bce    0.0261
+discr_encod_bce    0.0255
+----------------------------------------
+Epoch: 295/400 Step: 30/209
+loss               0.0393
+encoder_mse        0.0029
+dec_mse            0.0329
+bitwise-error      0.0089
+adversarial_bce    4.3373
+discr_cover_bce    0.0227
+discr_encod_bce    0.0363
+----------------------------------------
+Epoch: 295/400 Step: 40/209
+loss               0.0401
+encoder_mse        0.0031
+dec_mse            0.0333
+bitwise-error      0.0091
+adversarial_bce    4.6162
+discr_cover_bce    0.0353
+discr_encod_bce    0.0334
+----------------------------------------
+Epoch: 295/400 Step: 50/209
+loss               0.0400
+encoder_mse        0.0030
+dec_mse            0.0332
+bitwise-error      0.0092
+adversarial_bce    4.7680
+discr_cover_bce    0.0357
+discr_encod_bce    0.0312
+----------------------------------------
+Epoch: 295/400 Step: 60/209
+loss               0.0398
+encoder_mse        0.0029
+dec_mse            0.0331
+bitwise-error      0.0088
+adversarial_bce    4.7078
+discr_cover_bce    0.0355
+discr_encod_bce    0.0356
+----------------------------------------
+Epoch: 295/400 Step: 70/209
+loss               0.0398
+encoder_mse        0.0030
+dec_mse            0.0330
+bitwise-error      0.0087
+adversarial_bce    4.7210
+discr_cover_bce    0.0361
+discr_encod_bce    0.0439
+----------------------------------------
+Epoch: 295/400 Step: 80/209
+loss               0.0404
+encoder_mse        0.0032
+dec_mse            0.0336
+bitwise-error      0.0093
+adversarial_bce    4.6193
+discr_cover_bce    0.0682
+discr_encod_bce    0.0725
+----------------------------------------
+Epoch: 295/400 Step: 90/209
+loss               0.0407
+encoder_mse        0.0032
+dec_mse            0.0338
+bitwise-error      0.0094
+adversarial_bce    4.6554
+discr_cover_bce    0.0701
+discr_encod_bce    0.0757
+----------------------------------------
+Epoch: 295/400 Step: 100/209
+loss               0.0407
+encoder_mse        0.0031
+dec_mse            0.0340
+bitwise-error      0.0096
+adversarial_bce    4.5239
+discr_cover_bce    0.0762
+discr_encod_bce    0.0808
+----------------------------------------
+Epoch: 295/400 Step: 110/209
+loss               0.0404
+encoder_mse        0.0031
+dec_mse            0.0338
+bitwise-error      0.0095
+adversarial_bce    4.4765
+discr_cover_bce    0.0764
+discr_encod_bce    0.0806
+----------------------------------------
+Epoch: 295/400 Step: 120/209
+loss               0.0403
+encoder_mse        0.0031
+dec_mse            0.0338
+bitwise-error      0.0096
+adversarial_bce    4.4069
+discr_cover_bce    0.0755
+discr_encod_bce    0.0800
+----------------------------------------
+Epoch: 295/400 Step: 130/209
+loss               0.0402
+encoder_mse        0.0031
+dec_mse            0.0337
+bitwise-error      0.0096
+adversarial_bce    4.3875
+discr_cover_bce    0.0721
+discr_encod_bce    0.0778
+----------------------------------------
+Epoch: 295/400 Step: 140/209
+loss               0.0401
+encoder_mse        0.0030
+dec_mse            0.0337
+bitwise-error      0.0096
+adversarial_bce    4.3377
+discr_cover_bce    0.0776
+discr_encod_bce    0.0792
+----------------------------------------
+Epoch: 295/400 Step: 150/209
+loss               0.0400
+encoder_mse        0.0030
+dec_mse            0.0336
+bitwise-error      0.0095
+adversarial_bce    4.2770
+discr_cover_bce    0.0808
+discr_encod_bce    0.0807
+----------------------------------------
+Epoch: 295/400 Step: 160/209
+loss               0.0400
+encoder_mse        0.0030
+dec_mse            0.0336
+bitwise-error      0.0094
+adversarial_bce    4.2574
+discr_cover_bce    0.0867
+discr_encod_bce    0.0824
+----------------------------------------
+Epoch: 295/400 Step: 170/209
+loss               0.0400
+encoder_mse        0.0030
+dec_mse            0.0336
+bitwise-error      0.0094
+adversarial_bce    4.2388
+discr_cover_bce    0.0853
+discr_encod_bce    0.0824
+----------------------------------------
+Epoch: 295/400 Step: 180/209
+loss               0.0400
+encoder_mse        0.0030
+dec_mse            0.0336
+bitwise-error      0.0094
+adversarial_bce    4.2075
+discr_cover_bce    0.0825
+discr_encod_bce    0.0815
+----------------------------------------
+Epoch: 295/400 Step: 190/209
+loss               0.0400
+encoder_mse        0.0030
+dec_mse            0.0337
+bitwise-error      0.0094
+adversarial_bce    4.1977
+discr_cover_bce    0.0825
+discr_encod_bce    0.0792
+----------------------------------------
+Epoch: 295/400 Step: 200/209
+loss               0.0399
+encoder_mse        0.0030
+dec_mse            0.0336
+bitwise-error      0.0094
+adversarial_bce    4.2220
+discr_cover_bce    0.0811
+discr_encod_bce    0.0774
+----------------------------------------
+Epoch: 295/400 Step: 209/209
+loss               0.0399
+encoder_mse        0.0030
+dec_mse            0.0337
+bitwise-error      0.0095
+adversarial_bce    4.1833
+discr_cover_bce    0.0797
+discr_encod_bce    0.0799
+----------------------------------------
+Epoch 295 training duration 89.16 sec
+----------------------------------------
+Running validation for epoch 295/400
+loss               0.0401
+encoder_mse        0.0030
+dec_mse            0.0337
+bitwise-error      0.0095
+adversarial_bce    4.3190
+discr_cover_bce    0.0786
+discr_encod_bce    0.0731
+----------------------------------------
+Saving checkpoint to ./runs/dropout-0.55-0.6/checkpoints/295-loss=0.0401 enc=0.0030 dec=0.0337 adv=4.3190 discr-cov=0.0786 discr-enc=0.0731.pyt
+Saving checkpoint done.
+
+Starting epoch 296/400
+Batch size = 48
+Steps in epoch = 209
+Epoch: 296/400 Step: 10/209
+loss               0.0401
+encoder_mse        0.0025
+dec_mse            0.0329
+bitwise-error      0.0092
+adversarial_bce    5.4331
+discr_cover_bce    0.0709
+discr_encod_bce    0.0187
+----------------------------------------
+Epoch: 296/400 Step: 20/209
+loss               0.0406
+encoder_mse        0.0029
+dec_mse            0.0337
+bitwise-error      0.0102
+adversarial_bce    4.8842
+discr_cover_bce    0.0541
+discr_encod_bce    0.0255
+----------------------------------------
+Epoch: 296/400 Step: 30/209
+loss               0.0400
+encoder_mse        0.0027
+dec_mse            0.0336
+bitwise-error      0.0102
+adversarial_bce    4.5307
+discr_cover_bce    0.0476
+discr_encod_bce    0.0332
+----------------------------------------
+Epoch: 296/400 Step: 40/209
+loss               0.0399
+encoder_mse        0.0027
+dec_mse            0.0335
+bitwise-error      0.0098
+adversarial_bce    4.5289
+discr_cover_bce    0.0511
+discr_encod_bce    0.0461
+----------------------------------------
+Epoch: 296/400 Step: 50/209
+loss               0.0400
+encoder_mse        0.0028
+dec_mse            0.0336
+bitwise-error      0.0098
+adversarial_bce    4.4314
+discr_cover_bce    0.0678
+discr_encod_bce    0.0490
+----------------------------------------
+Epoch: 296/400 Step: 60/209
+loss               0.0397
+encoder_mse        0.0028
+dec_mse            0.0334
+bitwise-error      0.0097
+adversarial_bce    4.2929
+discr_cover_bce    0.0848
+discr_encod_bce    0.0592
+----------------------------------------
+Epoch: 296/400 Step: 70/209
+loss               0.0398
+encoder_mse        0.0028
+dec_mse            0.0336
+bitwise-error      0.0099
+adversarial_bce    4.3085
+discr_cover_bce    0.1021
+discr_encod_bce    0.0947
+----------------------------------------
+Epoch: 296/400 Step: 80/209
+loss               0.0399
+encoder_mse        0.0029
+dec_mse            0.0337
+bitwise-error      0.0099
+adversarial_bce    4.2086
+discr_cover_bce    0.1005
+discr_encod_bce    0.0994
+----------------------------------------
+Epoch: 296/400 Step: 90/209
+loss               0.0398
+encoder_mse        0.0029
+dec_mse            0.0336
+bitwise-error      0.0098
+adversarial_bce    4.1616
+discr_cover_bce    0.1324
+discr_encod_bce    0.1114
+----------------------------------------
+Epoch: 296/400 Step: 100/209
+loss               0.0395
+encoder_mse        0.0029
+dec_mse            0.0335
+bitwise-error      0.0097
+adversarial_bce    4.0197
+discr_cover_bce    0.1331
+discr_encod_bce    0.1107
+----------------------------------------
+Epoch: 296/400 Step: 110/209
+loss               0.0392
+encoder_mse        0.0029
+dec_mse            0.0333
+bitwise-error      0.0096
+adversarial_bce    3.9710
+discr_cover_bce    0.1265
+discr_encod_bce    0.1071
+----------------------------------------
+Epoch: 296/400 Step: 120/209
+loss               0.0391
+encoder_mse        0.0028
+dec_mse            0.0332
+bitwise-error      0.0094
+adversarial_bce    3.9990
+discr_cover_bce    0.1196
+discr_encod_bce    0.1014
+----------------------------------------
+Epoch: 296/400 Step: 130/209
+loss               0.0392
+encoder_mse        0.0028
+dec_mse            0.0332
+bitwise-error      0.0094
+adversarial_bce    4.0396
+discr_cover_bce    0.1124
+discr_encod_bce    0.0958
+----------------------------------------
+Epoch: 296/400 Step: 140/209
+loss               0.0392
+encoder_mse        0.0028
+dec_mse            0.0332
+bitwise-error      0.0094
+adversarial_bce    4.0281
+discr_cover_bce    0.1062
+discr_encod_bce    0.0916
+----------------------------------------
+Epoch: 296/400 Step: 150/209
+loss               0.0392
+encoder_mse        0.0029
+dec_mse            0.0332
+bitwise-error      0.0093
+adversarial_bce    4.0762
+discr_cover_bce    0.1021
+discr_encod_bce    0.0868
+----------------------------------------
+Epoch: 296/400 Step: 160/209
+loss               0.0393
+encoder_mse        0.0028
+dec_mse            0.0332
+bitwise-error      0.0094
+adversarial_bce    4.1077
+discr_cover_bce    0.0971
+discr_encod_bce    0.0845
+----------------------------------------
+Epoch: 296/400 Step: 170/209
+loss               0.0392
+encoder_mse        0.0028
+dec_mse            0.0331
+bitwise-error      0.0093
+adversarial_bce    4.1097
+discr_cover_bce    0.0946
+discr_encod_bce    0.0822
+----------------------------------------
+Epoch: 296/400 Step: 180/209
+loss               0.0391
+encoder_mse        0.0028
+dec_mse            0.0330
+bitwise-error      0.0092
+adversarial_bce    4.0998
+discr_cover_bce    0.0919
+discr_encod_bce    0.0803
+----------------------------------------
+Epoch: 296/400 Step: 190/209
+loss               0.0391
+encoder_mse        0.0028
+dec_mse            0.0330
+bitwise-error      0.0091
+adversarial_bce    4.1316
+discr_cover_bce    0.0909
+discr_encod_bce    0.0775
+----------------------------------------
+Epoch: 296/400 Step: 200/209
+loss               0.0392
+encoder_mse        0.0028
+dec_mse            0.0330
+bitwise-error      0.0092
+adversarial_bce    4.1505
+discr_cover_bce    0.0877
+discr_encod_bce    0.0768
+----------------------------------------
+Epoch: 296/400 Step: 209/209
+loss               0.0392
+encoder_mse        0.0028
+dec_mse            0.0331
+bitwise-error      0.0092
+adversarial_bce    4.1381
+discr_cover_bce    0.0870
+discr_encod_bce    0.0772
+----------------------------------------
+Epoch 296 training duration 89.18 sec
+----------------------------------------
+Running validation for epoch 296/400
+loss               0.0395
+encoder_mse        0.0028
+dec_mse            0.0335
+bitwise-error      0.0095
+adversarial_bce    4.0981
+discr_cover_bce    0.0917
+discr_encod_bce    0.0739
+----------------------------------------
+Saving checkpoint to ./runs/dropout-0.55-0.6/checkpoints/296-loss=0.0395 enc=0.0028 dec=0.0335 adv=4.0981 discr-cov=0.0917 discr-enc=0.0739.pyt
+Saving checkpoint done.
+
+Starting epoch 297/400
+Batch size = 48
+Steps in epoch = 209
+Epoch: 297/400 Step: 10/209
+loss               0.0396
+encoder_mse        0.0030
+dec_mse            0.0328
+bitwise-error      0.0090
+adversarial_bce    4.6367
+discr_cover_bce    0.0664
+discr_encod_bce    0.0241
+----------------------------------------
+Epoch: 297/400 Step: 20/209
+loss               0.0392
+encoder_mse        0.0030
+dec_mse            0.0325
+bitwise-error      0.0089
+adversarial_bce    4.5704
+discr_cover_bce    0.1143
+discr_encod_bce    0.0278
+----------------------------------------
+Epoch: 297/400 Step: 30/209
+loss               0.0391
+encoder_mse        0.0031
+dec_mse            0.0327
+bitwise-error      0.0091
+adversarial_bce    4.2307
+discr_cover_bce    0.1678
+discr_encod_bce    0.1059
+----------------------------------------
+Epoch: 297/400 Step: 40/209
+loss               0.0387
+encoder_mse        0.0030
+dec_mse            0.0328
+bitwise-error      0.0091
+adversarial_bce    3.6899
+discr_cover_bce    0.2093
+discr_encod_bce    0.1505
+----------------------------------------
+Epoch: 297/400 Step: 50/209
+loss               0.0388
+encoder_mse        0.0030
+dec_mse            0.0331
+bitwise-error      0.0094
+adversarial_bce    3.5799
+discr_cover_bce    0.2053
+discr_encod_bce    0.1568
+----------------------------------------
+Epoch: 297/400 Step: 60/209
+loss               0.0384
+encoder_mse        0.0029
+dec_mse            0.0329
+bitwise-error      0.0091
+adversarial_bce    3.4849
+discr_cover_bce    0.1907
+discr_encod_bce    0.1602
+----------------------------------------
+Epoch: 297/400 Step: 70/209
+loss               0.0385
+encoder_mse        0.0030
+dec_mse            0.0330
+bitwise-error      0.0094
+adversarial_bce    3.4890
+discr_cover_bce    0.1765
+discr_encod_bce    0.1508
+----------------------------------------
+Epoch: 297/400 Step: 80/209
+loss               0.0384
+encoder_mse        0.0030
+dec_mse            0.0328
+bitwise-error      0.0092
+adversarial_bce    3.5304
+discr_cover_bce    0.1661
+discr_encod_bce    0.1419
+----------------------------------------
+Epoch: 297/400 Step: 90/209
+loss               0.0384
+encoder_mse        0.0030
+dec_mse            0.0328
+bitwise-error      0.0092
+adversarial_bce    3.5028
+discr_cover_bce    0.1616
+discr_encod_bce    0.1378
+----------------------------------------
+Epoch: 297/400 Step: 100/209
+loss               0.0385
+encoder_mse        0.0030
+dec_mse            0.0328
+bitwise-error      0.0092
+adversarial_bce    3.5736
+discr_cover_bce    0.1478
+discr_encod_bce    0.1274
+----------------------------------------
+Epoch: 297/400 Step: 110/209
+loss               0.0385
+encoder_mse        0.0030
+dec_mse            0.0328
+bitwise-error      0.0091
+adversarial_bce    3.6132
+discr_cover_bce    0.1380
+discr_encod_bce    0.1185
+----------------------------------------
+Epoch: 297/400 Step: 120/209
+loss               0.0386
+encoder_mse        0.0030
+dec_mse            0.0328
+bitwise-error      0.0090
+adversarial_bce    3.6888
+discr_cover_bce    0.1281
+discr_encod_bce    0.1103
+----------------------------------------
+Epoch: 297/400 Step: 130/209
+loss               0.0386
+encoder_mse        0.0030
+dec_mse            0.0329
+bitwise-error      0.0091
+adversarial_bce    3.6465
+discr_cover_bce    0.1341
+discr_encod_bce    0.1112
+----------------------------------------
+Epoch: 297/400 Step: 140/209
+loss               0.0387
+encoder_mse        0.0029
+dec_mse            0.0330
+bitwise-error      0.0092
+adversarial_bce    3.6645
+discr_cover_bce    0.1319
+discr_encod_bce    0.1124
+----------------------------------------
+Epoch: 297/400 Step: 150/209
+loss               0.0387
+encoder_mse        0.0029
+dec_mse            0.0330
+bitwise-error      0.0091
+adversarial_bce    3.6286
+discr_cover_bce    0.1358
+discr_encod_bce    0.1132
+----------------------------------------
+Epoch: 297/400 Step: 160/209
+loss               0.0387
+encoder_mse        0.0029
+dec_mse            0.0329
+bitwise-error      0.0091
+adversarial_bce    3.6663
+discr_cover_bce    0.1304
+discr_encod_bce    0.1102
+----------------------------------------
+Epoch: 297/400 Step: 170/209
+loss               0.0387
+encoder_mse        0.0029
+dec_mse            0.0330
+bitwise-error      0.0091
+adversarial_bce    3.6642
+discr_cover_bce    0.1269
+discr_encod_bce    0.1082
+----------------------------------------
+Epoch: 297/400 Step: 180/209
+loss               0.0387
+encoder_mse        0.0029
+dec_mse            0.0329
+bitwise-error      0.0091
+adversarial_bce    3.7106
+discr_cover_bce    0.1215
+discr_encod_bce    0.1038
+----------------------------------------
+Epoch: 297/400 Step: 190/209
+loss               0.0387
+encoder_mse        0.0029
+dec_mse            0.0329
+bitwise-error      0.0090
+adversarial_bce    3.7740
+discr_cover_bce    0.1181
+discr_encod_bce    0.1012
+----------------------------------------
+Epoch: 297/400 Step: 200/209
+loss               0.0388
+encoder_mse        0.0028
+dec_mse            0.0330
+bitwise-error      0.0091
+adversarial_bce    3.7929
+discr_cover_bce    0.1135
+discr_encod_bce    0.0982
+----------------------------------------
+Epoch: 297/400 Step: 209/209
+loss               0.0390
+encoder_mse        0.0029
+dec_mse            0.0331
+bitwise-error      0.0092
+adversarial_bce    3.8640
+discr_cover_bce    0.1104
+discr_encod_bce    0.0957
+----------------------------------------
+Epoch 297 training duration 89.20 sec
+----------------------------------------
+Running validation for epoch 297/400
+loss               0.0389
+encoder_mse        0.0028
+dec_mse            0.0331
+bitwise-error      0.0091
+adversarial_bce    3.8294
+discr_cover_bce    0.1014
+discr_encod_bce    0.0912
+----------------------------------------
+Saving checkpoint to ./runs/dropout-0.55-0.6/checkpoints/297-loss=0.0389 enc=0.0028 dec=0.0331 adv=3.8294 discr-cov=0.1014 discr-enc=0.0912.pyt
+Saving checkpoint done.
+
+Starting epoch 298/400
+Batch size = 48
+Steps in epoch = 209
+Epoch: 298/400 Step: 10/209
+loss               0.0412
+encoder_mse        0.0024
+dec_mse            0.0354
+bitwise-error      0.0101
+adversarial_bce    4.1027
+discr_cover_bce    0.0882
+discr_encod_bce    0.0286
+----------------------------------------
+Epoch: 298/400 Step: 20/209
+loss               0.0400
+encoder_mse        0.0029
+dec_mse            0.0341
+bitwise-error      0.0094
+adversarial_bce    3.8580
+discr_cover_bce    0.0455
+discr_encod_bce    0.0403
+----------------------------------------
+Epoch: 298/400 Step: 30/209
+loss               0.0397
+encoder_mse        0.0028
+dec_mse            0.0340
+bitwise-error      0.0094
+adversarial_bce    3.7434
+discr_cover_bce    0.0456
+discr_encod_bce    0.0449
+----------------------------------------
+Epoch: 298/400 Step: 40/209
+loss               0.0398
+encoder_mse        0.0028
+dec_mse            0.0338
+bitwise-error      0.0097
+adversarial_bce    4.0729
+discr_cover_bce    0.0406
+discr_encod_bce    0.0380
+----------------------------------------
+Epoch: 298/400 Step: 50/209
+loss               0.0398
+encoder_mse        0.0027
+dec_mse            0.0337
+bitwise-error      0.0096
+adversarial_bce    4.1415
+discr_cover_bce    0.0340
+discr_encod_bce    0.0348
+----------------------------------------
+Epoch: 298/400 Step: 60/209
+loss               0.0396
+encoder_mse        0.0027
+dec_mse            0.0334
+bitwise-error      0.0095
+adversarial_bce    4.2721
+discr_cover_bce    0.0323
+discr_encod_bce    0.0309
+----------------------------------------
+Epoch: 298/400 Step: 70/209
+loss               0.0396
+encoder_mse        0.0027
+dec_mse            0.0334
+bitwise-error      0.0096
+adversarial_bce    4.2595
+discr_cover_bce    0.0304
+discr_encod_bce    0.0327
+----------------------------------------
+Epoch: 298/400 Step: 80/209
+loss               0.0397
+encoder_mse        0.0027
+dec_mse            0.0335
+bitwise-error      0.0097
+adversarial_bce    4.3041
+discr_cover_bce    0.0313
+discr_encod_bce    0.0314
+----------------------------------------
+Epoch: 298/400 Step: 90/209
+loss               0.0395
+encoder_mse        0.0027
+dec_mse            0.0332
+bitwise-error      0.0095
+adversarial_bce    4.3486
+discr_cover_bce    0.0317
+discr_encod_bce    0.0294
+----------------------------------------
+Epoch: 298/400 Step: 100/209
+loss               0.0396
+encoder_mse        0.0027
+dec_mse            0.0334
+bitwise-error      0.0095
+adversarial_bce    4.3729
+discr_cover_bce    0.0302
+discr_encod_bce    0.0314
+----------------------------------------
+Epoch: 298/400 Step: 110/209
+loss               0.0396
+encoder_mse        0.0026
+dec_mse            0.0333
+bitwise-error      0.0095
+adversarial_bce    4.4331
+discr_cover_bce    0.0330
+discr_encod_bce    0.0347
+----------------------------------------
+Epoch: 298/400 Step: 120/209
+loss               0.0396
+encoder_mse        0.0027
+dec_mse            0.0333
+bitwise-error      0.0095
+adversarial_bce    4.3848
+discr_cover_bce    0.0359
+discr_encod_bce    0.0359
+----------------------------------------
+Epoch: 298/400 Step: 130/209
+loss               0.0395
+encoder_mse        0.0027
+dec_mse            0.0333
+bitwise-error      0.0094
+adversarial_bce    4.3712
+discr_cover_bce    0.0375
+discr_encod_bce    0.0374
+----------------------------------------
+Epoch: 298/400 Step: 140/209
+loss               0.0395
+encoder_mse        0.0027
+dec_mse            0.0333
+bitwise-error      0.0095
+adversarial_bce    4.3216
+discr_cover_bce    0.0421
+discr_encod_bce    0.0411
+----------------------------------------
+Epoch: 298/400 Step: 150/209
+loss               0.0394
+encoder_mse        0.0027
+dec_mse            0.0333
+bitwise-error      0.0094
+adversarial_bce    4.2478
+discr_cover_bce    0.0450
+discr_encod_bce    0.0495
+----------------------------------------
+Epoch: 298/400 Step: 160/209
+loss               0.0395
+encoder_mse        0.0026
+dec_mse            0.0334
+bitwise-error      0.0095
+adversarial_bce    4.1861
+discr_cover_bce    0.0635
+discr_encod_bce    0.0539
+----------------------------------------
+Epoch: 298/400 Step: 170/209
+loss               0.0395
+encoder_mse        0.0027
+dec_mse            0.0335
+bitwise-error      0.0095
+adversarial_bce    4.1684
+discr_cover_bce    0.0646
+discr_encod_bce    0.0550
+----------------------------------------
+Epoch: 298/400 Step: 180/209
+loss               0.0395
+encoder_mse        0.0027
+dec_mse            0.0335
+bitwise-error      0.0095
+adversarial_bce    4.2027
+discr_cover_bce    0.0634
+discr_encod_bce    0.0537
+----------------------------------------
+Epoch: 298/400 Step: 190/209
+loss               0.0396
+encoder_mse        0.0027
+dec_mse            0.0335
+bitwise-error      0.0096
+adversarial_bce    4.1932
+discr_cover_bce    0.0617
+discr_encod_bce    0.0535
+----------------------------------------
+Epoch: 298/400 Step: 200/209
+loss               0.0395
+encoder_mse        0.0026
+dec_mse            0.0334
+bitwise-error      0.0095
+adversarial_bce    4.2112
+discr_cover_bce    0.0613
+discr_encod_bce    0.0516
+----------------------------------------
+Epoch: 298/400 Step: 209/209
+loss               0.0397
+encoder_mse        0.0027
+dec_mse            0.0336
+bitwise-error      0.0097
+adversarial_bce    4.2115
+discr_cover_bce    0.0626
+discr_encod_bce    0.0516
+----------------------------------------
+Epoch 298 training duration 89.16 sec
+----------------------------------------
+Running validation for epoch 298/400
+loss               0.0397
+encoder_mse        0.0027
+dec_mse            0.0336
+bitwise-error      0.0097
+adversarial_bce    4.1929
+discr_cover_bce    0.0591
+discr_encod_bce    0.0498
+----------------------------------------
+Saving checkpoint to ./runs/dropout-0.55-0.6/checkpoints/298-loss=0.0397 enc=0.0027 dec=0.0336 adv=4.1929 discr-cov=0.0591 discr-enc=0.0498.pyt
+Saving checkpoint done.
+
+Starting epoch 299/400
+Batch size = 48
+Steps in epoch = 209
+Epoch: 299/400 Step: 10/209
+loss               0.0377
+encoder_mse        0.0031
+dec_mse            0.0317
+bitwise-error      0.0095
+adversarial_bce    3.7913
+discr_cover_bce    0.0015
+discr_encod_bce    0.0471
+----------------------------------------
+Epoch: 299/400 Step: 20/209
+loss               0.0395
+encoder_mse        0.0031
+dec_mse            0.0333
+bitwise-error      0.0108
+adversarial_bce    4.0685
+discr_cover_bce    0.0307
+discr_encod_bce    0.0518
+----------------------------------------
+Epoch: 299/400 Step: 30/209
+loss               0.0402
+encoder_mse        0.0030
+dec_mse            0.0341
+bitwise-error      0.0115
+adversarial_bce    4.0127
+discr_cover_bce    0.0556
+discr_encod_bce    0.0623
+----------------------------------------
+Epoch: 299/400 Step: 40/209
+loss               0.0396
+encoder_mse        0.0029
+dec_mse            0.0336
+bitwise-error      0.0108
+adversarial_bce    3.8779
+discr_cover_bce    0.0688
+discr_encod_bce    0.0726
+----------------------------------------
+Epoch: 299/400 Step: 50/209
+loss               0.0391
+encoder_mse        0.0027
+dec_mse            0.0333
+bitwise-error      0.0102
+adversarial_bce    3.8835
+discr_cover_bce    0.0641
+discr_encod_bce    0.0756
+----------------------------------------
+Epoch: 299/400 Step: 60/209
+loss               0.0391
+encoder_mse        0.0027
+dec_mse            0.0332
+bitwise-error      0.0101
+adversarial_bce    3.9624
+discr_cover_bce    0.0617
+discr_encod_bce    0.0667
+----------------------------------------
+Epoch: 299/400 Step: 70/209
+loss               0.0393
+encoder_mse        0.0027
+dec_mse            0.0334
+bitwise-error      0.0102
+adversarial_bce    4.0463
+discr_cover_bce    0.0579
+discr_encod_bce    0.0601
+----------------------------------------
+Epoch: 299/400 Step: 80/209
+loss               0.0394
+encoder_mse        0.0028
+dec_mse            0.0333
+bitwise-error      0.0100
+adversarial_bce    4.2013
+discr_cover_bce    0.0517
+discr_encod_bce    0.0543
+----------------------------------------
+Epoch: 299/400 Step: 90/209
+loss               0.0395
+encoder_mse        0.0028
+dec_mse            0.0334
+bitwise-error      0.0101
+adversarial_bce    4.2340
+discr_cover_bce    0.0466
+discr_encod_bce    0.0509
+----------------------------------------
+Epoch: 299/400 Step: 100/209
+loss               0.0397
+encoder_mse        0.0028
+dec_mse            0.0333
+bitwise-error      0.0101
+adversarial_bce    4.3796
+discr_cover_bce    0.0432
+discr_encod_bce    0.0466
+----------------------------------------
+Epoch: 299/400 Step: 110/209
+loss               0.0398
+encoder_mse        0.0028
+dec_mse            0.0335
+bitwise-error      0.0100
+adversarial_bce    4.4200
+discr_cover_bce    0.0401
+discr_encod_bce    0.0437
+----------------------------------------
+Epoch: 299/400 Step: 120/209
+loss               0.0397
+encoder_mse        0.0028
+dec_mse            0.0333
+bitwise-error      0.0098
+adversarial_bce    4.4924
+discr_cover_bce    0.0375
+discr_encod_bce    0.0412
+----------------------------------------
+Epoch: 299/400 Step: 130/209
+loss               0.0399
+encoder_mse        0.0028
+dec_mse            0.0333
+bitwise-error      0.0099
+adversarial_bce    4.6256
+discr_cover_bce    0.0358
+discr_encod_bce    0.0382
+----------------------------------------
+Epoch: 299/400 Step: 140/209
+loss               0.0398
+encoder_mse        0.0028
+dec_mse            0.0333
+bitwise-error      0.0098
+adversarial_bce    4.6211
+discr_cover_bce    0.0335
+discr_encod_bce    0.0370
+----------------------------------------
+Epoch: 299/400 Step: 150/209
+loss               0.0399
+encoder_mse        0.0027
+dec_mse            0.0333
+bitwise-error      0.0098
+adversarial_bce    4.6529
+discr_cover_bce    0.0356
+discr_encod_bce    0.0352
+----------------------------------------
+Epoch: 299/400 Step: 160/209
+loss               0.0398
+encoder_mse        0.0028
+dec_mse            0.0333
+bitwise-error      0.0098
+adversarial_bce    4.5831
+discr_cover_bce    0.0345
+discr_encod_bce    0.0367
+----------------------------------------
+Epoch: 299/400 Step: 170/209
+loss               0.0399
+encoder_mse        0.0028
+dec_mse            0.0334
+bitwise-error      0.0099
+adversarial_bce    4.5966
+discr_cover_bce    0.0337
+discr_encod_bce    0.0356
+----------------------------------------
+Epoch: 299/400 Step: 180/209
+loss               0.0401
+encoder_mse        0.0028
+dec_mse            0.0335
+bitwise-error      0.0099
+adversarial_bce    4.6428
+discr_cover_bce    0.0334
+discr_encod_bce    0.0341
+----------------------------------------
+Epoch: 299/400 Step: 190/209
+loss               0.0401
+encoder_mse        0.0028
+dec_mse            0.0335
+bitwise-error      0.0099
+adversarial_bce    4.6177
+discr_cover_bce    0.0380
+discr_encod_bce    0.0369
+----------------------------------------
+Epoch: 299/400 Step: 200/209
+loss               0.0401
+encoder_mse        0.0028
+dec_mse            0.0335
+bitwise-error      0.0099
+adversarial_bce    4.6081
+discr_cover_bce    0.0399
+discr_encod_bce    0.0415
+----------------------------------------
+Epoch: 299/400 Step: 209/209
+loss               0.0402
+encoder_mse        0.0029
+dec_mse            0.0336
+bitwise-error      0.0100
+adversarial_bce    4.5898
+discr_cover_bce    0.0406
+discr_encod_bce    0.0420
+----------------------------------------
+Epoch 299 training duration 89.18 sec
+----------------------------------------
+Running validation for epoch 299/400
+loss               0.0405
+encoder_mse        0.0028
+dec_mse            0.0341
+bitwise-error      0.0103
+adversarial_bce    4.4885
+discr_cover_bce    0.0545
+discr_encod_bce    0.0425
+----------------------------------------
+Saving checkpoint to ./runs/dropout-0.55-0.6/checkpoints/299-loss=0.0405 enc=0.0028 dec=0.0341 adv=4.4885 discr-cov=0.0545 discr-enc=0.0425.pyt
+Saving checkpoint done.
+
+Starting epoch 300/400
+Batch size = 48
+Steps in epoch = 209
+Epoch: 300/400 Step: 10/209
+loss               0.0417
+encoder_mse        0.0028
+dec_mse            0.0355
+bitwise-error      0.0123
+adversarial_bce    4.2457
+discr_cover_bce    0.0405
+discr_encod_bce    0.0414
+----------------------------------------
+Epoch: 300/400 Step: 20/209
+loss               0.0413
+encoder_mse        0.0028
+dec_mse            0.0352
+bitwise-error      0.0111
+adversarial_bce    4.1866
+discr_cover_bce    0.0504
+discr_encod_bce    0.0403
+----------------------------------------
+Epoch: 300/400 Step: 30/209
+loss               0.0412
+encoder_mse        0.0026
+dec_mse            0.0354
+bitwise-error      0.0112
+adversarial_bce    3.9737
+discr_cover_bce    0.0634
+discr_encod_bce    0.0541
+----------------------------------------
+Epoch: 300/400 Step: 40/209
+loss               0.0416
+encoder_mse        0.0029
+dec_mse            0.0354
+bitwise-error      0.0115
+adversarial_bce    4.1810
+discr_cover_bce    0.0569
+discr_encod_bce    0.0486
+----------------------------------------
+Epoch: 300/400 Step: 50/209
+loss               0.0411
+encoder_mse        0.0031
+dec_mse            0.0349
+bitwise-error      0.0111
+adversarial_bce    4.0895
+discr_cover_bce    0.0541
+discr_encod_bce    0.0506
+----------------------------------------
+Epoch: 300/400 Step: 60/209
+loss               0.0417
+encoder_mse        0.0030
+dec_mse            0.0353
+bitwise-error      0.0114
+adversarial_bce    4.2707
+discr_cover_bce    0.0534
+discr_encod_bce    0.0473
+----------------------------------------
+Epoch: 300/400 Step: 70/209
+loss               0.0417
+encoder_mse        0.0031
+dec_mse            0.0352
+bitwise-error      0.0114
+adversarial_bce    4.2794
+discr_cover_bce    0.0473
+discr_encod_bce    0.0461
+----------------------------------------
+Epoch: 300/400 Step: 80/209
+loss               0.0415
+encoder_mse        0.0029
+dec_mse            0.0350
+bitwise-error      0.0111
+adversarial_bce    4.5122
+discr_cover_bce    0.0437
+discr_encod_bce    0.0409
+----------------------------------------
+Epoch: 300/400 Step: 90/209
+loss               0.0413
+encoder_mse        0.0029
+dec_mse            0.0347
+bitwise-error      0.0110
+adversarial_bce    4.5347
+discr_cover_bce    0.0425
+discr_encod_bce    0.0402
+----------------------------------------
+Epoch: 300/400 Step: 100/209
+loss               0.0414
+encoder_mse        0.0029
+dec_mse            0.0347
+bitwise-error      0.0110
+adversarial_bce    4.6633
+discr_cover_bce    0.0426
+discr_encod_bce    0.0391
+----------------------------------------
+Epoch: 300/400 Step: 110/209
+loss               0.0411
+encoder_mse        0.0028
+dec_mse            0.0345
+bitwise-error      0.0108
+adversarial_bce    4.6302
+discr_cover_bce    0.0410
+discr_encod_bce    0.0393
+----------------------------------------
+Epoch: 300/400 Step: 120/209
+loss               0.0408
+encoder_mse        0.0028
+dec_mse            0.0343
+bitwise-error      0.0108
+adversarial_bce    4.5371
+discr_cover_bce    0.0621
+discr_encod_bce    0.0534
+----------------------------------------
+Epoch: 300/400 Step: 130/209
+loss               0.0409
+encoder_mse        0.0029
+dec_mse            0.0343
+bitwise-error      0.0106
+adversarial_bce    4.5124
+discr_cover_bce    0.0782
+discr_encod_bce    0.0633
+----------------------------------------
+Epoch: 300/400 Step: 140/209
+loss               0.0406
+encoder_mse        0.0029
+dec_mse            0.0342
+bitwise-error      0.0105
+adversarial_bce    4.4039
+discr_cover_bce    0.0794
+discr_encod_bce    0.0685
+----------------------------------------
+Epoch: 300/400 Step: 150/209
+loss               0.0404
+encoder_mse        0.0029
+dec_mse            0.0340
+bitwise-error      0.0104
+adversarial_bce    4.3638
+discr_cover_bce    0.0807
+discr_encod_bce    0.0723
+----------------------------------------
+Epoch: 300/400 Step: 160/209
+loss               0.0401
+encoder_mse        0.0028
+dec_mse            0.0338
+bitwise-error      0.0102
+adversarial_bce    4.2753
+discr_cover_bce    0.0804
+discr_encod_bce    0.0857
+----------------------------------------
+Epoch: 300/400 Step: 170/209
+loss               0.0400
+encoder_mse        0.0028
+dec_mse            0.0337
+bitwise-error      0.0100
+adversarial_bce    4.3272
+discr_cover_bce    0.0815
+discr_encod_bce    0.0817
+----------------------------------------
+Epoch: 300/400 Step: 180/209
+loss               0.0400
+encoder_mse        0.0028
+dec_mse            0.0337
+bitwise-error      0.0099
+adversarial_bce    4.3172
+discr_cover_bce    0.0786
+discr_encod_bce    0.0807
+----------------------------------------
+Epoch: 300/400 Step: 190/209
+loss               0.0399
+encoder_mse        0.0028
+dec_mse            0.0336
+bitwise-error      0.0098
+adversarial_bce    4.3138
+discr_cover_bce    0.0786
+discr_encod_bce    0.0790
+----------------------------------------
+Epoch: 300/400 Step: 200/209
+loss               0.0398
+encoder_mse        0.0028
+dec_mse            0.0335
+bitwise-error      0.0098
+adversarial_bce    4.3247
+discr_cover_bce    0.0767
+discr_encod_bce    0.0762
+----------------------------------------
+Epoch: 300/400 Step: 209/209
+loss               0.0398
+encoder_mse        0.0028
+dec_mse            0.0336
+bitwise-error      0.0099
+adversarial_bce    4.2734
+discr_cover_bce    0.0767
+discr_encod_bce    0.0777
+----------------------------------------
+Epoch 300 training duration 89.13 sec
+----------------------------------------
+Running validation for epoch 300/400
+loss               0.0399
+encoder_mse        0.0028
+dec_mse            0.0336
+bitwise-error      0.0099
+adversarial_bce    4.3644
+discr_cover_bce    0.0890
+discr_encod_bce    0.0714
+----------------------------------------
+Saving checkpoint to ./runs/dropout-0.55-0.6/checkpoints/300-loss=0.0399 enc=0.0028 dec=0.0336 adv=4.3644 discr-cov=0.0890 discr-enc=0.0714.pyt
+Saving checkpoint done.
+
+Starting epoch 301/400
+Batch size = 48
+Steps in epoch = 209
+Epoch: 301/400 Step: 10/209
+loss               0.0413
+encoder_mse        0.0027
+dec_mse            0.0351
+bitwise-error      0.0117
+adversarial_bce    4.3178
+discr_cover_bce    0.0879
+discr_encod_bce    0.0560
+----------------------------------------
+Epoch: 301/400 Step: 20/209
+loss               0.0407
+encoder_mse        0.0030
+dec_mse            0.0343
+bitwise-error      0.0103
+adversarial_bce    4.2298
+discr_cover_bce    0.1026
+discr_encod_bce    0.0488
+----------------------------------------
+Epoch: 301/400 Step: 30/209
+loss               0.0401
+encoder_mse        0.0028
+dec_mse            0.0340
+bitwise-error      0.0102
+adversarial_bce    4.1250
+discr_cover_bce    0.0822
+discr_encod_bce    0.0609
+----------------------------------------
+Epoch: 301/400 Step: 40/209
+loss               0.0398
+encoder_mse        0.0028
+dec_mse            0.0336
+bitwise-error      0.0101
+adversarial_bce    4.2273
+discr_cover_bce    0.0812
+discr_encod_bce    0.0545
+----------------------------------------
+Epoch: 301/400 Step: 50/209
+loss               0.0398
+encoder_mse        0.0028
+dec_mse            0.0336
+bitwise-error      0.0101
+adversarial_bce    4.2638
+discr_cover_bce    0.0700
+discr_encod_bce    0.0527
+----------------------------------------
+Epoch: 301/400 Step: 60/209
+loss               0.0396
+encoder_mse        0.0028
+dec_mse            0.0333
+bitwise-error      0.0099
+adversarial_bce    4.3947
+discr_cover_bce    0.0667
+discr_encod_bce    0.0457
+----------------------------------------
+Epoch: 301/400 Step: 70/209
+loss               0.0398
+encoder_mse        0.0028
+dec_mse            0.0335
+bitwise-error      0.0103
+adversarial_bce    4.3084
+discr_cover_bce    0.0596
+discr_encod_bce    0.0456
+----------------------------------------
+Epoch: 301/400 Step: 80/209
+loss               0.0397
+encoder_mse        0.0028
+dec_mse            0.0335
+bitwise-error      0.0100
+adversarial_bce    4.3282
+discr_cover_bce    0.0573
+discr_encod_bce    0.0428
+----------------------------------------
+Epoch: 301/400 Step: 90/209
+loss               0.0397
+encoder_mse        0.0027
+dec_mse            0.0335
+bitwise-error      0.0100
+adversarial_bce    4.3479
+discr_cover_bce    0.0516
+discr_encod_bce    0.0424
+----------------------------------------
+Epoch: 301/400 Step: 100/209
+loss               0.0399
+encoder_mse        0.0027
+dec_mse            0.0337
+bitwise-error      0.0101
+adversarial_bce    4.3367
+discr_cover_bce    0.0522
+discr_encod_bce    0.0403
+----------------------------------------
+Epoch: 301/400 Step: 110/209
+loss               0.0400
+encoder_mse        0.0027
+dec_mse            0.0338
+bitwise-error      0.0102
+adversarial_bce    4.2600
+discr_cover_bce    0.0511
+discr_encod_bce    0.0443
+----------------------------------------
+Epoch: 301/400 Step: 120/209
+loss               0.0400
+encoder_mse        0.0027
+dec_mse            0.0338
+bitwise-error      0.0101
+adversarial_bce    4.3134
+discr_cover_bce    0.0541
+discr_encod_bce    0.0426
+----------------------------------------
+Epoch: 301/400 Step: 130/209
+loss               0.0401
+encoder_mse        0.0028
+dec_mse            0.0339
+bitwise-error      0.0102
+adversarial_bce    4.2874
+discr_cover_bce    0.0543
+discr_encod_bce    0.0448
+----------------------------------------
+Epoch: 301/400 Step: 140/209
+loss               0.0401
+encoder_mse        0.0027
+dec_mse            0.0339
+bitwise-error      0.0102
+adversarial_bce    4.2825
+discr_cover_bce    0.0526
+discr_encod_bce    0.0450
+----------------------------------------
+Epoch: 301/400 Step: 150/209
+loss               0.0403
+encoder_mse        0.0028
+dec_mse            0.0340
+bitwise-error      0.0103
+adversarial_bce    4.3897
+discr_cover_bce    0.0514
+discr_encod_bce    0.0428
+----------------------------------------
+Epoch: 301/400 Step: 160/209
+loss               0.0404
+encoder_mse        0.0028
+dec_mse            0.0341
+bitwise-error      0.0104
+adversarial_bce    4.4076
+discr_cover_bce    0.0488
+discr_encod_bce    0.0417
+----------------------------------------
+Epoch: 301/400 Step: 170/209
+loss               0.0403
+encoder_mse        0.0028
+dec_mse            0.0339
+bitwise-error      0.0103
+adversarial_bce    4.4111
+discr_cover_bce    0.0467
+discr_encod_bce    0.0408
+----------------------------------------
+Epoch: 301/400 Step: 180/209
+loss               0.0403
+encoder_mse        0.0028
+dec_mse            0.0339
+bitwise-error      0.0103
+adversarial_bce    4.4069
+discr_cover_bce    0.0470
+discr_encod_bce    0.0402
+----------------------------------------
+Epoch: 301/400 Step: 190/209
+loss               0.0402
+encoder_mse        0.0028
+dec_mse            0.0339
+bitwise-error      0.0102
+adversarial_bce    4.3955
+discr_cover_bce    0.0473
+discr_encod_bce    0.0397
+----------------------------------------
+Epoch: 301/400 Step: 200/209
+loss               0.0403
+encoder_mse        0.0028
+dec_mse            0.0339
+bitwise-error      0.0102
+adversarial_bce    4.4199
+discr_cover_bce    0.0480
+discr_encod_bce    0.0403
+----------------------------------------
+Epoch: 301/400 Step: 209/209
+loss               0.0403
+encoder_mse        0.0028
+dec_mse            0.0339
+bitwise-error      0.0102
+adversarial_bce    4.3868
+discr_cover_bce    0.0476
+discr_encod_bce    0.0422
+----------------------------------------
+Epoch 301 training duration 89.11 sec
+----------------------------------------
+Running validation for epoch 301/400
+loss               0.0402
+encoder_mse        0.0028
+dec_mse            0.0339
+bitwise-error      0.0102
+adversarial_bce    4.3895
+discr_cover_bce    0.0558
+discr_encod_bce    0.0399
+----------------------------------------
+Saving checkpoint to ./runs/dropout-0.55-0.6/checkpoints/301-loss=0.0402 enc=0.0028 dec=0.0339 adv=4.3895 discr-cov=0.0558 discr-enc=0.0399.pyt
+Saving checkpoint done.
+
+Starting epoch 302/400
+Batch size = 48
+Steps in epoch = 209
+Epoch: 302/400 Step: 10/209
+loss               0.0405
+encoder_mse        0.0026
+dec_mse            0.0350
+bitwise-error      0.0103
+adversarial_bce    3.7080
+discr_cover_bce    0.0715
+discr_encod_bce    0.0459
+----------------------------------------
+Epoch: 302/400 Step: 20/209
+loss               0.0405
+encoder_mse        0.0028
+dec_mse            0.0345
+bitwise-error      0.0106
+adversarial_bce    4.0697
+discr_cover_bce    0.0542
+discr_encod_bce    0.0370
+----------------------------------------
+Epoch: 302/400 Step: 30/209
+loss               0.0405
+encoder_mse        0.0027
+dec_mse            0.0345
+bitwise-error      0.0108
+adversarial_bce    4.1567
+discr_cover_bce    0.0537
+discr_encod_bce    0.0352
+----------------------------------------
+Epoch: 302/400 Step: 40/209
+loss               0.0404
+encoder_mse        0.0027
+dec_mse            0.0344
+bitwise-error      0.0107
+adversarial_bce    4.0928
+discr_cover_bce    0.0421
+discr_encod_bce    0.0381
+----------------------------------------
+Epoch: 302/400 Step: 50/209
+loss               0.0408
+encoder_mse        0.0027
+dec_mse            0.0345
+bitwise-error      0.0103
+adversarial_bce    4.3738
+discr_cover_bce    0.0412
+discr_encod_bce    0.0319
+----------------------------------------
+Epoch: 302/400 Step: 60/209
+loss               0.0405
+encoder_mse        0.0028
+dec_mse            0.0342
+bitwise-error      0.0100
+adversarial_bce    4.3386
+discr_cover_bce    0.0349
+discr_encod_bce    0.0328
+----------------------------------------
+Epoch: 302/400 Step: 70/209
+loss               0.0406
+encoder_mse        0.0027
+dec_mse            0.0343
+bitwise-error      0.0101
+adversarial_bce    4.4705
+discr_cover_bce    0.0359
+discr_encod_bce    0.0296
+----------------------------------------
+Epoch: 302/400 Step: 80/209
+loss               0.0408
+encoder_mse        0.0028
+dec_mse            0.0344
+bitwise-error      0.0104
+adversarial_bce    4.4269
+discr_cover_bce    0.0321
+discr_encod_bce    0.0337
+----------------------------------------
+Epoch: 302/400 Step: 90/209
+loss               0.0407
+encoder_mse        0.0028
+dec_mse            0.0344
+bitwise-error      0.0104
+adversarial_bce    4.3747
+discr_cover_bce    0.0350
+discr_encod_bce    0.0334
+----------------------------------------
+Epoch: 302/400 Step: 100/209
+loss               0.0406
+encoder_mse        0.0028
+dec_mse            0.0342
+bitwise-error      0.0101
+adversarial_bce    4.4367
+discr_cover_bce    0.0346
+discr_encod_bce    0.0320
+----------------------------------------
+Epoch: 302/400 Step: 110/209
+loss               0.0406
+encoder_mse        0.0028
+dec_mse            0.0341
+bitwise-error      0.0100
+adversarial_bce    4.5499
+discr_cover_bce    0.0321
+discr_encod_bce    0.0308
+----------------------------------------
+Epoch: 302/400 Step: 120/209
+loss               0.0408
+encoder_mse        0.0028
+dec_mse            0.0343
+bitwise-error      0.0102
+adversarial_bce    4.5580
+discr_cover_bce    0.0312
+discr_encod_bce    0.0304
+----------------------------------------
+Epoch: 302/400 Step: 130/209
+loss               0.0410
+encoder_mse        0.0028
+dec_mse            0.0345
+bitwise-error      0.0103
+adversarial_bce    4.5973
+discr_cover_bce    0.0314
+discr_encod_bce    0.0291
+----------------------------------------
+Epoch: 302/400 Step: 140/209
+loss               0.0410
+encoder_mse        0.0028
+dec_mse            0.0344
+bitwise-error      0.0104
+adversarial_bce    4.5826
+discr_cover_bce    0.0294
+discr_encod_bce    0.0293
+----------------------------------------
+Epoch: 302/400 Step: 150/209
+loss               0.0410
+encoder_mse        0.0028
+dec_mse            0.0344
+bitwise-error      0.0103
+adversarial_bce    4.6238
+discr_cover_bce    0.0286
+discr_encod_bce    0.0280
+----------------------------------------
+Epoch: 302/400 Step: 160/209
+loss               0.0409
+encoder_mse        0.0028
+dec_mse            0.0343
+bitwise-error      0.0103
+adversarial_bce    4.6205
+discr_cover_bce    0.0294
+discr_encod_bce    0.0274
+----------------------------------------
+Epoch: 302/400 Step: 170/209
+loss               0.0409
+encoder_mse        0.0028
+dec_mse            0.0343
+bitwise-error      0.0101
+adversarial_bce    4.6397
+discr_cover_bce    0.0313
+discr_encod_bce    0.0270
+----------------------------------------
+Epoch: 302/400 Step: 180/209
+loss               0.0409
+encoder_mse        0.0028
+dec_mse            0.0343
+bitwise-error      0.0102
+adversarial_bce    4.6326
+discr_cover_bce    0.0306
+discr_encod_bce    0.0294
+----------------------------------------
+Epoch: 302/400 Step: 190/209
+loss               0.0410
+encoder_mse        0.0028
+dec_mse            0.0344
+bitwise-error      0.0103
+adversarial_bce    4.6487
+discr_cover_bce    0.0317
+discr_encod_bce    0.0289
+----------------------------------------
+Epoch: 302/400 Step: 200/209
+loss               0.0409
+encoder_mse        0.0028
+dec_mse            0.0343
+bitwise-error      0.0103
+adversarial_bce    4.6417
+discr_cover_bce    0.0303
+discr_encod_bce    0.0289
+----------------------------------------
+Epoch: 302/400 Step: 209/209
+loss               0.0408
+encoder_mse        0.0028
+dec_mse            0.0343
+bitwise-error      0.0102
+adversarial_bce    4.6199
+discr_cover_bce    0.0318
+discr_encod_bce    0.0290
+----------------------------------------
+Epoch 302 training duration 89.15 sec
+----------------------------------------
+Running validation for epoch 302/400
+loss               0.0406
+encoder_mse        0.0027
+dec_mse            0.0343
+bitwise-error      0.0101
+adversarial_bce    4.3590
+discr_cover_bce    0.0292
+discr_encod_bce    0.0499
+----------------------------------------
+Saving checkpoint to ./runs/dropout-0.55-0.6/checkpoints/302-loss=0.0406 enc=0.0027 dec=0.0343 adv=4.3590 discr-cov=0.0292 discr-enc=0.0499.pyt
+Saving checkpoint done.
+
+Starting epoch 303/400
+Batch size = 48
+Steps in epoch = 209
+Epoch: 303/400 Step: 10/209
+loss               0.0423
+encoder_mse        0.0031
+dec_mse            0.0356
+bitwise-error      0.0126
+adversarial_bce    4.4979
+discr_cover_bce    0.0212
+discr_encod_bce    0.0288
+----------------------------------------
+Epoch: 303/400 Step: 20/209
+loss               0.0409
+encoder_mse        0.0028
+dec_mse            0.0351
+bitwise-error      0.0119
+adversarial_bce    3.8694
+discr_cover_bce    0.0396
+discr_encod_bce    0.0538
+----------------------------------------
+Epoch: 303/400 Step: 30/209
+loss               0.0411
+encoder_mse        0.0028
+dec_mse            0.0349
+bitwise-error      0.0120
+adversarial_bce    4.2453
+discr_cover_bce    0.0463
+discr_encod_bce    0.0445
+----------------------------------------
+Epoch: 303/400 Step: 40/209
+loss               0.0414
+encoder_mse        0.0031
+dec_mse            0.0350
+bitwise-error      0.0118
+adversarial_bce    4.1988
+discr_cover_bce    0.0467
+discr_encod_bce    0.0512
+----------------------------------------
+Epoch: 303/400 Step: 50/209
+loss               0.0414
+encoder_mse        0.0031
+dec_mse            0.0348
+bitwise-error      0.0114
+adversarial_bce    4.4374
+discr_cover_bce    0.0442
+discr_encod_bce    0.0439
+----------------------------------------
+Epoch: 303/400 Step: 60/209
+loss               0.0408
+encoder_mse        0.0030
+dec_mse            0.0342
+bitwise-error      0.0109
+adversarial_bce    4.4015
+discr_cover_bce    0.0371
+discr_encod_bce    0.0415
+----------------------------------------
+Epoch: 303/400 Step: 70/209
+loss               0.0408
+encoder_mse        0.0030
+dec_mse            0.0342
+bitwise-error      0.0108
+adversarial_bce    4.5259
+discr_cover_bce    0.0349
+discr_encod_bce    0.0370
+----------------------------------------
+Epoch: 303/400 Step: 80/209
+loss               0.0409
+encoder_mse        0.0030
+dec_mse            0.0343
+bitwise-error      0.0109
+adversarial_bce    4.5280
+discr_cover_bce    0.0340
+discr_encod_bce    0.0360
+----------------------------------------
+Epoch: 303/400 Step: 90/209
+loss               0.0409
+encoder_mse        0.0029
+dec_mse            0.0342
+bitwise-error      0.0107
+adversarial_bce    4.6086
+discr_cover_bce    0.0333
+discr_encod_bce    0.0331
+----------------------------------------
+Epoch: 303/400 Step: 100/209
+loss               0.0407
+encoder_mse        0.0029
+dec_mse            0.0342
+bitwise-error      0.0106
+adversarial_bce    4.5261
+discr_cover_bce    0.0348
+discr_encod_bce    0.0350
+----------------------------------------
+Epoch: 303/400 Step: 110/209
+loss               0.0410
+encoder_mse        0.0030
+dec_mse            0.0342
+bitwise-error      0.0107
+adversarial_bce    4.6668
+discr_cover_bce    0.0338
+discr_encod_bce    0.0328
+----------------------------------------
+Epoch: 303/400 Step: 120/209
+loss               0.0411
+encoder_mse        0.0030
+dec_mse            0.0344
+bitwise-error      0.0108
+adversarial_bce    4.6699
+discr_cover_bce    0.0325
+discr_encod_bce    0.0337
+----------------------------------------
+Epoch: 303/400 Step: 130/209
+loss               0.0412
+encoder_mse        0.0030
+dec_mse            0.0344
+bitwise-error      0.0107
+adversarial_bce    4.7165
+discr_cover_bce    0.0344
+discr_encod_bce    0.0333
+----------------------------------------
+Epoch: 303/400 Step: 140/209
+loss               0.0411
+encoder_mse        0.0029
+dec_mse            0.0344
+bitwise-error      0.0108
+adversarial_bce    4.6515
+discr_cover_bce    0.0494
+discr_encod_bce    0.0365
+----------------------------------------
+Epoch: 303/400 Step: 150/209
+loss               0.0410
+encoder_mse        0.0029
+dec_mse            0.0344
+bitwise-error      0.0107
+adversarial_bce    4.5819
+discr_cover_bce    0.0553
+discr_encod_bce    0.0417
+----------------------------------------
+Epoch: 303/400 Step: 160/209
+loss               0.0409
+encoder_mse        0.0028
+dec_mse            0.0344
+bitwise-error      0.0107
+adversarial_bce    4.5406
+discr_cover_bce    0.0578
+discr_encod_bce    0.0466
+----------------------------------------
+Epoch: 303/400 Step: 170/209
+loss               0.0408
+encoder_mse        0.0029
+dec_mse            0.0343
+bitwise-error      0.0106
+adversarial_bce    4.4883
+discr_cover_bce    0.0580
+discr_encod_bce    0.0510
+----------------------------------------
+Epoch: 303/400 Step: 180/209
+loss               0.0407
+encoder_mse        0.0028
+dec_mse            0.0341
+bitwise-error      0.0104
+adversarial_bce    4.5292
+discr_cover_bce    0.0574
+discr_encod_bce    0.0494
+----------------------------------------
+Epoch: 303/400 Step: 190/209
+loss               0.0407
+encoder_mse        0.0028
+dec_mse            0.0342
+bitwise-error      0.0105
+adversarial_bce    4.5070
+discr_cover_bce    0.0550
+discr_encod_bce    0.0492
+----------------------------------------
+Epoch: 303/400 Step: 200/209
+loss               0.0407
+encoder_mse        0.0029
+dec_mse            0.0342
+bitwise-error      0.0106
+adversarial_bce    4.4834
+discr_cover_bce    0.0603
+discr_encod_bce    0.0522
+----------------------------------------
+Epoch: 303/400 Step: 209/209
+loss               0.0407
+encoder_mse        0.0029
+dec_mse            0.0342
+bitwise-error      0.0105
+adversarial_bce    4.4396
+discr_cover_bce    0.0639
+discr_encod_bce    0.0587
+----------------------------------------
+Epoch 303 training duration 89.14 sec
+----------------------------------------
+Running validation for epoch 303/400
+loss               0.0404
+encoder_mse        0.0029
+dec_mse            0.0342
+bitwise-error      0.0104
+adversarial_bce    4.1820
+discr_cover_bce    0.0640
+discr_encod_bce    0.0871
+----------------------------------------
+Saving checkpoint to ./runs/dropout-0.55-0.6/checkpoints/303-loss=0.0404 enc=0.0029 dec=0.0342 adv=4.1820 discr-cov=0.0640 discr-enc=0.0871.pyt
+Saving checkpoint done.
+
+Starting epoch 304/400
+Batch size = 48
+Steps in epoch = 209
+Epoch: 304/400 Step: 10/209
+loss               0.0399
+encoder_mse        0.0023
+dec_mse            0.0347
+bitwise-error      0.0107
+adversarial_bce    3.4724
+discr_cover_bce    0.4893
+discr_encod_bce    0.2198
+----------------------------------------
+Epoch: 304/400 Step: 20/209
+loss               0.0410
+encoder_mse        0.0030
+dec_mse            0.0351
+bitwise-error      0.0116
+adversarial_bce    3.7592
+discr_cover_bce    0.3060
+discr_encod_bce    0.1522
+----------------------------------------
+Epoch: 304/400 Step: 30/209
+loss               0.0409
+encoder_mse        0.0032
+dec_mse            0.0348
+bitwise-error      0.0109
+adversarial_bce    3.8584
+discr_cover_bce    0.2364
+discr_encod_bce    0.1304
+----------------------------------------
+Epoch: 304/400 Step: 40/209
+loss               0.0401
+encoder_mse        0.0031
+dec_mse            0.0342
+bitwise-error      0.0103
+adversarial_bce    3.7243
+discr_cover_bce    0.2300
+discr_encod_bce    0.1399
+----------------------------------------
+Epoch: 304/400 Step: 50/209
+loss               0.0398
+encoder_mse        0.0031
+dec_mse            0.0341
+bitwise-error      0.0101
+adversarial_bce    3.5754
+discr_cover_bce    0.2120
+discr_encod_bce    0.1319
+----------------------------------------
+Epoch: 304/400 Step: 60/209
+loss               0.0393
+encoder_mse        0.0030
+dec_mse            0.0336
+bitwise-error      0.0098
+adversarial_bce    3.5125
+discr_cover_bce    0.1934
+discr_encod_bce    0.1265
+----------------------------------------
+Epoch: 304/400 Step: 70/209
+loss               0.0392
+encoder_mse        0.0030
+dec_mse            0.0336
+bitwise-error      0.0099
+adversarial_bce    3.4867
+discr_cover_bce    0.1943
+discr_encod_bce    0.1357
+----------------------------------------
+Epoch: 304/400 Step: 80/209
+loss               0.0391
+encoder_mse        0.0029
+dec_mse            0.0336
+bitwise-error      0.0098
+adversarial_bce    3.4617
+discr_cover_bce    0.1853
+discr_encod_bce    0.1324
+----------------------------------------
+Epoch: 304/400 Step: 90/209
+loss               0.0390
+encoder_mse        0.0029
+dec_mse            0.0335
+bitwise-error      0.0097
+adversarial_bce    3.4377
+discr_cover_bce    0.1761
+discr_encod_bce    0.1296
+----------------------------------------
+Epoch: 304/400 Step: 100/209
+loss               0.0391
+encoder_mse        0.0029
+dec_mse            0.0336
+bitwise-error      0.0099
+adversarial_bce    3.4183
+discr_cover_bce    0.1729
+discr_encod_bce    0.1256
+----------------------------------------
+Epoch: 304/400 Step: 110/209
+loss               0.0390
+encoder_mse        0.0029
+dec_mse            0.0335
+bitwise-error      0.0098
+adversarial_bce    3.5049
+discr_cover_bce    0.1661
+discr_encod_bce    0.1199
+----------------------------------------
+Epoch: 304/400 Step: 120/209
+loss               0.0390
+encoder_mse        0.0028
+dec_mse            0.0335
+bitwise-error      0.0097
+adversarial_bce    3.5548
+discr_cover_bce    0.1548
+discr_encod_bce    0.1126
+----------------------------------------
+Epoch: 304/400 Step: 130/209
+loss               0.0391
+encoder_mse        0.0028
+dec_mse            0.0335
+bitwise-error      0.0097
+adversarial_bce    3.5771
+discr_cover_bce    0.1449
+discr_encod_bce    0.1068
+----------------------------------------
+Epoch: 304/400 Step: 140/209
+loss               0.0390
+encoder_mse        0.0028
+dec_mse            0.0333
+bitwise-error      0.0095
+adversarial_bce    3.6934
+discr_cover_bce    0.1351
+discr_encod_bce    0.1005
+----------------------------------------
+Epoch: 304/400 Step: 150/209
+loss               0.0390
+encoder_mse        0.0028
+dec_mse            0.0333
+bitwise-error      0.0095
+adversarial_bce    3.7420
+discr_cover_bce    0.1279
+discr_encod_bce    0.0955
+----------------------------------------
+Epoch: 304/400 Step: 160/209
+loss               0.0392
+encoder_mse        0.0028
+dec_mse            0.0334
+bitwise-error      0.0096
+adversarial_bce    3.8134
+discr_cover_bce    0.1205
+discr_encod_bce    0.0906
+----------------------------------------
+Epoch: 304/400 Step: 170/209
+loss               0.0392
+encoder_mse        0.0028
+dec_mse            0.0333
+bitwise-error      0.0096
+adversarial_bce    3.8395
+discr_cover_bce    0.1159
+discr_encod_bce    0.0876
+----------------------------------------
+Epoch: 304/400 Step: 180/209
+loss               0.0391
+encoder_mse        0.0028
+dec_mse            0.0333
+bitwise-error      0.0096
+adversarial_bce    3.8626
+discr_cover_bce    0.1104
+discr_encod_bce    0.0847
+----------------------------------------
+Epoch: 304/400 Step: 190/209
+loss               0.0393
+encoder_mse        0.0028
+dec_mse            0.0333
+bitwise-error      0.0096
+adversarial_bce    3.9805
+discr_cover_bce    0.1054
+discr_encod_bce    0.0805
+----------------------------------------
+Epoch: 304/400 Step: 200/209
+loss               0.0394
+encoder_mse        0.0029
+dec_mse            0.0334
+bitwise-error      0.0096
+adversarial_bce    4.0595
+discr_cover_bce    0.1005
+discr_encod_bce    0.0791
+----------------------------------------
+Epoch: 304/400 Step: 209/209
+loss               0.0396
+encoder_mse        0.0028
+dec_mse            0.0335
+bitwise-error      0.0098
+adversarial_bce    4.0788
+discr_cover_bce    0.0993
+discr_encod_bce    0.0765
+----------------------------------------
+Epoch 304 training duration 89.18 sec
+----------------------------------------
+Running validation for epoch 304/400
+loss               0.0394
+encoder_mse        0.0029
+dec_mse            0.0334
+bitwise-error      0.0097
+adversarial_bce    4.0104
+discr_cover_bce    0.0976
+discr_encod_bce    0.0751
+----------------------------------------
+Saving checkpoint to ./runs/dropout-0.55-0.6/checkpoints/304-loss=0.0394 enc=0.0029 dec=0.0334 adv=4.0104 discr-cov=0.0976 discr-enc=0.0751.pyt
+Saving checkpoint done.
+
+Starting epoch 305/400
+Batch size = 48
+Steps in epoch = 209
+Epoch: 305/400 Step: 10/209
+loss               0.0408
+encoder_mse        0.0030
+dec_mse            0.0354
+bitwise-error      0.0115
+adversarial_bce    3.3116
+discr_cover_bce    0.0560
+discr_encod_bce    0.0717
+----------------------------------------
+Epoch: 305/400 Step: 20/209
+loss               0.0419
+encoder_mse        0.0031
+dec_mse            0.0353
+bitwise-error      0.0109
+adversarial_bce    4.4487
+discr_cover_bce    0.0625
+discr_encod_bce    0.0541
+----------------------------------------
+Epoch: 305/400 Step: 30/209
+loss               0.0414
+encoder_mse        0.0029
+dec_mse            0.0351
+bitwise-error      0.0104
+adversarial_bce    4.2960
+discr_cover_bce    0.0452
+discr_encod_bce    0.0561
+----------------------------------------
+Epoch: 305/400 Step: 40/209
+loss               0.0414
+encoder_mse        0.0029
+dec_mse            0.0346
+bitwise-error      0.0101
+adversarial_bce    4.7956
+discr_cover_bce    0.0418
+discr_encod_bce    0.0432
+----------------------------------------
+Epoch: 305/400 Step: 50/209
+loss               0.0410
+encoder_mse        0.0028
+dec_mse            0.0343
+bitwise-error      0.0100
+adversarial_bce    4.7566
+discr_cover_bce    0.0349
+discr_encod_bce    0.0392
+----------------------------------------
+Epoch: 305/400 Step: 60/209
+loss               0.0411
+encoder_mse        0.0028
+dec_mse            0.0342
+bitwise-error      0.0100
+adversarial_bce    4.9324
+discr_cover_bce    0.0368
+discr_encod_bce    0.0335
+----------------------------------------
+Epoch: 305/400 Step: 70/209
+loss               0.0410
+encoder_mse        0.0028
+dec_mse            0.0341
+bitwise-error      0.0101
+adversarial_bce    4.8442
+discr_cover_bce    0.0323
+discr_encod_bce    0.0378
+----------------------------------------
+Epoch: 305/400 Step: 80/209
+loss               0.0413
+encoder_mse        0.0028
+dec_mse            0.0343
+bitwise-error      0.0103
+adversarial_bce    4.9769
+discr_cover_bce    0.0336
+discr_encod_bce    0.0337
+----------------------------------------
+Epoch: 305/400 Step: 90/209
+loss               0.0412
+encoder_mse        0.0029
+dec_mse            0.0343
+bitwise-error      0.0101
+adversarial_bce    4.9563
+discr_cover_bce    0.0306
+discr_encod_bce    0.0316
+----------------------------------------
+Epoch: 305/400 Step: 100/209
+loss               0.0412
+encoder_mse        0.0028
+dec_mse            0.0343
+bitwise-error      0.0101
+adversarial_bce    4.9671
+discr_cover_bce    0.0284
+discr_encod_bce    0.0304
+----------------------------------------
+Epoch: 305/400 Step: 110/209
+loss               0.0413
+encoder_mse        0.0029
+dec_mse            0.0343
+bitwise-error      0.0101
+adversarial_bce    5.0273
+discr_cover_bce    0.0273
+discr_encod_bce    0.0283
+----------------------------------------
+Epoch: 305/400 Step: 120/209
+loss               0.0412
+encoder_mse        0.0028
+dec_mse            0.0342
+bitwise-error      0.0100
+adversarial_bce    5.0277
+discr_cover_bce    0.0255
+discr_encod_bce    0.0275
+----------------------------------------
+Epoch: 305/400 Step: 130/209
+loss               0.0410
+encoder_mse        0.0028
+dec_mse            0.0340
+bitwise-error      0.0100
+adversarial_bce    5.0292
+discr_cover_bce    0.0253
+discr_encod_bce    0.0263
+----------------------------------------
+Epoch: 305/400 Step: 140/209
+loss               0.0411
+encoder_mse        0.0028
+dec_mse            0.0341
+bitwise-error      0.0100
+adversarial_bce    4.9935
+discr_cover_bce    0.0273
+discr_encod_bce    0.0261
+----------------------------------------
+Epoch: 305/400 Step: 150/209
+loss               0.0411
+encoder_mse        0.0028
+dec_mse            0.0342
+bitwise-error      0.0101
+adversarial_bce    4.9111
+discr_cover_bce    0.0279
+discr_encod_bce    0.0287
+----------------------------------------
+Epoch: 305/400 Step: 160/209
+loss               0.0411
+encoder_mse        0.0028
+dec_mse            0.0343
+bitwise-error      0.0102
+adversarial_bce    4.8812
+discr_cover_bce    0.0299
+discr_encod_bce    0.0316
+----------------------------------------
+Epoch: 305/400 Step: 170/209
+loss               0.0412
+encoder_mse        0.0028
+dec_mse            0.0344
+bitwise-error      0.0103
+adversarial_bce    4.8695
+discr_cover_bce    0.0308
+discr_encod_bce    0.0313
+----------------------------------------
+Epoch: 305/400 Step: 180/209
+loss               0.0411
+encoder_mse        0.0028
+dec_mse            0.0343
+bitwise-error      0.0102
+adversarial_bce    4.8415
+discr_cover_bce    0.0311
+discr_encod_bce    0.0327
+----------------------------------------
+Epoch: 305/400 Step: 190/209
+loss               0.0410
+encoder_mse        0.0028
+dec_mse            0.0342
+bitwise-error      0.0102
+adversarial_bce    4.8249
+discr_cover_bce    0.0331
+discr_encod_bce    0.0338
+----------------------------------------
+Epoch: 305/400 Step: 200/209
+loss               0.0409
+encoder_mse        0.0028
+dec_mse            0.0341
+bitwise-error      0.0101
+adversarial_bce    4.8171
+discr_cover_bce    0.0325
+discr_encod_bce    0.0334
+----------------------------------------
+Epoch: 305/400 Step: 209/209
+loss               0.0410
+encoder_mse        0.0028
+dec_mse            0.0343
+bitwise-error      0.0103
+adversarial_bce    4.7917
+discr_cover_bce    0.0334
+discr_encod_bce    0.0370
+----------------------------------------
+Epoch 305 training duration 89.14 sec
+----------------------------------------
+Running validation for epoch 305/400
+loss               0.0411
+encoder_mse        0.0028
+dec_mse            0.0344
+bitwise-error      0.0102
+adversarial_bce    4.7550
+discr_cover_bce    0.0368
+discr_encod_bce    0.0353
+----------------------------------------
+Saving checkpoint to ./runs/dropout-0.55-0.6/checkpoints/305-loss=0.0411 enc=0.0028 dec=0.0344 adv=4.7550 discr-cov=0.0368 discr-enc=0.0353.pyt
+Saving checkpoint done.
+
+Starting epoch 306/400
+Batch size = 48
+Steps in epoch = 209
+Epoch: 306/400 Step: 10/209
+loss               0.0430
+encoder_mse        0.0033
+dec_mse            0.0358
+bitwise-error      0.0099
+adversarial_bce    4.8902
+discr_cover_bce    0.1551
+discr_encod_bce    0.0204
+----------------------------------------
+Epoch: 306/400 Step: 20/209
+loss               0.0418
+encoder_mse        0.0030
+dec_mse            0.0355
+bitwise-error      0.0106
+adversarial_bce    4.2512
+discr_cover_bce    0.1335
+discr_encod_bce    0.0791
+----------------------------------------
+Epoch: 306/400 Step: 30/209
+loss               0.0416
+encoder_mse        0.0030
+dec_mse            0.0353
+bitwise-error      0.0104
+adversarial_bce    4.1868
+discr_cover_bce    0.1098
+discr_encod_bce    0.0658
+----------------------------------------
+Epoch: 306/400 Step: 40/209
+loss               0.0409
+encoder_mse        0.0029
+dec_mse            0.0346
+bitwise-error      0.0097
+adversarial_bce    4.2300
+discr_cover_bce    0.0956
+discr_encod_bce    0.0658
+----------------------------------------
+Epoch: 306/400 Step: 50/209
+loss               0.0407
+encoder_mse        0.0030
+dec_mse            0.0343
+bitwise-error      0.0095
+adversarial_bce    4.2796
+discr_cover_bce    0.0802
+discr_encod_bce    0.0723
+----------------------------------------
+Epoch: 306/400 Step: 60/209
+loss               0.0404
+encoder_mse        0.0030
+dec_mse            0.0342
+bitwise-error      0.0097
+adversarial_bce    4.1241
+discr_cover_bce    0.1007
+discr_encod_bce    0.0736
+----------------------------------------
+Epoch: 306/400 Step: 70/209
+loss               0.0401
+encoder_mse        0.0030
+dec_mse            0.0339
+bitwise-error      0.0095
+adversarial_bce    4.0789
+discr_cover_bce    0.1093
+discr_encod_bce    0.0765
+----------------------------------------
+Epoch: 306/400 Step: 80/209
+loss               0.0398
+encoder_mse        0.0030
+dec_mse            0.0337
+bitwise-error      0.0096
+adversarial_bce    3.9880
+discr_cover_bce    0.1347
+discr_encod_bce    0.0969
+----------------------------------------
+Epoch: 306/400 Step: 90/209
+loss               0.0395
+encoder_mse        0.0030
+dec_mse            0.0335
+bitwise-error      0.0094
+adversarial_bce    3.9456
+discr_cover_bce    0.1227
+discr_encod_bce    0.0949
+----------------------------------------
+Epoch: 306/400 Step: 100/209
+loss               0.0394
+encoder_mse        0.0029
+dec_mse            0.0334
+bitwise-error      0.0094
+adversarial_bce    3.9381
+discr_cover_bce    0.1178
+discr_encod_bce    0.0915
+----------------------------------------
+Epoch: 306/400 Step: 110/209
+loss               0.0392
+encoder_mse        0.0029
+dec_mse            0.0333
+bitwise-error      0.0093
+adversarial_bce    3.8880
+discr_cover_bce    0.1181
+discr_encod_bce    0.0931
+----------------------------------------
+Epoch: 306/400 Step: 120/209
+loss               0.0392
+encoder_mse        0.0029
+dec_mse            0.0333
+bitwise-error      0.0093
+adversarial_bce    3.8995
+discr_cover_bce    0.1148
+discr_encod_bce    0.0888
+----------------------------------------
+Epoch: 306/400 Step: 130/209
+loss               0.0391
+encoder_mse        0.0029
+dec_mse            0.0332
+bitwise-error      0.0093
+adversarial_bce    3.9296
+discr_cover_bce    0.1193
+discr_encod_bce    0.0894
+----------------------------------------
+Epoch: 306/400 Step: 140/209
+loss               0.0391
+encoder_mse        0.0029
+dec_mse            0.0331
+bitwise-error      0.0093
+adversarial_bce    3.9154
+discr_cover_bce    0.1189
+discr_encod_bce    0.0919
+----------------------------------------
+Epoch: 306/400 Step: 150/209
+loss               0.0390
+encoder_mse        0.0028
+dec_mse            0.0331
+bitwise-error      0.0092
+adversarial_bce    3.8715
+discr_cover_bce    0.1197
+discr_encod_bce    0.1022
+----------------------------------------
+Epoch: 306/400 Step: 160/209
+loss               0.0389
+encoder_mse        0.0028
+dec_mse            0.0330
+bitwise-error      0.0092
+adversarial_bce    3.8897
+discr_cover_bce    0.1183
+discr_encod_bce    0.1015
+----------------------------------------
+Epoch: 306/400 Step: 170/209
+loss               0.0390
+encoder_mse        0.0028
+dec_mse            0.0331
+bitwise-error      0.0092
+adversarial_bce    3.8867
+discr_cover_bce    0.1176
+discr_encod_bce    0.0990
+----------------------------------------
+Epoch: 306/400 Step: 180/209
+loss               0.0390
+encoder_mse        0.0028
+dec_mse            0.0331
+bitwise-error      0.0092
+adversarial_bce    3.8987
+discr_cover_bce    0.1185
+discr_encod_bce    0.1046
+----------------------------------------
+Epoch: 306/400 Step: 190/209
+loss               0.0390
+encoder_mse        0.0028
+dec_mse            0.0332
+bitwise-error      0.0093
+adversarial_bce    3.8807
+discr_cover_bce    0.1165
+discr_encod_bce    0.1062
+----------------------------------------
+Epoch: 306/400 Step: 200/209
+loss               0.0391
+encoder_mse        0.0028
+dec_mse            0.0332
+bitwise-error      0.0094
+adversarial_bce    3.9587
+discr_cover_bce    0.1138
+discr_encod_bce    0.1014
+----------------------------------------
+Epoch: 306/400 Step: 209/209
+loss               0.0392
+encoder_mse        0.0028
+dec_mse            0.0332
+bitwise-error      0.0095
+adversarial_bce    3.9548
+discr_cover_bce    0.1100
+discr_encod_bce    0.0993
+----------------------------------------
+Epoch 306 training duration 89.15 sec
+----------------------------------------
+Running validation for epoch 306/400
+loss               0.0389
+encoder_mse        0.0028
+dec_mse            0.0331
+bitwise-error      0.0094
+adversarial_bce    3.8333
+discr_cover_bce    0.1022
+discr_encod_bce    0.1019
+----------------------------------------
+Saving checkpoint to ./runs/dropout-0.55-0.6/checkpoints/306-loss=0.0389 enc=0.0028 dec=0.0331 adv=3.8333 discr-cov=0.1022 discr-enc=0.1019.pyt
+Saving checkpoint done.
+
+Starting epoch 307/400
+Batch size = 48
+Steps in epoch = 209
+Epoch: 307/400 Step: 10/209
+loss               0.0389
+encoder_mse        0.0024
+dec_mse            0.0333
+bitwise-error      0.0099
+adversarial_bce    3.9014
+discr_cover_bce    0.0826
+discr_encod_bce    0.0681
+----------------------------------------
+Epoch: 307/400 Step: 20/209
+loss               0.0404
+encoder_mse        0.0027
+dec_mse            0.0340
+bitwise-error      0.0103
+adversarial_bce    4.5481
+discr_cover_bce    0.0722
+discr_encod_bce    0.0520
+----------------------------------------
+Epoch: 307/400 Step: 30/209
+loss               0.0404
+encoder_mse        0.0027
+dec_mse            0.0341
+bitwise-error      0.0105
+adversarial_bce    4.4335
+discr_cover_bce    0.0565
+discr_encod_bce    0.0660
+----------------------------------------
+Epoch: 307/400 Step: 40/209
+loss               0.0406
+encoder_mse        0.0027
+dec_mse            0.0344
+bitwise-error      0.0105
+adversarial_bce    4.3038
+discr_cover_bce    0.1455
+discr_encod_bce    0.0965
+----------------------------------------
+Epoch: 307/400 Step: 50/209
+loss               0.0398
+encoder_mse        0.0026
+dec_mse            0.0338
+bitwise-error      0.0099
+adversarial_bce    4.1413
+discr_cover_bce    0.1722
+discr_encod_bce    0.1139
+----------------------------------------
+Epoch: 307/400 Step: 60/209
+loss               0.0393
+encoder_mse        0.0026
+dec_mse            0.0337
+bitwise-error      0.0098
+adversarial_bce    3.8561
+discr_cover_bce    0.1757
+discr_encod_bce    0.1250
+----------------------------------------
+Epoch: 307/400 Step: 70/209
+loss               0.0391
+encoder_mse        0.0026
+dec_mse            0.0335
+bitwise-error      0.0097
+adversarial_bce    3.7826
+discr_cover_bce    0.1582
+discr_encod_bce    0.1231
+----------------------------------------
+Epoch: 307/400 Step: 80/209
+loss               0.0390
+encoder_mse        0.0026
+dec_mse            0.0334
+bitwise-error      0.0096
+adversarial_bce    3.8471
+discr_cover_bce    0.1455
+discr_encod_bce    0.1109
+----------------------------------------
+Epoch: 307/400 Step: 90/209
+loss               0.0389
+encoder_mse        0.0026
+dec_mse            0.0332
+bitwise-error      0.0094
+adversarial_bce    3.9474
+discr_cover_bce    0.1313
+discr_encod_bce    0.1006
+----------------------------------------
+Epoch: 307/400 Step: 100/209
+loss               0.0391
+encoder_mse        0.0026
+dec_mse            0.0333
+bitwise-error      0.0096
+adversarial_bce    3.9668
+discr_cover_bce    0.1225
+discr_encod_bce    0.0954
+----------------------------------------
+Epoch: 307/400 Step: 110/209
+loss               0.0391
+encoder_mse        0.0026
+dec_mse            0.0333
+bitwise-error      0.0096
+adversarial_bce    3.9828
+discr_cover_bce    0.1155
+discr_encod_bce    0.0892
+----------------------------------------
+Epoch: 307/400 Step: 120/209
+loss               0.0392
+encoder_mse        0.0027
+dec_mse            0.0333
+bitwise-error      0.0095
+adversarial_bce    3.9644
+discr_cover_bce    0.1102
+discr_encod_bce    0.0850
+----------------------------------------
+Epoch: 307/400 Step: 130/209
+loss               0.0392
+encoder_mse        0.0027
+dec_mse            0.0333
+bitwise-error      0.0094
+adversarial_bce    4.0291
+discr_cover_bce    0.1039
+discr_encod_bce    0.0824
+----------------------------------------
+Epoch: 307/400 Step: 140/209
+loss               0.0391
+encoder_mse        0.0027
+dec_mse            0.0332
+bitwise-error      0.0093
+adversarial_bce    4.0237
+discr_cover_bce    0.1029
+discr_encod_bce    0.0802
+----------------------------------------
+Epoch: 307/400 Step: 150/209
+loss               0.0394
+encoder_mse        0.0027
+dec_mse            0.0335
+bitwise-error      0.0095
+adversarial_bce    3.9889
+discr_cover_bce    0.1025
+discr_encod_bce    0.0825
+----------------------------------------
+Epoch: 307/400 Step: 160/209
+loss               0.0394
+encoder_mse        0.0028
+dec_mse            0.0334
+bitwise-error      0.0094
+adversarial_bce    4.0366
+discr_cover_bce    0.0977
+discr_encod_bce    0.0792
+----------------------------------------
+Epoch: 307/400 Step: 170/209
+loss               0.0395
+encoder_mse        0.0027
+dec_mse            0.0335
+bitwise-error      0.0093
+adversarial_bce    4.0716
+discr_cover_bce    0.0943
+discr_encod_bce    0.0759
+----------------------------------------
+Epoch: 307/400 Step: 180/209
+loss               0.0394
+encoder_mse        0.0027
+dec_mse            0.0334
+bitwise-error      0.0093
+adversarial_bce    4.1255
+discr_cover_bce    0.0894
+discr_encod_bce    0.0731
+----------------------------------------
+Epoch: 307/400 Step: 190/209
+loss               0.0395
+encoder_mse        0.0027
+dec_mse            0.0334
+bitwise-error      0.0093
+adversarial_bce    4.1290
+discr_cover_bce    0.0868
+discr_encod_bce    0.0711
+----------------------------------------
+Epoch: 307/400 Step: 200/209
+loss               0.0394
+encoder_mse        0.0027
+dec_mse            0.0334
+bitwise-error      0.0092
+adversarial_bce    4.1362
+discr_cover_bce    0.0834
+discr_encod_bce    0.0698
+----------------------------------------
+Epoch: 307/400 Step: 209/209
+loss               0.0395
+encoder_mse        0.0027
+dec_mse            0.0334
+bitwise-error      0.0093
+adversarial_bce    4.1453
+discr_cover_bce    0.0842
+discr_encod_bce    0.0679
+----------------------------------------
+Epoch 307 training duration 89.12 sec
+----------------------------------------
+Running validation for epoch 307/400
