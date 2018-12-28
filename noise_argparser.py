@@ -1,11 +1,5 @@
 import argparse
 import re
-from noise_layers.crop import Crop
-from noise_layers.cropout import Cropout
-from noise_layers.dropout import Dropout
-from noise_layers.jpeg_compression import JpegCompression
-from noise_layers.noiser import Noiser
-
 
 def parse_pair(match_groups):
     heights = match_groups[0].split(',')
@@ -63,7 +57,6 @@ def parse_resize(resize_command):
         'type': 'resize',
         'resize_ratio_range': (min_ratio, max_ratio)
     }
-
 
 
 class NoiseArgParser(argparse.Action):
@@ -132,54 +125,3 @@ class NoiseArgParser(argparse.Action):
             else:
                 raise ValueError('Command not recognized: \n{}'.format(command))
         setattr(namespace, self.dest, layers)
-
-
-
-# class NoiseArgParser(argparse.Action):
-#     def __init__(self,
-#                  option_strings,
-#                  dest,
-#                  nargs=None,
-#                  const=None,
-#                  default=None,
-#                  type=None,
-#                  choices=None,
-#                  required=False,
-#                  help=None,
-#                  metavar=None):
-#         argparse.Action.__init__(self,
-#                                  option_strings=option_strings,
-#                                  dest=dest,
-#                                  nargs=nargs,
-#                                  const=const,
-#                                  default=default,
-#                                  type=type,
-#                                  choices=choices,
-#                                  required=required,
-#                                  help=help,
-#                                  metavar=metavar,
-#                                  )
-#         print('Initializing CustomAction')
-#         for name, value in sorted(locals().items()):
-#             if name == 'self' or value is None:
-#                 continue
-#             print('  {} = {!r}'.format(name, value))
-#         print()
-#         return
-
-#     def __call__(self, parser, namespace, values,
-#                  option_string=None):
-#         print('Processing CustomAction for {}'.format(self.dest))
-#         print('  parser = {}'.format(id(parser)))
-#         print('  values = {!r}'.format(values))
-#         print('  option_string = {!r}'.format(option_string))
-
-#         # Do some arbitrary processing of the input values
-#         if isinstance(values, list):
-#             values = [v.upper() for v in values]
-#         else:
-#             values = values.upper()
-#         # Save the results in the namespace using the destination
-#         # variable given to our constructor.
-#         setattr(namespace, self.dest, values)
-#         print()
