@@ -6,7 +6,7 @@ from noise_layers.cropout import Cropout
 from noise_layers.dropout import Dropout
 from noise_layers.resize import Resize
 from noise_layers.identity import Identity
-
+from noise_layers.quantization import Quantization
 
 class Noiser(nn.Module):
     """
@@ -39,6 +39,8 @@ class Noiser(nn.Module):
                 pass
             elif layer_type == 'identity':
                 noise_layers.append(Identity())
+            elif layer_type == 'quantization':
+                noise_layers.append(Quantization())
             else:
                 raise ValueError('Noise layer of {} not supported'.format(noise_layer_config['type']))
 

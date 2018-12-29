@@ -122,6 +122,10 @@ class NoiseArgParser(argparse.Action):
                 layers.append({
                     'type': 'identity'
                 })
+            elif command[:len('quant')] == 'quant' or command[:len('quantization')] == 'quantization':
+                layers.append({
+                    'type': 'quantization'
+                })
             else:
                 raise ValueError('Command not recognized: \n{}'.format(command))
         setattr(namespace, self.dest, layers)
