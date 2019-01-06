@@ -131,7 +131,8 @@ def main():
     checkpoint = None
     if args.continue_from_folder != '':
         this_run_folder = args.continue_from_folder
-        train_options, hidden_config, noise_config = utils.load_options(this_run_folder)
+        options_file = os.path.join(this_run_folder, 'options-and-config.pickle')
+        train_options, hidden_config, noise_config = utils.load_options(options_file)
         checkpoint = utils.load_last_checkpoint(os.path.join(this_run_folder, 'checkpoints'))
         train_options.start_epoch = checkpoint['epoch']+1
     else:
@@ -144,7 +145,7 @@ def main():
             runs_folder=os.path.join('.', 'runs'),
             start_epoch=start_epoch)
 
-        noise_config = args.noise
+        noise_config = args.noise if args.noise is not None else []
         hidden_config = HiDDenConfiguration(H=args.size, W=args.size,
                                             message_length=args.message,
                                             encoder_blocks=4, encoder_channels=64,

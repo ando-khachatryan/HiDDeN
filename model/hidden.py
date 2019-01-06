@@ -135,7 +135,6 @@ class Hidden:
         batch_size = images.shape[0]
 
         with torch.no_grad():
-            d_on_cover = self.discriminator(images)
             d_target_label_cover = torch.full((batch_size, 1), self.cover_label, device=self.device)
             d_on_cover = self.discriminator(images)
             d_loss_on_cover = self.bce_with_logits_loss(d_on_cover, d_target_label_cover)

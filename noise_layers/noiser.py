@@ -8,6 +8,7 @@ from noise_layers.resize import Resize
 from noise_layers.identity import Identity
 from noise_layers.quantization import Quantization
 
+
 class Noiser(nn.Module):
     """
     This module allows to combine different noise layers into a sequential noise module. The
@@ -21,7 +22,7 @@ class Noiser(nn.Module):
 
         for noise_layer_config in noise_config:
             layer_type = noise_layer_config['type'].lower()
-            if  layer_type == 'jpeg_compression':
+            if layer_type == 'jpeg_compression':
                 # TODO: Add jpeg compression level as a config option
                 noise_layers.append(JpegCompression(device))
             elif layer_type == 'crop':
@@ -32,7 +33,8 @@ class Noiser(nn.Module):
                 noise_layers.append(Dropout(noise_layer_config['keep_ratio_range']))
             elif layer_type == 'resize':
                 if 'interpolation_method' in noise_layer_config:
-                    noise_layers.append(Resize(noise_layer_config['resize_ratio_range'], noise_layer_config['interpolation_method']))
+                    noise_layers.append(Resize(noise_layer_config['resize_ratio_range'],
+                                               noise_layer_config['interpolation_method']))
                 else:
                     noise_layers.append(Resize(noise_layer_config['resize_ratio_range']))
             elif layer_type == 'rotate':
@@ -43,9 +45,6 @@ class Noiser(nn.Module):
                 noise_layers.append(Quantization())
             else:
                 raise ValueError('Noise layer of {} not supported'.format(noise_layer_config['type']))
-
-        if not noise_layers:
-            noise_layers.append(Identity())
 
         self.noise_layers = nn.Sequential(*noise_layers)
 

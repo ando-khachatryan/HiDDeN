@@ -19,7 +19,9 @@ class Discriminator(nn.Module):
 
     def forward(self, image):
         X = self.before_linear(image)
-        X.squeeze_()
+        # the output is of shape b x c x 1 x 1, and we want to squeeze out the last two dummy dimensions and make
+        # the tensor of shape b x c. If we just call squeeze_() it will also squeeze the batch dimension when b=1.
+        X.squeeze_(3).squeeze_(2)
         X = self.linear(X)
         # X = torch.sigmoid(X)
         return X

@@ -8,7 +8,8 @@ def tensor_float_to_uint(tensor, values_range):
     :return:
     """
     factor = 255.0/(values_range[1] - values_range[0])
-    return (tensor.add(values_range[0]) * factor).round().clamp(0, 255)
+    tensor_uint = ((tensor - values_range[0]) * factor).round().clamp(0, 255)
+    return tensor_uint
 
 
 def tensor_uint_to_float(tensor, target_range_min):
@@ -18,14 +19,14 @@ def tensor_uint_to_float(tensor, target_range_min):
     :param values_range:
     :return:
     """
-    factor = 255.0/(1-target_range_min)
-    return tensor.float()/factor - target_range_min
+    factor = (1-target_range_min)/255
+    return tensor.float()*factor + target_range_min
 
 
 def tensor_save_load(tensor, min_value):
-     tensor_float = tensor_uint_to_float(tensor, min_value)
-     tensor_uint = tensor_float_to_uint(tensor_float, [min_value, 1])
-     return tensor_uint
+     tensor_uint = tensor_float_to_uint(tensor, [min_value, 1])
+     tensor_float = tensor_uint_to_float(tensor_uint, min_value)
+     return tensor_float
 
 
 class Quantization(nn.Module):

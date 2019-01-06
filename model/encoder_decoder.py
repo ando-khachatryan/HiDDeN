@@ -14,13 +14,11 @@ class EncoderDecoder(nn.Module):
     to the Decoder which tries to recover the watermark (called decoded_message). The module outputs
     a three-tuple: (encoded_image, noised_image, decoded_message)
     """
-    def __init__(self, config: HiDDenConfiguration, noiser: Noiser, apply_quantization: bool = False):
-        # TODO: consider adding quantization after the noiser if the parameter value us true
-        # TODO: consider making quantization part of noise configuration
+    def __init__(self, config: HiDDenConfiguration, noiser: Noiser):
 
         super(EncoderDecoder, self).__init__()
         self.encoder = Encoder(config)
-        self.noiser = noiser  # TODO: we were passing device to Noiser
+        self.noiser = noiser
 
         self.decoder = Decoder(config)
 
