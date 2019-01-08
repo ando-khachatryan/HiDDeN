@@ -4,13 +4,14 @@ Pytorch implementation of paper "HiDDeN: Hiding Data With Deep Networks" by Jire
 
 The authors have Lua+Torch implementation here: https://github.com/jirenz/HiDDeN
 
-I have tested this on Pytorch 1.0 and Python 3.6. Note that this is a work in progress, and I was not yet able to fully reproduce the results of the original paper.
+Note that this is a work in progress, and I was not yet able to fully reproduce the results of the original paper.
 
 ## Requirements
 
 You need Pytorch 1.0 with TorchVision to run this, and matplotlib.
+Python version tested was 3.6 and 3.7, but it should also work with 3.5, maybe with minor changes.
 If you want to use Tensorboard, you need to install TensorboardX and Tensorboard. This allows to use a subset of Tensorboard functionality to visualize the training. However, this is optional.
-The code has been tested and runs on Ubuntu 16.04 and Windows 10. 
+The code has been tested and runs on Ubuntu 16.04 and Windows 10.
 
 ## Data
 
@@ -66,7 +67,7 @@ runs the training with the following noise layers applied to each watermarked im
 * _Crop((height_min,height_max),(width_min,width_max))_, where **_(height_min,height_max)_** is a range from which we draw a random number and keep that fraction of the height of the original image. **_(width_min,width_max)_** controls the same for the width of the image. 
 Put it another way, given an image with dimensions **_H x W,_** the Crop() will randomly crop this into dimensions **_H' x W'_**, where **_H'/H_** is in the range **_(height_min,height_max)_**, and **_W'/W_** is in the range **_(width_min,width_max)_**. In the paper, the authors use a single parameter **_p_** which shows the ratio **_(H' * W')/ (H * W)_**, i.e., which fraction of the are to keep. In our setting, you can obtain the appropriate **_p_** by picking **_height_min_**, **_height_max_**  **_width_min_**, **_width_max_** to be all equal to **_sqrt(p)_**
 *  _Cropout((height_min,height_max), (width_min,width_max))_, the parameters have the same meaning as in case of _Crop_. 
-* _Dropout_(keep_min, keep_max)_ : where the ratio of the pixels to keep from the watermarked image, **_keep_ratio_**, is drawn uniformly from the range **_(keep_min,keep_max)_**.
+* _Dropout(keep_min, keep_max)_ : where the ratio of the pixels to keep from the watermarked image, **_keep_ratio_**, is drawn uniformly from the range **_(keep_min,keep_max)_**.
 * _Jpeg_ does not have any parameters. 
 
 
