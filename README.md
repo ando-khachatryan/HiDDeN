@@ -4,7 +4,7 @@ Pytorch implementation of paper "HiDDeN: Hiding Data With Deep Networks" by Jire
 
 The authors have Lua+Torch implementation here: https://github.com/jirenz/HiDDeN
 
-I have tested this on Pytorch 1.0. Note that this is a work in progress, and I was not yet able to fully reproduce the results of the original paper.
+I have tested this on Pytorch 1.0 and Python 3.6. Note that this is a work in progress, and I was not yet able to fully reproduce the results of the original paper.
 
 ## Requirements
 
