@@ -37,7 +37,7 @@ The data directory has the following structure:
 
 ## Running
 
-You will need to install the dependencies, then run 
+You will need to install the requirements, then run 
 ```
 python main.py --data-dir <data_root> --batch-size <b>
 ```
