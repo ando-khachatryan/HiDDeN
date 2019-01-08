@@ -8,10 +8,9 @@ Note that this is a work in progress, and I was not yet able to fully reproduce 
 
 ## Requirements
 
-You need Pytorch 1.0 with TorchVision to run this, and matplotlib.
-Python version tested was 3.6 and 3.7, but it should also work with 3.5, maybe with minor changes.
+You need [Pytorch](https://pytorch.org/) 1.0 with TorchVision to run this.
 If you want to use Tensorboard, you need to install TensorboardX and Tensorboard. This allows to use a subset of Tensorboard functionality to visualize the training. However, this is optional.
-The code has been tested and runs on Ubuntu 16.04 and Windows 10.
+The code has been tested with Python 3.5+ and runs both on Ubuntu 16.04 and Windows 10.
 
 ## Data
 
