@@ -3,7 +3,6 @@ import os
 import re
 import csv
 import time
-import matplotlib.pyplot as plt
 import pickle
 
 import torch
@@ -38,14 +37,6 @@ def tensor_to_image(tensor):
     image = tensor.permute(0, 2, 3, 1).cpu().numpy()
     image = (image + 1) * 127.5
     return np.clip(image, 0, 255).astype(np.uint8)
-
-
-def show_images(images, labels):
-    f, axarr = plt.subplots(1, len(images))
-    for i in range(len(images)):
-        axarr[i].imshow(images[i])
-        axarr[i].set_title(labels[i])
-    plt.show()
 
 
 def save_images(original_images, watermarked_images, epoch, folder, resize_to=None):
