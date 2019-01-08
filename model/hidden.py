@@ -59,6 +59,8 @@ class Hidden:
         """
         images, messages = batch
         batch_size = images.shape[0]
+        self.encoder_decoder.train()
+        self.discriminator.train()
         with torch.enable_grad():
             # ---------------- Train the discriminator -----------------------------
             self.optimizer_discrim.zero_grad()
@@ -133,7 +135,8 @@ class Hidden:
 
         images, messages = batch
         batch_size = images.shape[0]
-
+        self.encoder_decoder.eval()
+        self.discriminator.eval()
         with torch.no_grad():
             d_target_label_cover = torch.full((batch_size, 1), self.cover_label, device=self.device)
             d_on_cover = self.discriminator(images)

@@ -8,8 +8,7 @@ def parse_pair(match_groups):
     widths = match_groups[1].split(',')
     wmin = float(widths[0])
     wmax = float(widths[1])
-    return  (hmin, hmax), (wmin, wmax)
-
+    return (hmin, hmax), (wmin, wmax)
 
 
 def parse_crop(crop_command):
