@@ -67,6 +67,7 @@ runs the training with the following noise layers applied to each watermarked im
 Put it another way, given an image with dimensions **_H x W,_** the Crop() will randomly crop this into dimensions **_H' x W'_**, where **_H'/H_** is in the range **_(height_min,height_max)_**, and **_W'/W_** is in the range **_(width_min,width_max)_**. In the paper, the authors use a single parameter **_p_** which shows the ratio **_(H' * W')/ (H * W)_**, i.e., which fraction of the are to keep. In our setting, you can obtain the appropriate **_p_** by picking **_height_min_**, **_height_max_**  **_width_min_**, **_width_max_** to be all equal to **_sqrt(p)_**
 *  _Cropout((height_min,height_max), (width_min,width_max))_, the parameters have the same meaning as in case of _Crop_. 
 * _Dropout(keep_min, keep_max)_ : where the ratio of the pixels to keep from the watermarked image, **_keep_ratio_**, is drawn uniformly from the range **_(keep_min,keep_max)_**.
+* _Resize(keep_min, keep_max)_, where the resize ratio is drawn uniformly from the range **_(keep_min, keep_max)_**. This ratio applies to both dimensions. For instance, of we have Resize(0.7, 0.9), and we randomly draw the number 0.8 for a particular image, then the resulting image will have the dimensions (H * 0.8, W * 0.8).
 * _Jpeg_ does not have any parameters. 
 
 
