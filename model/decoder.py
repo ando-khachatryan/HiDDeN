@@ -5,7 +5,8 @@ from model.conv_bn_relu import ConvBNRelu
 
 class Decoder(nn.Module):
     """
-    Decoder module. Receives a watermarked image and extracts the watermark. The input image may have various kinds of noise applied to it,
+    Decoder module. Receives a watermarked image and extracts the watermark.
+    The input image may have various kinds of noise applied to it,
     such as Crop, JpegCompression, and so on. See Noise layers for more.
     """
     def __init__(self, config: HiDDenConfiguration):

@@ -103,7 +103,6 @@ class Hidden:
         decoded_rounded = decoded_messages.detach().cpu().numpy().round().clip(0, 1)
         bitwise_avg_err = np.sum(np.abs(decoded_rounded - messages.detach().cpu().numpy()))/(batch_size * messages.shape[1])
 
-
         losses = {
             'loss           ': g_loss.item(),
             'encoder_mse    ': g_loss_enc.item(),
@@ -114,7 +113,6 @@ class Hidden:
             'discr_encod_bce': d_loss_on_encoded.item()
         }
         return losses, (encoded_images, noised_images, decoded_messages)
-
 
     def validate_on_batch(self, batch: list):
         """
@@ -131,7 +129,6 @@ class Hidden:
             self.tb_logger.add_tensor('weights/decoder_out', decoder_final.weight)
             discrim_final = self.discriminator._modules['linear']
             self.tb_logger.add_tensor('weights/discrim_out', discrim_final.weight)
-
 
         images, messages = batch
         batch_size = images.shape[0]
@@ -151,7 +148,7 @@ class Hidden:
             d_on_encoded_for_enc = self.discriminator(encoded_images)
             g_loss_adv = self.bce_with_logits_loss(d_on_encoded_for_enc, g_target_label_encoded)
 
-            if self.vgg_loss == None:
+            if self.vgg_loss is None:
                 g_loss_enc = self.mse_loss(encoded_images, images)
             else:
                 vgg_on_cov = self.vgg_loss(images)

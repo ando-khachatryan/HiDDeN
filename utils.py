@@ -119,7 +119,7 @@ def model_from_checkpoint(hidden_net, checkpoint):
     hidden_net.optimizer_discrim.load_state_dict(checkpoint['discrim-optim'])
 
 
-def load_options(options_file_name):
+def load_options(options_file_name) -> (TrainingOptions, HiDDenConfiguration, dict):
     """ Loads the training, model, and noise configurations from the given folder """
     with open(os.path.join(options_file_name), 'rb') as f:
         train_options = pickle.load(f)
