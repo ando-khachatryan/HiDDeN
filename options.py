@@ -5,14 +5,14 @@ class TrainingOptions:
     def __init__(self,
                  batch_size, number_of_epochs,
                  train_folder, validation_folder, runs_folder,
-                 start_epoch):
+                 start_epoch, experiment_name):
         self.batch_size = batch_size
         self.number_of_epochs = number_of_epochs
         self.train_folder = train_folder
         self.validation_folder = validation_folder
         self.runs_folder = runs_folder
         self.start_epoch = start_epoch
-
+        self.experiment_name = experiment_name
 
 class HiDDenConfiguration():
     """

@@ -4,6 +4,7 @@ import re
 import csv
 import time
 import pickle
+import logging
 
 import torch
 from torchvision import datasets, transforms
@@ -70,25 +71,14 @@ def last_checkpoint_from_folder(folder: str):
     return last_file
 
 
-def save_checkpoint(model: Hidden, epoch: int, losses_accu: dict, checkpoint_folder: str, file_name_prefix=''):
+def save_checkpoint(model: Hidden, experiment_name: str, epoch: int, checkpoint_folder: str):
     """ Saves a checkpoint at the end of an epoch. """
     if not os.path.exists(checkpoint_folder):
         os.makedirs(checkpoint_folder)
 
-    losses_redux = {name.strip(): np.mean(value) for (name, value) in losses_accu.items()}
-    checkpoint_filename = '{}{}-loss={:.4f} enc={:.4f} dec={:.4f} adv={:.4f} discr-cov={:.4f} discr-enc={:.4f}.pyt'.\
-        format(
-            epoch,
-            file_name_prefix,
-            losses_redux['loss'],
-            losses_redux['encoder_mse'],
-            losses_redux['dec_mse'],
-            losses_redux['adversarial_bce'],
-            losses_redux['discr_cover_bce'],
-            losses_redux['discr_encod_bce']
-    )
+    checkpoint_filename = f'{experiment_name}--epoch-{epoch}.pyt'
     checkpoint_filename = os.path.join(checkpoint_folder, checkpoint_filename)
-    print('Saving checkpoint to {}'.format(checkpoint_filename))
+    logging.info('Saving checkpoint to {}'.format(checkpoint_filename))
     checkpoint = {
         'enc-dec-model': model.encoder_decoder.state_dict(),
         'enc-dec-optim': model.optimizer_enc_dec.state_dict(),
@@ -97,16 +87,16 @@ def save_checkpoint(model: Hidden, epoch: int, losses_accu: dict, checkpoint_fol
         'epoch': epoch
     }
     torch.save(checkpoint, checkpoint_filename)
-    print('Saving checkpoint done.')
+    logging.info('Saving checkpoint done.')
 
 
 # def load_checkpoint(hidden_net: Hidden, options: Options, this_run_folder: str):
 def load_last_checkpoint(checkpoint_folder):
     """ Load the last checkpoint from the given folder """
     last_checkpoint_file = last_checkpoint_from_folder(checkpoint_folder)
-    print("=> loading checkpoint '{}'".format(last_checkpoint_file))
+    logging.info("=> loading checkpoint '{}'".format(last_checkpoint_file))
     checkpoint = torch.load(last_checkpoint_file)
-    print("=> loaded checkpoint '{}' (epoch {})".format(last_checkpoint_file, checkpoint['epoch']))
+    logging.info("=> loaded checkpoint '{}' (epoch {})".format(last_checkpoint_file, checkpoint['epoch']))
 
     return checkpoint
 
@@ -157,16 +147,16 @@ def get_data_loaders(hidden_config: HiDDenConfiguration, train_options: Training
 def print_progress(losses_accu):
     max_len = max([len(loss_name) for loss_name in losses_accu])
     for loss_name, loss_value in losses_accu.items():
-        print(loss_name.ljust(max_len+4) + '{:.4f}'.format(np.mean(loss_value)))
+        logging.info(loss_name.ljust(max_len+4) + '{:.4f}'.format(np.mean(loss_value)))
 
 
-def create_folder_for_run(options: TrainingOptions):
-    if not os.path.exists(options.runs_folder):
-        os.makedirs(options.runs_folder)
+def create_folder_for_run(runs_folder, experiment_name):
 
-    this_run_folder = time.strftime("%Y.%m.%d--%H-%M-%S")
+    if not os.path.exists(runs_folder):
+        os.makedirs(runs_folder)
 
-    this_run_folder = os.path.join(options.runs_folder, this_run_folder)
+    this_run_folder = os.path.join(runs_folder, f'{experiment_name} {time.strftime("%Y.%m.%d--%H-%M-%S")}')
+
     os.makedirs(this_run_folder)
     os.makedirs(os.path.join(this_run_folder, 'checkpoints'))
     os.makedirs(os.path.join(this_run_folder, 'images'))

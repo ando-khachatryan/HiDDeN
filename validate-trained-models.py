@@ -80,7 +80,7 @@ def main():
                 print('-' * 40)
 
         utils.print_progress(losses_accu)
-        write_validation_loss(os.path.join('.', 'validation_run.csv'), losses_accu, run_name, checkpoint['epoch'],
+        write_validation_loss(os.path.join(args.runs_root, 'validation_run.csv'), losses_accu, run_name, checkpoint['epoch'],
                               write_header=write_csv_header)
         write_csv_header = False
     # train(model, device, hidden_config, train_options, this_run_folder, tb_logger)
