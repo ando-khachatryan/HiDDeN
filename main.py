@@ -54,14 +54,15 @@ def train(model: Hidden,
             image = image.to(device)
             message = torch.Tensor(np.random.choice([0, 1], (image.shape[0], hidden_config.message_length))).to(device)
             losses, _ = model.train_on_batch([image, message])
-            if not losses_accu: # dict is empty, initialize
+            if not losses_accu:  # dict is empty, initialize
                 for name in losses:
                     losses_accu[name] = []
 
             for name, loss in losses.items():
                 losses_accu[name].append(loss)
             if step % print_each == 0 or step == steps_in_epoch:
-                logging.info('Epoch: {}/{} Step: {}/{}'.format(epoch, train_options.number_of_epochs, step, steps_in_epoch))
+                logging.info(
+                    'Epoch: {}/{} Step: {}/{}'.format(epoch, train_options.number_of_epochs, step, steps_in_epoch))
                 utils.print_progress(losses_accu)
                 logging.info('-' * 40)
             step += 1
@@ -82,7 +83,7 @@ def train(model: Hidden,
             image = image.to(device)
             message = torch.Tensor(np.random.choice([0, 1], (image.shape[0], hidden_config.message_length))).to(device)
             losses, (encoded_images, noised_images, decoded_messages) = model.validate_on_batch([image, message])
-            if not losses_accu: # dict is empty, initialize
+            if not losses_accu:  # dict is empty, initialize
                 for name in losses:
                     losses_accu[name] = []
             for name, loss in losses.items():
@@ -97,7 +98,8 @@ def train(model: Hidden,
         utils.print_progress(losses_accu)
         logging.info('-' * 40)
         utils.save_checkpoint(model, train_options.experiment_name, epoch, os.path.join(this_run_folder, 'checkpoints'))
-        utils.write_losses(os.path.join(this_run_folder, 'validation.csv'), losses_accu, epoch, time.time() - epoch_start)
+        utils.write_losses(os.path.join(this_run_folder, 'validation.csv'), losses_accu, epoch,
+                           time.time() - epoch_start)
 
 
 def main():
@@ -109,16 +111,27 @@ def main():
     parser.add_argument('--epochs', '-e', default=400, type=int, help='Number of epochs to run the simulation.')
     parser.add_argument('--name', required=True, type=str, help='The name of the experiment.')
 
-    parser.add_argument('--runs-folder', '-sf', default=os.path.join('.', 'runs'), type=str, help='The root folder where data about experiments are stored.')
-    parser.add_argument('--size', '-s', default=128, type=int, help='The size of the images (images are square so this is height and width).')
+    parser.add_argument('--runs-folder', '-sf', default=os.path.join('.', 'runs'), type=str,
+                        help='The root folder where data about experiments are stored.')
+    parser.add_argument('--size', '-s', default=128, type=int,
+                        help='The size of the images (images are square so this is height and width).')
     parser.add_argument('--message', '-m', default=30, type=int, help='The length in bits of the watermark.')
-    parser.add_argument('--continue-from-folder', '-c', default='', type=str, help='The folder from where to continue a previous run. Leave blank if you are starting a new experiment.')
-    parser.add_argument('--tensorboard', dest='tensorboard', action='store_true', help='If specified, use adds a Tensorboard log. On by default')
-    parser.add_argument('--no-tensorboard', dest='tensorboard', action='store_false', help='Use to switch off Tensorboard logging.')
+    parser.add_argument('--continue-from-folder', '-c', default='', type=str,
+                        help='The folder from where to continue a previous run. Leave blank if you are starting a new experiment.')
+    # parser.add_argument('--tensorboard', dest='tensorboard', action='store_true',
+    #                     help='If specified, use adds a Tensorboard log. On by default')
+    parser.add_argument('--no-tensorboard', dest='tensorboard', action='store_false',
+                        help='Use to switch off Tensorboard logging.')
+    # parser.add_argument('--enable-mixed', dest='enable_mixed', action='store_true',
+    #                     help='Enable mixed-precision training. On by default')
+    parser.add_argument('--disable-mixed', dest='enable_mixed', action='store_false',
+                        help='Disable mixed-precision training.')
 
-    parser.add_argument('--noise', nargs='*', action=NoiseArgParser, help="Noise layers configuration. Use quotes when specifying configuration, e.g. 'cropout((0.55, 0.6), (0.55, 0.6))'")
+    parser.add_argument('--noise', nargs='*', action=NoiseArgParser,
+                        help="Noise layers configuration. Use quotes when specifying configuration, e.g. 'cropout((0.55, 0.6), (0.55, 0.6))'")
 
     parser.set_defaults(tensorboard=True)
+    parser.set_defaults(enable_mixed=True)
     args = parser.parse_args()
 
     checkpoint = None
@@ -127,7 +140,7 @@ def main():
         options_file = os.path.join(this_run_folder, 'options-and-config.pickle')
         train_options, hidden_config, noise_config = utils.load_options(options_file)
         checkpoint = utils.load_last_checkpoint(os.path.join(this_run_folder, 'checkpoints'))
-        train_options.start_epoch = checkpoint['epoch']+1
+        train_options.start_epoch = checkpoint['epoch'] + 1
     else:
         start_epoch = 1
         train_options = TrainingOptions(
@@ -149,7 +162,8 @@ def main():
                                             discriminator_blocks=3, discriminator_channels=64,
                                             decoder_loss=1,
                                             encoder_loss=0.7,
-                                            adversarial_loss=1e-3
+                                            adversarial_loss=1e-3,
+                                            enable_mixed=args.enable_mixed
                                             )
 
         this_run_folder = utils.create_folder_for_run(train_options.runs_folder, args.name)
@@ -187,7 +201,6 @@ def main():
     logging.info(pprint.pformat(str(noise_config)))
     logging.info('\nTraining train_options:\n')
     logging.info(pprint.pformat(vars(train_options)))
-
 
     train(model, device, hidden_config, train_options, this_run_folder, tb_logger)
 

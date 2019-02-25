@@ -1,6 +1,8 @@
 import numpy as np
 import torch
 import torch.nn as nn
+from apex import amp
+
 from options import HiDDenConfiguration
 from model.discriminator import Discriminator
 from model.encoder_decoder import EncoderDecoder
@@ -18,11 +20,18 @@ class Hidden:
         """
         super(Hidden, self).__init__()
 
+        # Create amp handle for mixed (FP32/FP16) training. If configuration.enable_mixed is False,
+        # then all calls to amp are Nop-s.
+        self.amp_handle = amp.init(configuration.enable_mixed)
+
         self.encoder_decoder = EncoderDecoder(configuration, noiser).to(device)
         self.optimizer_enc_dec = torch.optim.Adam(self.encoder_decoder.parameters())
+        # create amp wrapper for mixed training, if it is enabled.
+        self.optimizer_enc_dec = self.amp_handle.wrap_optimizer(self.optimizer_enc_dec)
 
         self.discriminator = Discriminator(configuration).to(device)
         self.optimizer_discrim = torch.optim.Adam(self.discriminator.parameters())
+        self.optimizer_discrim = self.amp_handle.wrap_optimizer(self.optimizer_discrim, num_loss=2)
 
         if configuration.use_vgg:
             self.vgg_loss = VGGLoss(3, 1, False)
@@ -50,7 +59,6 @@ class Hidden:
             discrim_final = self.discriminator._modules['linear']
             discrim_final.weight.register_hook(tb_logger.grad_hook_by_name('grads/discrim_out'))
 
-
     def train_on_batch(self, batch: list):
         """
         Trains the network on a single batch consisting of images and messages
@@ -68,14 +76,20 @@ class Hidden:
             d_target_label_cover = torch.full((batch_size, 1), self.cover_label, device=self.device)
             d_on_cover = self.discriminator(images)
             d_loss_on_cover = self.bce_with_logits_loss(d_on_cover, d_target_label_cover)
-            d_loss_on_cover.backward()
+            # auto-scale loss to fit into FP16 range, if mixed training is enabled
+            with self.optimizer_discrim.scale_loss(d_loss_on_cover) as d_loss_on_cover_scaled:
+                d_loss_on_cover_scaled.backward()
 
             # train on fake
             encoded_images, noised_images, decoded_messages = self.encoder_decoder(images, messages)
             d_target_label_encoded = torch.full((batch_size, 1), self.encoded_label, device=self.device)
             d_on_encoded = self.discriminator(encoded_images.detach())
             d_loss_on_encoded = self.bce_with_logits_loss(d_on_encoded, d_target_label_encoded)
-            d_loss_on_encoded.backward()
+
+            # auto-scale loss to fit into FP16 range, if mixed training is enabled
+            with self.optimizer_discrim.scale_loss(d_loss_on_encoded) as d_loss_on_encoded_scaled:
+                d_loss_on_encoded_scaled.backward()
+
             self.optimizer_discrim.step()
 
             # --------------Train the generator (encoder-decoder) ---------------------
@@ -93,15 +107,18 @@ class Hidden:
                 g_loss_enc = self.mse_loss(vgg_on_cov, vgg_on_enc)
 
             g_loss_dec = self.mse_loss(decoded_messages, messages)
-
-
             g_loss = self.config.adversarial_loss * g_loss_adv + self.config.encoder_loss * g_loss_enc \
                      + self.config.decoder_loss * g_loss_dec
-            g_loss.backward()
+
+            # auto-scale loss to fit into FP16 range, if mixed training is enabled
+            with self.optimizer_enc_dec.scale_loss(g_loss) as g_loss_scaled:
+                g_loss_scaled.backward()
+
             self.optimizer_enc_dec.step()
 
         decoded_rounded = decoded_messages.detach().cpu().numpy().round().clip(0, 1)
-        bitwise_avg_err = np.sum(np.abs(decoded_rounded - messages.detach().cpu().numpy()))/(batch_size * messages.shape[1])
+        bitwise_avg_err = np.sum(np.abs(decoded_rounded - messages.detach().cpu().numpy())) / (
+                batch_size * messages.shape[1])
 
         losses = {
             'loss           ': g_loss.item(),
@@ -160,7 +177,8 @@ class Hidden:
                      + self.config.decoder_loss * g_loss_dec
 
         decoded_rounded = decoded_messages.detach().cpu().numpy().round().clip(0, 1)
-        bitwise_avg_err = np.sum(np.abs(decoded_rounded - messages.detach().cpu().numpy()))/(batch_size * messages.shape[1])
+        bitwise_avg_err = np.sum(np.abs(decoded_rounded - messages.detach().cpu().numpy())) / (
+                batch_size * messages.shape[1])
 
         losses = {
             'loss           ': g_loss.item(),
@@ -175,5 +193,3 @@ class Hidden:
 
     def to_stirng(self):
         return '{}\n{}'.format(str(self.encoder_decoder), str(self.discriminator))
-
-
