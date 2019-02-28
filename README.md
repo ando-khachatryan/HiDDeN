@@ -38,7 +38,7 @@ The data directory has the following structure:
 
 You will need to install the requirements, then run 
 ```
-python main.py --data-dir <data_root> --batch-size <b>
+python main.py --data-dir <data_root> --batch-size <b> --name <experiment_name>
 ```
 By default, tensorboard logging is enabled. To use this, you need to install Tensorboard and TensorboardX. 
 However, if you don't want to use Tensorboard, you don't need to install Tensorboard/TensorboardX. Simply run with the 
