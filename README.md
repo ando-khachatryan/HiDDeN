@@ -40,29 +40,32 @@ The data directory has the following structure:
 
 You will need to install the requirements, then run 
 ```
-python main.py --data-dir <data_root> --batch-size <b> --name <experiment_name>
+python main.py new --data-dir <data_root> --batch-size <b> --name <experiment_name>
 ```
-By default, tensorboard logging is enabled. To use this, you need to install Tensorboard and TensorboardX. 
-However, if you don't want to use Tensorboard, you don't need to install Tensorboard/TensorboardX. Simply run with the 
-```--no-tensorboard``` switch.
-
+By default, tensorboard logging is disabled. To enable it, use the ```--tensorboard``` switch. 
+If you want to continue from a training run, use 
+```
+python main.py continue --folder <incomplete_run_folder>
+```
 There are additional parameters for main.py. Use
 ```
 python main.py --help
 ```
 to see the description of all of the parameters.
-
-Each run creates a folder in ./runs/<date-and-time> and stores all the information about the run in there.
+Each run creates a folder in ./runs/<experiment_name date-and-time> and stores all the information about the run in there.
 
 
 ### Running with Noise Layers
 You can specify noise layers configuration. To do so, use the ```--noise``` switch, following by configuration of noise layer or layers.
 For instance, the command 
 ```
-python main.py --no-tensorboard --data-dir /data/ --batch-size 12 --noise  'crop((0.2,0.3),(0.4,0.5))+cropout((0
+python main.py --data-dir /data/ --batch-size 12 --noise  'crop((0.2,0.3),(0.4,0.5))+cropout((0
 .11,0.22),(0.33,0.44))+dropout(0.2,0.3)+jpeg()'
 ```
 runs the training with the following noise layers applied to each watermarked image: crop, then cropout, then dropout, then jpeg compression. The parameters of the layers are explained below. **It is important to use the quotes around the noise configuration. Also, avoid redundant spaces** If you want to stack several noise layers, specify them using + in the noise configuration, as shown in the example. 
+
+**Important**
+In the paper, when using combined noise (several noise layers), for each batch, a single layer is picked randomly and applied. Instead, we apply ALL the layers in exactly the order as specified in the --noise argument. I plan to change enable support for the original approach as well.
 
 ### Noise Layer paremeters
 * _Crop((height_min,height_max),(width_min,width_max))_, where **_(height_min,height_max)_** is a range from which we draw a random number and keep that fraction of the height of the original image. **_(width_min,width_max)_** controls the same for the width of the image. 
@@ -74,7 +77,7 @@ Put it another way, given an image with dimensions **_H x W,_** the Crop() will 
 
 
 ## Experiments
-The data for some of the experiments are stored in 'HiDDeN/experiments/<name of the experiment> folder. This includes: figures, detailed training and validation losses, all the settings in *pickle* format, and the checkpoint file of the trained model. Here, we provide summary of the experiments.
+The data for some of the experiments are stored in './experiments/<name of the experiment> folder. This includes: figures, detailed training and validation losses, all the settings in *pickle* format, and the checkpoint file of the trained model. Here, we provide summary of the experiments.
 
 ### Setup
 We try to follow the experimental setup of the original paper as closely as possibly.
