@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 import torch.nn as nn
-from apex import amp
+import apex
 
 from options import HiDDenConfiguration
 from model.discriminator import Discriminator
@@ -20,18 +20,14 @@ class Hidden:
         """
         super(Hidden, self).__init__()
 
-        # Create amp handle for mixed (FP32/FP16) training. If configuration.enable_mixed is False,
-        # then all calls to amp are Nop-s.
-        self.amp_handle = amp.init(configuration.enable_mixed)
-
         self.encoder_decoder = EncoderDecoder(configuration, noiser).to(device)
-        self.optimizer_enc_dec = torch.optim.Adam(self.encoder_decoder.parameters())
-        # create amp wrapper for mixed training, if it is enabled.
-        self.optimizer_enc_dec = self.amp_handle.wrap_optimizer(self.optimizer_enc_dec)
-
         self.discriminator = Discriminator(configuration).to(device)
-        self.optimizer_discrim = torch.optim.Adam(self.discriminator.parameters())
-        self.optimizer_discrim = self.amp_handle.wrap_optimizer(self.optimizer_discrim, num_loss=2)
+        if configuration.enable_fp16:
+            self.optimizer_enc_dec = apex.optimizers.FusedAdam(self.encoder_decoder.parameters())
+            self.optimizer_discrim = apex.optimizers.FusedAdam(self.discriminator.parameters())
+        else:
+            self.optimizer_enc_dec = torch.optim.Adam(self.encoder_decoder.parameters())
+            self.optimizer_discrim = torch.optim.Adam(self.discriminator.parameters())
 
         if configuration.use_vgg:
             self.vgg_loss = VGGLoss(3, 1, False)
@@ -42,8 +38,8 @@ class Hidden:
         self.config = configuration
         self.device = device
 
-        self.bce_with_logits_loss = nn.BCEWithLogitsLoss()
-        self.mse_loss = nn.MSELoss()
+        self.bce_with_logits_loss = nn.BCEWithLogitsLoss().to(device)
+        self.mse_loss = nn.MSELoss().to(device)
 
         # Defined the labels used for training the discriminator/adversarial loss
         self.cover_label = 1
@@ -59,6 +55,35 @@ class Hidden:
             discrim_final = self.discriminator._modules['linear']
             discrim_final.weight.register_hook(tb_logger.grad_hook_by_name('grads/discrim_out'))
 
+        if configuration.enable_fp16:
+            def fix_bn(m):
+                classname = m.__class__.__name__
+                if classname.find('BatchNorm') != -1:
+                    m.eval().half()
+            self.encoder_decoder = apex.fp16_utils.FP16Model(self.encoder_decoder)
+            self.encoder_decoder.apply(fix_bn)
+            self.discriminator = apex.fp16_utils.FP16Model(self.discriminator)
+            self.discriminator.apply(fix_bn)
+
+            self.optimizer_enc_dec = apex.optimizers.FP16_Optimizer(self.optimizer_enc_dec, dynamic_loss_scale=True)
+            self.optimizer_discrim = apex.optimizers.FP16_Optimizer(self.optimizer_discrim, dynamic_loss_scale=True)
+            # self.optimizer_enc_dec = apex.optimizers.FP16_Optimizer(self.optimizer_enc_dec, static_loss_scale=128.0)
+            # self.optimizer_discrim = apex.optimizers.FP16_Optimizer(self.optimizer_discrim, static_loss_scale=128.0)
+
+
+        # if configuration.enable_fp16:
+        #     def fix_bn(m):
+        #         classname = m.__class__.__name__
+        #         if classname.find('BatchNorm') != -1:
+        #             m.eval().half()
+        #     self.encoder_decoder = apex.fp16_utils.network_to_half(self.encoder_decoder)
+        #     self.encoder_decoder.apply(fix_bn)
+        #     self.discriminator = apex.fp16_utils.network_to_half(self.discriminator)
+        #     self.discriminator.apply(fix_bn)
+        #     self.optimizer_enc_dec = apex.optimizers.FP16_Optimizer(self.optimizer_enc_dec, dynamic_loss_scale=True)
+        #     self.optimizer_discrim = apex.optimizers.FP16_Optimizer(self.optimizer_discrim, dynamic_loss_scale=True)
+
+
     def train_on_batch(self, batch: list):
         """
         Trains the network on a single batch consisting of images and messages
@@ -66,6 +91,10 @@ class Hidden:
         :return: dictionary of error metrics from Encoder, Decoder, and Discriminator on the current batch
         """
         images, messages = batch
+        if self.config.enable_fp16:
+            images = images.half()
+            messages = messages.half()
+
         batch_size = images.shape[0]
         self.encoder_decoder.train()
         self.discriminator.train()
@@ -74,28 +103,37 @@ class Hidden:
             self.optimizer_discrim.zero_grad()
             # train on cover
             d_target_label_cover = torch.full((batch_size, 1), self.cover_label, device=self.device)
+            d_target_label_encoded = torch.full((batch_size, 1), self.encoded_label, device=self.device)
+            g_target_label_encoded = torch.full((batch_size, 1), self.cover_label, device=self.device)
+
+            if self.config.enable_fp16:
+                d_target_label_cover = d_target_label_cover.half()
+                d_target_label_encoded = d_target_label_encoded.half()
+                g_target_label_encoded = g_target_label_encoded.half()
+
             d_on_cover = self.discriminator(images)
             d_loss_on_cover = self.bce_with_logits_loss(d_on_cover, d_target_label_cover)
             # auto-scale loss to fit into FP16 range, if mixed training is enabled
-            with self.optimizer_discrim.scale_loss(d_loss_on_cover) as d_loss_on_cover_scaled:
-                d_loss_on_cover_scaled.backward()
+            if self.config.enable_fp16:
+                self.optimizer_discrim.backward(d_loss_on_cover)
+            else:
+                d_loss_on_cover.backward()
 
             # train on fake
             encoded_images, noised_images, decoded_messages = self.encoder_decoder(images, messages)
-            d_target_label_encoded = torch.full((batch_size, 1), self.encoded_label, device=self.device)
             d_on_encoded = self.discriminator(encoded_images.detach())
             d_loss_on_encoded = self.bce_with_logits_loss(d_on_encoded, d_target_label_encoded)
 
             # auto-scale loss to fit into FP16 range, if mixed training is enabled
-            with self.optimizer_discrim.scale_loss(d_loss_on_encoded) as d_loss_on_encoded_scaled:
-                d_loss_on_encoded_scaled.backward()
-
+            if self.config.enable_fp16:
+                self.optimizer_discrim.backward(d_loss_on_encoded)
+            else:
+                d_loss_on_encoded.backward()
             self.optimizer_discrim.step()
 
             # --------------Train the generator (encoder-decoder) ---------------------
             self.optimizer_enc_dec.zero_grad()
             # target label for encoded images should be 'cover', because we want to fool the discriminator
-            g_target_label_encoded = torch.full((batch_size, 1), self.cover_label, device=self.device)
             d_on_encoded_for_enc = self.discriminator(encoded_images)
             g_loss_adv = self.bce_with_logits_loss(d_on_encoded_for_enc, g_target_label_encoded)
 
@@ -111,9 +149,10 @@ class Hidden:
                      + self.config.decoder_loss * g_loss_dec
 
             # auto-scale loss to fit into FP16 range, if mixed training is enabled
-            with self.optimizer_enc_dec.scale_loss(g_loss) as g_loss_scaled:
-                g_loss_scaled.backward()
-
+            if self.config.enable_fp16:
+                self.optimizer_enc_dec.backward(g_loss)
+            else:
+                g_loss.backward()
             self.optimizer_enc_dec.step()
 
         decoded_rounded = decoded_messages.detach().cpu().numpy().round().clip(0, 1)
@@ -148,20 +187,32 @@ class Hidden:
             self.tb_logger.add_tensor('weights/discrim_out', discrim_final.weight)
 
         images, messages = batch
+        if self.config.enable_fp16:
+            images = images.half()
+            messages = messages.half()
+
         batch_size = images.shape[0]
+
         self.encoder_decoder.eval()
         self.discriminator.eval()
         with torch.no_grad():
             d_target_label_cover = torch.full((batch_size, 1), self.cover_label, device=self.device)
+            d_target_label_encoded = torch.full((batch_size, 1), self.encoded_label, device=self.device)
+            g_target_label_encoded = torch.full((batch_size, 1), self.cover_label, device=self.device)
+
+            if self.config.enable_fp16:
+                d_target_label_cover = d_target_label_cover.half()
+                d_target_label_encoded = d_target_label_encoded.half()
+                g_target_label_encoded = g_target_label_encoded.half()
+
             d_on_cover = self.discriminator(images)
             d_loss_on_cover = self.bce_with_logits_loss(d_on_cover, d_target_label_cover)
 
             encoded_images, noised_images, decoded_messages = self.encoder_decoder(images, messages)
-            d_target_label_encoded = torch.full((batch_size, 1), self.encoded_label, device=self.device)
+
             d_on_encoded = self.discriminator(encoded_images)
             d_loss_on_encoded = self.bce_with_logits_loss(d_on_encoded, d_target_label_encoded)
 
-            g_target_label_encoded = torch.full((batch_size, 1), self.cover_label, device=self.device)
             d_on_encoded_for_enc = self.discriminator(encoded_images)
             g_loss_adv = self.bce_with_logits_loss(d_on_encoded_for_enc, g_target_label_encoded)
 

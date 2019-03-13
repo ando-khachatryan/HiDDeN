@@ -1,6 +1,7 @@
 import argparse
 import re
 
+
 def parse_pair(match_groups):
     heights = match_groups[0].split(',')
     hmin = float(heights[0])
@@ -47,6 +48,7 @@ def parse_dropout(dropout_command):
         'keep_ratio_range': (keep_min, keep_max)
     }
 
+
 def parse_resize(resize_command):
     matches = re.match(r'resize\((\d+\.*\d*,\d+\.*\d*)\)', resize_command)
     ratios = matches.groups()[0].split(',')
@@ -82,15 +84,14 @@ class NoiseArgParser(argparse.Action):
                                  help=help,
                                  metavar=metavar,
                                  )
+
     @staticmethod
     def parse_cropout_args(cropout_args):
         pass
 
-
     @staticmethod
     def parse_dropout_args(dropout_args):
         pass
-
 
     def __call__(self, parser, namespace, values,
                  option_string=None):

@@ -42,7 +42,7 @@ class Noiser(nn.Module):
             elif layer_type == 'identity':
                 noise_layers.append(Identity())
             elif layer_type == 'quantization':
-                noise_layers.append(Quantization())
+                noise_layers.append(Quantization(device))
             else:
                 raise ValueError('Noise layer of {} not supported'.format(noise_layer_config['type']))
 

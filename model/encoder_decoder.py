@@ -2,7 +2,6 @@ import torch.nn as nn
 from model.encoder import Encoder
 from model.decoder import Decoder
 from options import HiDDenConfiguration
-from noise_layers.identity import Identity
 from noise_layers.noiser import Noiser
 
 

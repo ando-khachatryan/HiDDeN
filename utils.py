@@ -41,7 +41,6 @@ def tensor_to_image(tensor):
 
 
 def save_images(original_images, watermarked_images, epoch, folder, resize_to=None):
-
     images = original_images[:original_images.shape[0], :, :, :].cpu()
     watermarked_images = watermarked_images[:watermarked_images.shape[0], :, :, :].cpu()
 
@@ -94,11 +93,9 @@ def save_checkpoint(model: Hidden, experiment_name: str, epoch: int, checkpoint_
 def load_last_checkpoint(checkpoint_folder):
     """ Load the last checkpoint from the given folder """
     last_checkpoint_file = last_checkpoint_from_folder(checkpoint_folder)
-    logging.info("=> loading checkpoint '{}'".format(last_checkpoint_file))
     checkpoint = torch.load(last_checkpoint_file)
-    logging.info("=> loaded checkpoint '{}' (epoch {})".format(last_checkpoint_file, checkpoint['epoch']))
 
-    return checkpoint
+    return checkpoint, last_checkpoint_file
 
 
 def model_from_checkpoint(hidden_net, checkpoint):
@@ -115,6 +112,9 @@ def load_options(options_file_name) -> (TrainingOptions, HiDDenConfiguration, di
         train_options = pickle.load(f)
         noise_config = pickle.load(f)
         hidden_config = pickle.load(f)
+        # for backward-capability. Some models were trained and saved before .enable_fp16 was added
+        if not hasattr(hidden_config, 'enable_fp16'):
+            setattr(hidden_config, 'enable_fp16', False)
 
     return train_options, hidden_config, noise_config
 
@@ -136,22 +136,31 @@ def get_data_loaders(hidden_config: HiDDenConfiguration, train_options: Training
     }
 
     train_images = datasets.ImageFolder(train_options.train_folder, data_transforms['train'])
-    train_loader = torch.utils.data.DataLoader(train_images, batch_size=train_options.batch_size, shuffle=True, num_workers=4)
+    train_loader = torch.utils.data.DataLoader(train_images, batch_size=train_options.batch_size, shuffle=True,
+                                               num_workers=4)
 
     validation_images = datasets.ImageFolder(train_options.validation_folder, data_transforms['test'])
-    validation_loader = torch.utils.data.DataLoader(validation_images, batch_size=train_options.batch_size, shuffle=False, num_workers=4)
+    validation_loader = torch.utils.data.DataLoader(validation_images, batch_size=train_options.batch_size,
+                                                    shuffle=False, num_workers=4)
 
     return train_loader, validation_loader
 
 
+def log_progress(losses_accu):
+    log_print_helper(losses_accu, logging.info)
+
+
 def print_progress(losses_accu):
+    log_print_helper(losses_accu, print)
+
+
+def log_print_helper(losses_accu, log_or_print_func):
     max_len = max([len(loss_name) for loss_name in losses_accu])
     for loss_name, loss_value in losses_accu.items():
-        logging.info(loss_name.ljust(max_len+4) + '{:.4f}'.format(np.mean(loss_value)))
+        log_or_print_func(loss_name.ljust(max_len + 4) + '{:.4f}'.format(loss_value.avg))
 
 
 def create_folder_for_run(runs_folder, experiment_name):
-
     if not os.path.exists(runs_folder):
         os.makedirs(runs_folder)
 
@@ -170,5 +179,6 @@ def write_losses(file_name, losses_accu, epoch, duration):
         if epoch == 1:
             row_to_write = ['epoch'] + [loss_name.strip() for loss_name in losses_accu.keys()] + ['duration']
             writer.writerow(row_to_write)
-        row_to_write = [epoch] + ['{:.4f}'.format(np.mean(loss_list)) for loss_list in losses_accu.values()] + ['{:.0f}'.format(duration)]
+        row_to_write = [epoch] + ['{:.4f}'.format(loss_avg.avg) for loss_avg in losses_accu.values()] + [
+            '{:.0f}'.format(duration)]
         writer.writerow(row_to_write)

@@ -18,7 +18,7 @@ class TensorBoardLogger:
 
     def save_losses(self, losses_accu: dict, epoch: int):
         for loss_name, loss_value in losses_accu.items():
-            self.writer.add_scalar('losses/{}'.format(loss_name.strip()), np.mean(loss_value), global_step=epoch)
+            self.writer.add_scalar('losses/{}'.format(loss_name.strip()), loss_value.avg, global_step=epoch)
 
     def save_grads(self, epoch: int):
         for grad_name, grad_values in self.grads.items():

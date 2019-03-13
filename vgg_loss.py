@@ -30,4 +30,3 @@ class VGGLoss(nn.Module):
 
     def forward(self, img):
         return self.vgg_loss(img)
-
