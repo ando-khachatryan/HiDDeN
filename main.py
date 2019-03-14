@@ -69,10 +69,10 @@ def main():
             train_options.train_folder = os.path.join(args.data_dir, 'train')
             train_options.validation_folder = os.path.join(args.data_dir, 'val')
         if args.epochs is not None:
-            if args.number_of_epochs < train_options.start_epoch:
-                train_options.number_of_epochs = args.number_of_epochs
+            if train_options.start_epoch < args.epochs:
+                train_options.number_of_epochs = args.epochs
             else:
-                print(f'Command-line specifies of number of epochs = {args.number_of_epochs}, but folder={args.folder} '
+                print(f'Command-line specifies of number of epochs = {args.epochs}, but folder={args.folder} '
                       f'already contains checkpoint for epoch = {train_options.start_epoch}.')
                 exit(1)
 
