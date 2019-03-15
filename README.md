@@ -12,8 +12,6 @@ You need [Pytorch](https://pytorch.org/) 1.0 with TorchVision to run this.
 If you want to use Tensorboard, you need to install TensorboardX and Tensorboard. This allows to use a subset of Tensorboard functionality to visualize the training. However, this is optional.
 The code has been tested with Python 3.6+ and runs both on Ubuntu 16.04, 18.04 and Windows 10.
 
-**Update 03.03.2019**: I am trying to enable mixed-precision training. At the moment, to run things you also need to install NVidia Apex (https://github.com/NVIDIA/apex) even if you want to run it disabled. I will fix this at some later point. 
-
 ## Data
 
 We use 10,000 images for training and 1,000 images for validation. Following the original paper, we chose 
