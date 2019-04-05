@@ -47,3 +47,16 @@ class HiDDenConfiguration():
         self.encoder_loss = encoder_loss
         self.adversarial_loss = adversarial_loss
         self.enable_fp16 = enable_fp16
+
+
+class UnetConfiguaration():
+    def __init__(self, H: int,
+                 W: int,
+                 num_downs: int,
+                 message_length: int,
+                 encoder_loss_coff: float):
+        self.H = H
+        self.W = W
+        self.num_downs = num_downs
+        self.message_length = message_length
+        self.encoder_loss_coeff = encoder_loss_coff

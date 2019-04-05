@@ -1,12 +1,8 @@
-import torch
 import torch.nn
 import argparse
-import os
-import numpy as np
-from options import HiDDenConfiguration
 
 import utils
-from model.hidden import *
+from model.hidden.hidden import *
 from noise_layers.noiser import Noiser
 from PIL import Image
 import torchvision.transforms.functional as TF

@@ -1,14 +1,11 @@
 import os
-import time
-import pprint
 import argparse
 import torch
 import numpy as np
-import pickle
 import utils
 import csv
 
-from model.hidden import Hidden
+from model.hidden.hidden import Hidden
 from noise_layers.noiser import Noiser
 from average_meter import AverageMeter
 
@@ -59,7 +56,7 @@ def main():
         utils.model_from_checkpoint(model, checkpoint)
 
         print('Model loaded successfully. Starting validation run...')
-        _, val_data = utils.get_data_loaders(hidden_config, train_options)
+        _, val_data = utils.get_data_loaders((hidden_config.H, hidden_config.W), train_options)
         file_count = len(val_data.dataset)
         if file_count % train_options.batch_size == 0:
             steps_in_epoch = file_count // train_options.batch_size

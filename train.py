@@ -7,7 +7,7 @@ import logging
 from collections import defaultdict
 
 from options import *
-from model.hidden import Hidden
+from model.hidden.hidden import Hidden
 from average_meter import AverageMeter
 
 
@@ -29,7 +29,7 @@ def train(model: Hidden,
     :return:
     """
 
-    train_data, val_data = utils.get_data_loaders(hidden_config, train_options)
+    train_data, val_data = utils.get_data_loaders((hidden_config.H, hidden_config.W), train_options)
     file_count = len(train_data.dataset)
     if file_count % train_options.batch_size == 0:
         steps_in_epoch = file_count // train_options.batch_size

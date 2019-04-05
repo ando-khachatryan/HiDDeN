@@ -8,15 +8,15 @@ import logging
 import sys
 
 from options import *
-from model.hidden import Hidden
+from model.hidden.hidden import Hidden
 from noise_layers.noiser import Noiser
 from noise_argparser import NoiseArgParser
-
 from train import train
 
 
 def main():
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+
 
     parent_parser = argparse.ArgumentParser(description='Training of HiDDeN nets')
     subparsers = parent_parser.add_subparsers(dest='command', help='Sub-parser for commands')
@@ -30,10 +30,6 @@ def main():
     new_run_parser.add_argument('--size', '-s', default=128, type=int,
                                 help='The size of the images (images are square so this is height and width).')
     new_run_parser.add_argument('--message', '-m', default=30, type=int, help='The length in bits of the watermark.')
-    new_run_parser.add_argument('--continue-from-folder', '-c', default='', type=str,
-                                help='The folder from where to continue a previous run. Leave blank if you are starting a new experiment.')
-    # parser.add_argument('--tensorboard', dest='tensorboard', action='store_true',
-    #                     help='If specified, use adds a Tensorboard log. On by default')
     new_run_parser.add_argument('--tensorboard', action='store_true',
                                 help='Use to switch on Tensorboard logging.')
     new_run_parser.add_argument('--enable-fp16', dest='enable_fp16', action='store_true',

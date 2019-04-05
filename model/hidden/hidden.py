@@ -3,8 +3,8 @@ import torch
 import torch.nn as nn
 
 from options import HiDDenConfiguration
-from model.discriminator import Discriminator
-from model.encoder_decoder import EncoderDecoder
+from model.hidden.discriminator import Discriminator
+from model.hidden.encoder_decoder import EncoderDecoder
 from vgg_loss import VGGLoss
 from noise_layers.noiser import Noiser
 
@@ -42,7 +42,6 @@ class Hidden:
 
         self.tb_logger = tb_logger
         if tb_logger is not None:
-            from tensorboard_logger import TensorBoardLogger
             encoder_final = self.encoder_decoder.encoder._modules['final_layer']
             encoder_final.weight.register_hook(tb_logger.grad_hook_by_name('grads/encoder_out'))
             decoder_final = self.encoder_decoder.decoder._modules['linear']

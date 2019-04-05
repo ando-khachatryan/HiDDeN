@@ -13,7 +13,7 @@ from torch.utils import data
 import torch.nn.functional as F
 
 from options import HiDDenConfiguration, TrainingOptions
-from model.hidden import Hidden
+from model.hidden.hidden import Hidden
 
 
 def image_to_tensor(image):
@@ -119,17 +119,18 @@ def load_options(options_file_name) -> (TrainingOptions, HiDDenConfiguration, di
     return train_options, hidden_config, noise_config
 
 
-def get_data_loaders(hidden_config: HiDDenConfiguration, train_options: TrainingOptions):
+def get_data_loaders(image_size: tuple, train_options: TrainingOptions):
     """ Get torch data loaders for training and validation. The data loaders take a crop of the image,
     transform it into tensor, and normalize it."""
+    height, width = image_size
     data_transforms = {
         'train': transforms.Compose([
-            transforms.RandomCrop((hidden_config.H, hidden_config.W), pad_if_needed=True),
+            transforms.RandomCrop((height, width), pad_if_needed=True),
             transforms.ToTensor(),
             transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])
         ]),
         'test': transforms.Compose([
-            transforms.CenterCrop((hidden_config.H, hidden_config.W)),
+            transforms.CenterCrop((height, width)),
             transforms.ToTensor(),
             transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])
         ])
@@ -182,3 +183,4 @@ def write_losses(file_name, losses_accu, epoch, duration):
         row_to_write = [epoch] + ['{:.4f}'.format(loss_avg.avg) for loss_avg in losses_accu.values()] + [
             '{:.0f}'.format(duration)]
         writer.writerow(row_to_write)
+
