@@ -63,9 +63,10 @@ def yuv2rgb(image_yuv, image_rgb_out):
 
 
 class JpegCompression(nn.Module):
-    def __init__(self, device: torch.device, yuv_keep_weights = (25, 9, 9)):
+    def __init__(self, device, yuv_keep_weights = (25, 9, 9)):
         super(JpegCompression, self).__init__()
         self.device = device
+
         self.dct_conv_weights = torch.tensor(gen_filters(8, 8, dct_coeff), dtype=torch.float32).to(self.device)
         self.dct_conv_weights.unsqueeze_(1)
         self.idct_conv_weights = torch.tensor(gen_filters(8, 8, idct_coeff), dtype=torch.float32).to(self.device)

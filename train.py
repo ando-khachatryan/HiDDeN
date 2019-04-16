@@ -50,10 +50,6 @@ def train(model: Hidden,
             image = image.to(device)
             message = torch.Tensor(np.random.choice([0, 1], (image.shape[0], hidden_config.message_length))).to(device)
             losses, _ = model.train_on_batch([image, message])
-            # if not losses_accu:  # dict is empty, initialize
-            #     for name in losses:
-            #         # losses_accu[name] = []
-            #         losses_accu[name] = AverageMeter()
 
             for name, loss in losses.items():
                 training_losses[name].update(loss)
@@ -80,9 +76,6 @@ def train(model: Hidden,
             image = image.to(device)
             message = torch.Tensor(np.random.choice([0, 1], (image.shape[0], hidden_config.message_length))).to(device)
             losses, (encoded_images, noised_images, decoded_messages) = model.validate_on_batch([image, message])
-            # if not losses_accu:  # dict is empty, initialize
-            #     for name in losses:
-            #         losses_accu[name] = AverageMeter()
             for name, loss in losses.items():
                 validation_losses[name].update(loss)
             if first_iteration:
@@ -100,8 +93,3 @@ def train(model: Hidden,
         utils.save_checkpoint(model, train_options.experiment_name, epoch, os.path.join(this_run_folder, 'checkpoints'))
         utils.write_losses(os.path.join(this_run_folder, 'validation.csv'), validation_losses, epoch,
                            time.time() - epoch_start)
-
-        # if epoch % 10 == 0:
-        #     sleep_sec = 5 * 60
-        #     logging.info(f'\nSleeping for {sleep_sec} seconds to cool down the GPU\n')
-        #     time.sleep(sleep_sec)

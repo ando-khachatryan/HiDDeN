@@ -1,5 +1,12 @@
 import argparse
 import re
+from noise_layers.cropout import Cropout
+from noise_layers.crop import Crop
+from noise_layers.identity import Identity
+from noise_layers.dropout import Dropout
+from noise_layers.resize import Resize
+from noise_layers.quantization import Quantization
+from noise_layers.jpeg_compression import JpegCompression
 
 
 def parse_pair(match_groups):
@@ -15,27 +22,12 @@ def parse_pair(match_groups):
 def parse_crop(crop_command):
     matches = re.match(r'crop\(\((\d+\.*\d*,\d+\.*\d*)\),\((\d+\.*\d*,\d+\.*\d*)\)\)', crop_command)
     (hmin, hmax), (wmin, wmax) = parse_pair(matches.groups())
-    return {
-        'type': 'crop',
-        'height_ratios': (hmin, hmax),
-        'width_ratios': (wmin, wmax)
-    }
-
+    return Crop((hmin, hmax), (wmin, wmax))
 
 def parse_cropout(cropout_command):
     matches = re.match(r'cropout\(\((\d+\.*\d*,\d+\.*\d*)\),\((\d+\.*\d*,\d+\.*\d*)\)\)', cropout_command)
-    heights = matches.groups()[0].split(',')
-    hmin = float(heights[0])
-    hmax = float(heights[1])
-    widths = matches.groups()[1].split(',')
-    wmin = float(widths[0])
-    wmax = float(widths[1])
-
-    return {
-        'type': 'cropout',
-        'height_ratios': (hmin, hmax),
-        'width_ratios': (wmin, wmax)
-    }
+    (hmin, hmax), (wmin, wmax) = parse_pair(matches.groups())
+    return Cropout((hmin, hmax), (wmin, wmax))
 
 
 def parse_dropout(dropout_command):
@@ -43,21 +35,14 @@ def parse_dropout(dropout_command):
     ratios = matches.groups()[0].split(',')
     keep_min = float(ratios[0])
     keep_max = float(ratios[1])
-    return {
-        'type': 'dropout',
-        'keep_ratio_range': (keep_min, keep_max)
-    }
-
+    return Dropout((keep_min, keep_max))
 
 def parse_resize(resize_command):
     matches = re.match(r'resize\((\d+\.*\d*,\d+\.*\d*)\)', resize_command)
     ratios = matches.groups()[0].split(',')
     min_ratio = float(ratios[0])
     max_ratio = float(ratios[1])
-    return {
-        'type': 'resize',
-        'resize_ratio_range': (min_ratio, max_ratio)
-    }
+    return Resize((min_ratio, max_ratio))
 
 
 class NoiseArgParser(argparse.Action):
@@ -103,29 +88,20 @@ class NoiseArgParser(argparse.Action):
             # remove all whitespace
             command = command.replace(' ', '')
             if command[:len('cropout')] == 'cropout':
-                cropout_descriptor = parse_cropout(command)
-                layers.append(cropout_descriptor)
+                layers.append(parse_cropout(command))
             elif command[:len('crop')] == 'crop':
-                crop_descriptor = parse_crop(command)
-                layers.append(crop_descriptor)
+                layers.append(parse_crop(command))
             elif command[:len('dropout')] == 'dropout':
-                dropout_descriptor = parse_dropout(command)
-                layers.append(dropout_descriptor)
+                layers.append(parse_dropout(command))
             elif command[:len('resize')] == 'resize':
-                resize_descriptor = parse_resize(command)
-                layers.append(resize_descriptor)
+                layers.append(parse_resize(command))
             elif command[:len('jpeg')] == 'jpeg':
-                layers.append({
-                    'type': 'jpeg_compression'
-                })
+                layers.append('JpegPlaceholder')
+            elif command[:len('quant')] == 'quant':
+                layers.append('QuantizationPlaceholder')
             elif command[:len('identity')] == 'identity':
-                layers.append({
-                    'type': 'identity'
-                })
-            elif command[:len('quant')] == 'quant' or command[:len('quantization')] == 'quantization':
-                layers.append({
-                    'type': 'quantization'
-                })
+                # We are adding one Identity() layer in Noiser anyway
+                pass
             else:
                 raise ValueError('Command not recognized: \n{}'.format(command))
         setattr(namespace, self.dest, layers)
