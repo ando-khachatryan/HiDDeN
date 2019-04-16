@@ -54,7 +54,7 @@ def main():
         checkpoint, chpt_file_name = utils.load_last_checkpoint(os.path.join(current_run, 'checkpoints'))
         print(f'Loaded checkpoint from file {chpt_file_name}')
 
-        noiser = Noiser(noise_config, device)
+        noiser = Noiser(noise_config)
         model = Hidden(hidden_config, device, noiser, tb_logger=None)
         utils.model_from_checkpoint(model, checkpoint)
 

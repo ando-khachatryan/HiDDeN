@@ -15,8 +15,10 @@ def transform(tensor, target_range):
 
 
 class Quantization(nn.Module):
-    def __init__(self, device):
+    def __init__(self, device=None):
         super(Quantization, self).__init__()
+        device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+
         self.min_value = 0.0
         self.max_value = 255.0
         self.N = 10
