@@ -62,8 +62,8 @@ python main.py new --name 'combined-noise' --data-dir /data/ --batch-size 12 --n
 ```
 runs the training with the following noise layers applied to each watermarked image: crop, then cropout, then dropout, then jpeg compression. The parameters of the layers are explained below. **It is important to use the quotes around the noise configuration. Also, avoid redundant spaces** If you want to stack several noise layers, specify them using + in the noise configuration, as shown in the example. 
 
-**Important**
-In the paper, when using combined noise (several noise layers), for each batch, a single layer is picked randomly and applied. Instead, we apply ALL the layers in exactly the order as specified in the --noise argument. I plan to change enable support for the original approach as well.
+**Update 16.04.2019**
+Prior to this, the noise layers in our implementation worked sequentially, that is, resize(...)+jpeg() first resized the image and then applied jpeg compression. This is different from the behaviour described in the paper. From 16.04.2019, this has been changed. Now, if several noise layers are specified, one of them is picked at random and applied to the batch.
 
 ### Noise Layer paremeters
 * _Crop((height_min,height_max),(width_min,width_max))_, where **_(height_min,height_max)_** is a range from which we draw a random number and keep that fraction of the height of the original image. **_(width_min,width_max)_** controls the same for the width of the image. 
@@ -94,19 +94,17 @@ This table summarizes experimental runs. Detailed information about the runs can
 |experiment_name | loss | encoder_mse | bitwise-error | dec_mse | epoch |
 |----------------------------|----------------|----------------|------------------------|-------------|----------------|
 |crop(0.2-0.25) | 0.046 | 0.0019 | 0.0603 | 0.0435 | 300 |
-|crop(0.5-0.6)+jpeg | 0.0433 | 0.0039 | 0.0325 | 0.0388 | 300 |
-|crop(0.6-0.65)+jpeg | 0.06 | 0.0044 | 0.0612 | 0.0547 | 300 |
-|crop(0.5-0.6)+resize(0.7-0.8)+jpeg-batch-12 | 0.0924 | 0.0053 | 0.1158 | 0.087 | 400 |
 |cropout(0.55-0.6) | 0.071 | 0.0011 | 0.0647 | 0.0662 | 300 |
 |dropout(0.55-0.6) | 0.033 | 0.0019 | 0.008 | 0.0298 | 300 |
 |jpeg | 0.0272 | 0.0025 | 0.0096 | 0.0253 | 300 | 
-|resize(0.3-0.5)+jpeg | 0.0664 | 0.0098 | 0.0503 | 0.0575 | 400 | 
 |resize(0.7-0.8) | 0.0251 | 0.0016 | 0.0052 | 0.0238 | 300 | 
+|combined-noise| 0.1681 | 0.0028 | 0.2109 | 0.1648 | 400 | 
 
 
 * **No noise** means no noise layers.
 * **Crop((0.2,0.25),...)** is shorthand for Crop((0.2,0.25),(0.2,0.25)). This means that the height and the weight of the cropped image have the expected value of (0.25 + 0.2)/2 = 0.225. Therefore, the ratio of (expected) area of the  Cropped image against the original image is 0.225x0.225 ≈ 0.05. The paper used p = 0.035.
 * **Cropout((0.55,0.6),...)** is a shorhand for Cropout((0.55,0.6),(0.55,0.6)). Similar to Crop(...), this translates to ratio of Cropped vs original image areas with p ≈ 0.33. The paper used p = 0.3
 * **Jpeg** the same as the Jpeg layer from the paper. It is a differentiable approximation of Jpeg compression with the highest compression coefficient.
+* **combined-noise** is the configuration 'crop((0.4,0.55),(0.4,0.55))+cropout((0.25,0.35),(0.25,0.35))+dropout(0.25,0.35)+resize(0.4,0.6)+jpeg()'. This is somewhat similar to combined noise configuation in the paper. 
 
 
