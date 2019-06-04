@@ -155,6 +155,6 @@ class JpegCompression(nn.Module):
         yuv2rgb(image_idct, image_ret_padded)
 
         # un-pad
-        noised_and_cover[0] = image_ret_padded[:, :, :image_ret_padded.shape[2]-pad_height, :image_ret_padded.shape[3]-pad_width].clone()
+        image_jpg = image_ret_padded[:, :, :image_ret_padded.shape[2]-pad_height, :image_ret_padded.shape[3]-pad_width].clone()
 
-        return noised_and_cover
+        return image_jpg

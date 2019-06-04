@@ -13,7 +13,6 @@ from torch.utils import data
 import torch.nn.functional as F
 
 from options import HiDDenConfiguration, TrainingOptions
-from model.hidden.hidden import Hidden
 
 
 def image_to_tensor(image):
@@ -70,14 +69,17 @@ def last_checkpoint_from_folder(folder: str):
     return last_file
 
 
-def save_checkpoint(model: Hidden, experiment_name: str, epoch: int, checkpoint_folder: str):
-    """ Saves a checkpoint at the end of an epoch. """
+def update_checkpoint(model, experiment_name: str, epoch: int, checkpoint_folder: str, checkpoint_type: str):
+    """Updates a checkpoint, or creates a new one if none exists"""
     if not os.path.exists(checkpoint_folder):
         os.makedirs(checkpoint_folder)
 
-    checkpoint_filename = f'{experiment_name}--epoch-{epoch}.pyt'
+    if checkpoint_type not in ['last', 'best']:
+        raise ValueError(
+            f'Only supported checkpoint types are "last" and "best", but checkpoint_type was "{checkpoint_type}"')
+
+    checkpoint_filename = f'{experiment_name}--{checkpoint_type}.pyt'
     checkpoint_filename = os.path.join(checkpoint_folder, checkpoint_filename)
-    logging.info('Saving checkpoint to {}'.format(checkpoint_filename))
     checkpoint = {
         'enc-dec-model': model.encoder_decoder.state_dict(),
         'enc-dec-optim': model.optimizer_enc_dec.state_dict(),
@@ -85,11 +87,14 @@ def save_checkpoint(model: Hidden, experiment_name: str, epoch: int, checkpoint_
         'discrim-optim': model.optimizer_discrim.state_dict(),
         'epoch': epoch
     }
+    if not os.path.isfile(checkpoint_filename):
+        logging.info(f'Saving {checkpoint_type }checkpoint to {checkpoint_filename}')
+    else:
+        logging.info(f'Overwriting {checkpoint_type} checkpoint file: {checkpoint_filename}, epoch: {epoch}')
     torch.save(checkpoint, checkpoint_filename)
-    logging.info('Saving checkpoint done.')
+    logging.info('Checkpoint save/update done.')
 
 
-# def load_checkpoint(hidden_net: Hidden, options: Options, this_run_folder: str):
 def load_last_checkpoint(checkpoint_folder):
     """ Load the last checkpoint from the given folder """
     last_checkpoint_file = last_checkpoint_from_folder(checkpoint_folder)
@@ -98,17 +103,17 @@ def load_last_checkpoint(checkpoint_folder):
     return checkpoint, last_checkpoint_file
 
 
-def model_from_checkpoint(hidden_net, checkpoint):
-    """ Restores the hidden_net object from a checkpoint object """
-    hidden_net.encoder_decoder.load_state_dict(checkpoint['enc-dec-model'])
-    hidden_net.optimizer_enc_dec.load_state_dict(checkpoint['enc-dec-optim'])
-    hidden_net.discriminator.load_state_dict(checkpoint['discrim-model'])
-    hidden_net.optimizer_discrim.load_state_dict(checkpoint['discrim-optim'])
+def model_from_checkpoint(model, checkpoint):
+    """ Restores the network object from a checkpoint object """
+    model.encoder_decoder.load_state_dict(checkpoint['enc-dec-model'])
+    model.optimizer_enc_dec.load_state_dict(checkpoint['enc-dec-optim'])
+    model.discriminator.load_state_dict(checkpoint['discrim-model'])
+    model.optimizer_discrim.load_state_dict(checkpoint['discrim-optim'])
 
 
 def load_options(options_file_name) -> (TrainingOptions, HiDDenConfiguration, dict):
-    """ Loads the training, model, and noise configurations from the given folder """
-    with open(os.path.join(options_file_name), 'rb') as f:
+    """ Loads the training, model, and noise configurations from the given file """
+    with open(options_file_name, 'rb') as f:
         train_options = pickle.load(f)
         noise_config = pickle.load(f)
         hidden_config = pickle.load(f)
@@ -119,18 +124,17 @@ def load_options(options_file_name) -> (TrainingOptions, HiDDenConfiguration, di
     return train_options, hidden_config, noise_config
 
 
-def get_data_loaders(image_size: tuple, train_options: TrainingOptions):
+def get_data_loaders(train_options: TrainingOptions):
     """ Get torch data loaders for training and validation. The data loaders take a crop of the image,
     transform it into tensor, and normalize it."""
-    height, width = image_size
     data_transforms = {
         'train': transforms.Compose([
-            transforms.RandomCrop((height, width), pad_if_needed=True),
+            transforms.RandomCrop((train_options.image_height, train_options.image_width), pad_if_needed=True),
             transforms.ToTensor(),
             transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])
         ]),
         'test': transforms.Compose([
-            transforms.CenterCrop((height, width)),
+            transforms.CenterCrop((train_options.image_height, train_options.image_width)),
             transforms.ToTensor(),
             transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])
         ])
@@ -147,25 +151,26 @@ def get_data_loaders(image_size: tuple, train_options: TrainingOptions):
     return train_loader, validation_loader
 
 
-def log_progress(losses_accu):
-    log_print_helper(losses_accu, logging.info)
+# TODO: Remove
+# def log_print_helper(losses_accu, log_or_print_func):
+#     max_len = max([len(loss_name) for loss_name in losses_accu])
+#     for loss_name, loss_value in losses_accu.items():
+#         log_or_print_func(loss_name.ljust(max_len + 4) + '{:.4f}'.format(loss_value.avg))
 
 
-def print_progress(losses_accu):
-    log_print_helper(losses_accu, print)
-
-
-def log_print_helper(losses_accu, log_or_print_func):
-    max_len = max([len(loss_name) for loss_name in losses_accu])
-    for loss_name, loss_value in losses_accu.items():
-        log_or_print_func(loss_name.ljust(max_len + 4) + '{:.4f}'.format(loss_value.avg))
+def losses_to_string(losses):
+    max_len = max([len(loss_name) for loss_name in losses])
+    log_strings = []
+    for loss_name, loss_value in losses.items():
+        log_strings.append(loss_name.ljust(max_len + 4) + '{:.4f}'.format(loss_value.avg))
+    return '\n'.join(log_strings)
 
 
 def create_folder_for_run(runs_folder, experiment_name):
     if not os.path.exists(runs_folder):
         os.makedirs(runs_folder)
 
-    this_run_folder = os.path.join(runs_folder, f'{experiment_name} {time.strftime("%Y.%m.%d--%H-%M-%S")}')
+    this_run_folder = os.path.join(runs_folder, f'{time.strftime("%Y.%m.%d--%H-%M-%S")} {experiment_name} ')
 
     os.makedirs(this_run_folder)
     os.makedirs(os.path.join(this_run_folder, 'checkpoints'))
@@ -184,3 +189,8 @@ def write_losses(file_name, losses_accu, epoch, duration):
             '{:.0f}'.format(duration)]
         writer.writerow(row_to_write)
 
+
+def expand_message(message, spatial_height, spatial_width):
+    expanded_message = message.unsqueeze(-1)
+    expanded_message.unsqueeze_(-1)
+    return expanded_message.expand(-1, -1, spatial_height, spatial_width)

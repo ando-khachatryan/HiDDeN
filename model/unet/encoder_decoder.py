@@ -10,15 +10,16 @@ class UnetEncoderDecoder(nn.Module):
     def __init__(self, configuration: UnetConfiguaration, noiser: Noiser):
         super(UnetEncoderDecoder, self).__init__()
         self.encoder = UnetGenerator(input_nc=configuration.message_length+3, output_nc=3,
-                                     num_downs=configuration.num_downs)
+                                     num_downs=configuration.num_downs,
+                                     message_length=configuration.message_length)
         self.noiser = noiser
-        self.decoder = RevealNet()
+        self.decoder = RevealNet(configuration.message_length)
 
 
     def forward(self, image, message):
         encoded_image = self.encoder(image, message)
         if self.noiser is not None:
-            noised_image = self.noiser(encoded_image)
+            noised_image = self.noiser([encoded_image, image])
         else:
             noised_image = encoded_image
 

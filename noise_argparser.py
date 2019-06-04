@@ -70,13 +70,6 @@ class NoiseArgParser(argparse.Action):
                                  metavar=metavar,
                                  )
 
-    @staticmethod
-    def parse_cropout_args(cropout_args):
-        pass
-
-    @staticmethod
-    def parse_dropout_args(dropout_args):
-        pass
 
     def __call__(self, parser, namespace, values,
                  option_string=None):

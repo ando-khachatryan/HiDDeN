@@ -9,4 +9,4 @@ class Identity(nn.Module):
         super(Identity, self).__init__()
 
     def forward(self, noised_and_cover):
-        return noised_and_cover
+        return noised_and_cover[0]

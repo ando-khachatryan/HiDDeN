@@ -1,31 +1,24 @@
-
 import torch.nn as nn
+from model.conv_bn_relu import ConvBNRelu
 
 
 class RevealNet(nn.Module):
-    def __init__(self, channels_in = 3, nhf=64, output_function=nn.Sigmoid):
+    def __init__(self, message_length, input_channels=3, decoder_inner_channels=64, decoder_inner_blocks=7):
         super(RevealNet, self).__init__()
+        layers = [ConvBNRelu(input_channels, decoder_inner_channels)]
 
-        self.layers = nn.Sequential(
-            nn.Conv2d(channels_in, nhf, 3, 1, 1),
-            nn.BatchNorm2d(nhf),
-            nn.ReLU(True),
-            nn.Conv2d(nhf, nhf * 2, 3, 1, 1),
-            nn.BatchNorm2d(nhf*2),
-            nn.ReLU(True),
-            nn.Conv2d(nhf * 2, nhf * 4, 3, 1, 1),
-            nn.BatchNorm2d(nhf*4),
-            nn.ReLU(True),
-            nn.Conv2d(nhf * 4, nhf * 2, 3, 1, 1),
-            nn.BatchNorm2d(nhf*2),
-            nn.ReLU(True),
-            nn.Conv2d(nhf * 2, nhf, 3, 1, 1),
-            nn.BatchNorm2d(nhf),
-            nn.ReLU(True),
-            nn.Conv2d(in_channels=nhf, out_channels=1, kernel_size=1, stride=1, padding=0),
-            output_function()
-        )
+        for _ in range(decoder_inner_blocks):
+            layers.append(ConvBNRelu(decoder_inner_channels, decoder_inner_channels))
+
+        layers.append(nn.AdaptiveAvgPool2d(output_size=(1,1)))
+        self.model = nn.Sequential(*layers)
+        self.linear = nn.Linear(decoder_inner_channels, message_length)
+
 
     def forward(self, input):
-        output=self.layers(input)
-        return output
+        decoded_message = self.model(input)
+        # TODO: consider inplace
+        decoded_message = decoded_message.squeeze(-1)
+        decoded_message = decoded_message.squeeze(-1)
+        decoded_message = self.linear(decoded_message)
+        return decoded_message

@@ -4,16 +4,11 @@
 Adapted from https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix/blob/master/models/networks.py
 
 """
-
 import functools
-
 import torch
 import torch.nn as nn
 
-
-def expand_message(message, spatial_height, spatial_width):
-    expanded_message = message.unsqueeze(-1).unsqueeze_(-1)
-    return expanded_message.expand(-1, -1, spatial_height, spatial_width)
+from utils import expand_message
 
 
 # Defines the Unet generator.
@@ -22,27 +17,39 @@ def expand_message(message, spatial_height, spatial_width):
 # at the bottleneck
 
 class UnetGenerator(nn.Module):
-    def __init__(self, input_nc:int, output_nc:int, num_downs:int, message_length:int,
-                 ngf:int=64, norm_layer=nn.BatchNorm2d, use_dropout:bool=False, output_function=nn.Sigmoid):
+    def __init__(self, input_nc: int, output_nc: int, num_downs: int, message_length: int,
+                 ngf: int = 64, output_function=nn.Tanh):
+        # def __init__(self, input_nc: int, output_nc: int, num_downs: int, message_length: int,
+        #              ngf: int = 64, norm_layer=nn.BatchNorm2d, use_dropout: bool = False, output_function=nn.Sigmoid):
         super(UnetGenerator, self).__init__()
-        # construct unet structure
-        unet_block = UnetSkipConnectionBlock(ngf * 8, ngf * 8, input_nc=None, submodule=None, norm_layer=norm_layer,
+
+        norm_layer = nn.BatchNorm2d
+        use_dropout = False
+
+        unet_block = UnetSkipConnectionBlock(outer_nc=ngf * 8, inner_nc=ngf * 8, input_nc=ngf * 8 + message_length,
+                                             submodule=None,
+                                             norm_layer=norm_layer,
                                              innermost=True)
         for i in range(num_downs - 5):
-            unet_block = UnetSkipConnectionBlock(ngf * 8, ngf * 8, input_nc=None, submodule=unet_block,
+            unet_block = UnetSkipConnectionBlock(outer_nc=ngf * 8, inner_nc=ngf * 8, input_nc=ngf * 8 + message_length,
+                                                 submodule=unet_block,
                                                  norm_layer=norm_layer, use_dropout=use_dropout)
-        unet_block = UnetSkipConnectionBlock(ngf * 4, ngf * 8, input_nc=None, submodule=unet_block,
+        unet_block = UnetSkipConnectionBlock(outer_nc=ngf * 4, inner_nc=ngf * 8, input_nc=ngf * 4 + message_length,
+                                             submodule=unet_block,
                                              norm_layer=norm_layer)
-        unet_block = UnetSkipConnectionBlock(ngf * 2, ngf * 4, input_nc=None, submodule=unet_block,
+        unet_block = UnetSkipConnectionBlock(outer_nc=ngf * 2, inner_nc=ngf * 4, input_nc=ngf * 2 + message_length,
+                                             submodule=unet_block,
                                              norm_layer=norm_layer)
-        unet_block = UnetSkipConnectionBlock(ngf, ngf * 2, input_nc=None, submodule=unet_block, norm_layer=norm_layer)
-        unet_block = UnetSkipConnectionBlock(output_nc, ngf, input_nc=input_nc, submodule=unet_block, outermost=True,
+        unet_block = UnetSkipConnectionBlock(outer_nc=ngf, inner_nc=ngf * 2, input_nc=ngf + message_length,
+                                             submodule=unet_block, norm_layer=norm_layer)
+        unet_block = UnetSkipConnectionBlock(outer_nc=output_nc, inner_nc=ngf, input_nc=input_nc, submodule=unet_block,
+                                             outermost=True,
                                              norm_layer=norm_layer, output_function=output_function)
 
         self.model = unet_block
 
-    def forward(self, images, messages):
-        return self.model(images, messages)
+    def forward(self, image, message):
+        return self.model(image, message)
 
 
 # Defines the submodule with skip connection.
@@ -91,21 +98,28 @@ class UnetSkipConnectionBlock(nn.Module):
             up = [uprelu, upconv, upnorm]
 
             if use_dropout:
-                model = down + [submodule] + up + [nn.Dropout(0.5)]
-            else:
-                model = down + [submodule] + up
+                up.append(nn.Dropout(0.5))
 
-        self.model = nn.Sequential(*model)
+        self.down = nn.Sequential(*down)
+        self.submodule = submodule
+        self.up = nn.Sequential(*up)
+        # self.model = nn.Sequential(*model)
 
     def forward(self, x, message):
-        if self.outermost:
-            # expanded_message = expand_message(message, x.shape[2], x.shape[3])
-            # return self.model(torch.cat((x, expanded_message), 1), message)
-            return self.model(x, message)
-        else:
-            model_out = self.model(x, message)
-            expanded_message = expand_message(message, x.shape[2], x.shape[3])
-            return torch.cat((x, model_out, expanded_message), 1)
+        expanded_message = expand_message(message, x.shape[2], x.shape[3])
+        x_cat = torch.cat((x, expanded_message), 1)
+        image_down = self.down(x_cat)
+        if self.submodule is not None: # means we are at the innermost module
+            image_down = self.submodule(image_down, message)
+        image_up = self.up(image_down)
+        if not self.outermost:
+            image_up = torch.cat([image_up, x], 1)
+        return image_up
+
+        # else:
+        #     model_out = self.model(x, message)
+        #     expanded_message = expand_message(message, x.shape[2], x.shape[3])
+        #     return torch.cat((x, model_out, expanded_message), 1)
 
     # def forward(self, x):
     #     if self.outermost:

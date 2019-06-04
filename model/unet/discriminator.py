@@ -1,21 +1,21 @@
 import torch.nn as nn
-from options import HiDDenConfiguration
 from model.conv_bn_relu import ConvBNRelu
+from options import UnetConfiguaration
 
 class Discriminator(nn.Module):
     """
     Discriminator network. Receives an image and has to figure out whether it has a watermark inserted into it, or not.
     """
-    def __init__(self, config: HiDDenConfiguration):
+    def __init__(self, config: UnetConfiguaration):
         super(Discriminator, self).__init__()
-
-        layers = [ConvBNRelu(3, config.discriminator_channels)]
+        discriminator_channels = 64
+        layers = [ConvBNRelu(3, discriminator_channels)]
         for _ in range(config.discriminator_blocks-1):
-            layers.append(ConvBNRelu(config.discriminator_channels, config.discriminator_channels))
+            layers.append(ConvBNRelu(discriminator_channels, discriminator_channels))
 
         layers.append(nn.AdaptiveAvgPool2d(output_size=(1, 1)))
         self.before_linear = nn.Sequential(*layers)
-        self.linear = nn.Linear(config.discriminator_channels, 1)
+        self.linear = nn.Linear(discriminator_channels, 1)
 
     def forward(self, image):
         X = self.before_linear(image)

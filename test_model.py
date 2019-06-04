@@ -52,7 +52,7 @@ def main():
     # for t in range(args.times):
     message = torch.Tensor(np.random.choice([0, 1], (image_tensor.shape[0],
                                                     hidden_config.message_length))).to(device)
-    losses, (encoded_images, noised_images, decoded_messages) = hidden_net.validate_on_batch([image_tensor, message])
+    losses, (encoded_images, noised_images, decoded_messages) = hidden_net.validate_on_batch(image_tensor, message)
     decoded_rounded = decoded_messages.detach().cpu().numpy().round().clip(0, 1)
     message_detached = message.detach().cpu().numpy()
     print('original: {}'.format(message_detached))

@@ -24,5 +24,4 @@ class Cropout(nn.Module):
                                                                      width_ratio_range=self.width_ratio_range)
         cropout_mask[:, :, h_start:h_end, w_start:w_end] = 1
 
-        noised_and_cover[0] = noised_image * cropout_mask + cover_image * (1-cropout_mask)
-        return  noised_and_cover
+        return noised_image * cropout_mask + cover_image * (1-cropout_mask)

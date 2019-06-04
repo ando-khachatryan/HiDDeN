@@ -18,7 +18,7 @@ class Noiser(nn.Module):
                 if layer == 'JpegPlaceholder':
                     self.noise_layers.append(JpegCompression(device))
                 elif layer == 'QuantizationPlaceholder':
-                    self.noise_layers.append(Quantization(device))
+                    self.noise_layers.append(Quantization(fourier_coeff_count=10, target_range=(0,255)).to(device))
                 else:
                     raise ValueError(f'Wrong layer placeholder string in Noiser.__init__().'
                                      f' Expected "JpegPlaceholder" or "QuantizationPlaceholder" but got {layer} instead')

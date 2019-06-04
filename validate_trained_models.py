@@ -56,7 +56,7 @@ def main():
         utils.model_from_checkpoint(model, checkpoint)
 
         print('Model loaded successfully. Starting validation run...')
-        _, val_data = utils.get_data_loaders((hidden_config.H, hidden_config.W), train_options)
+        _, val_data = utils.get_data_loaders(train_options)
         file_count = len(val_data.dataset)
         if file_count % train_options.batch_size == 0:
             steps_in_epoch = file_count // train_options.batch_size
@@ -69,8 +69,7 @@ def main():
             step += 1
             image = image.to(device)
             message = torch.Tensor(np.random.choice([0, 1], (image.shape[0], hidden_config.message_length))).to(device)
-            losses, (encoded_images, noised_images, decoded_messages) = model.validate_on_batch([image, message],
-                                                                                                set_eval_mode=True)
+            losses, (encoded_images, noised_images, decoded_messages) = model.validate_on_batch(image, message)
             if not losses_accu:  # dict is empty, initialize
                 for name in losses:
                     losses_accu[name] = AverageMeter()
@@ -78,10 +77,10 @@ def main():
                 losses_accu[name].update(loss)
             if step % print_each == 0 or step == steps_in_epoch:
                 print(f'Step {step}/{steps_in_epoch}')
-                utils.print_progress(losses_accu)
+                print(utils.losses_to_string(losses_accu))
                 print('-' * 40)
 
-        # utils.print_progress(losses_accu)
+
         write_validation_loss(os.path.join(args.runs_root, 'validation_run.csv'), losses_accu, run_name,
                               checkpoint['epoch'],
                               write_header=write_csv_header)
