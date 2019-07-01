@@ -1,8 +1,8 @@
 import numpy as np
 import torch.nn as nn
-from noise_layers.identity import Identity
-from noise_layers.jpeg_compression import JpegCompression
-from noise_layers.quantization import Quantization
+from src.noise_layers.identity import Identity
+from src.noise_layers.jpeg_compression import JpegCompression
+from src.noise_layers.quantization import Quantization
 
 
 class Noiser(nn.Module):

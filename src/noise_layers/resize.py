@@ -1,7 +1,6 @@
 import torch.nn as nn
 import torch.nn.functional as F
-import numpy as np
-from noise_layers.crop import random_float
+from src.noise_layers.crop import random_float
 
 class Resize(nn.Module):
     """

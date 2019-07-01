@@ -1,9 +1,9 @@
 import torch.nn
 import argparse
 
-import utils
-from model.hidden.hidden import *
-from noise_layers.noiser import Noiser
+from src import utils
+from src.model.hidden.hidden import *
+from src.noise_layers.noiser import Noiser
 from PIL import Image
 import torchvision.transforms.functional as TF
 

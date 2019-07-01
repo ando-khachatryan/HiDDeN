@@ -1,8 +1,8 @@
 import torch.nn as nn
-from model.hidden.encoder import Encoder
-from model.hidden.decoder import Decoder
-from options import HiDDenConfiguration
-from noise_layers.noiser import Noiser
+from src.model.hidden.encoder import Encoder
+from src.model.hidden.decoder import Decoder
+from src.options import HiDDenConfiguration
+from src.noise_layers.noiser import Noiser
 
 
 class EncoderDecoder(nn.Module):

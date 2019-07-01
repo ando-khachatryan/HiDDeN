@@ -8,12 +8,12 @@ import sys
 
 import torch
 
-from noise_argparser import NoiseArgParser
-import utils
-from options import *
-from model.unet.unet_model import UnetModel, UnetConfiguaration
-from model.hidden.hidden import Hidden, HiDDenConfiguration
-from noise_layers.noiser import Noiser
+from src.noise_argparser import NoiseArgParser
+from src import utils
+from src.options import *
+from src.model.unet.unet_model import UnetModel, UnetConfiguaration
+from src.model.hidden.hidden import Hidden, HiDDenConfiguration
+from src.noise_layers.noiser import Noiser
 
 
 def create_new_run_subparser(new_run_parser: ArgumentParser):
@@ -140,7 +140,7 @@ def prepare_training(network_type: str):
     if (args.command == 'new' and args.tensorboard) or \
             (args.command == 'continue' and os.path.isdir(os.path.join(this_run_folder, 'tb-logs'))):
         logging.info('Tensorboard is enabled. Creating logger.')
-        from tensorboard_logger import TensorBoardLogger
+        from src.tensorboard_logger import TensorBoardLogger
         tb_logger = TensorBoardLogger(os.path.join(this_run_folder, 'tb-logs'))
     else:
         tb_logger = None

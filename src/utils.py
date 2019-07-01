@@ -12,7 +12,7 @@ import torchvision.utils
 from torch.utils import data
 import torch.nn.functional as F
 
-from options import HiDDenConfiguration, TrainingOptions
+from src.options import HiDDenConfiguration, TrainingOptions
 
 
 def image_to_tensor(image):

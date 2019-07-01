@@ -2,16 +2,16 @@ import time
 import os
 import numpy as np
 from collections import defaultdict
-from average_meter import AverageMeter
+from src.average_meter import AverageMeter
 import logging
 import torch
 # from tqdm import tqdm
 
-import utils
-from options import TrainingOptions
-from model.hidden.hidden import Hidden
-from model.unet.unet_model import UnetModel
-from loss_names import LossNames
+from src import utils
+from src.options import TrainingOptions
+from src.model.hidden.hidden import Hidden
+from src.model.unet.unet_model import UnetModel
+from src.loss_names import LossNames
 
 
 def train(model,

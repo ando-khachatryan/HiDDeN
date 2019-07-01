@@ -1,8 +1,8 @@
 import torch
 import torch.nn as nn
-from options import HiDDenConfiguration
-from model.conv_bn_relu import ConvBNRelu
-from utils import expand_message
+from src.options import HiDDenConfiguration
+from src.model.conv_bn_relu import ConvBNRelu
+from src.utils import expand_message
 
 class Encoder(nn.Module):
     """

@@ -1,6 +1,6 @@
 import torch.nn as nn
-from options import HiDDenConfiguration
-from model.conv_bn_relu import ConvBNRelu
+from src.options import HiDDenConfiguration
+from src.model.conv_bn_relu import ConvBNRelu
 
 
 class Decoder(nn.Module):

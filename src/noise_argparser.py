@@ -1,12 +1,9 @@
 import argparse
 import re
-from noise_layers.cropout import Cropout
-from noise_layers.crop import Crop
-from noise_layers.identity import Identity
-from noise_layers.dropout import Dropout
-from noise_layers.resize import Resize
-from noise_layers.quantization import Quantization
-from noise_layers.jpeg_compression import JpegCompression
+from src.noise_layers.cropout import Cropout
+from src.noise_layers.crop import Crop
+from src.noise_layers.dropout import Dropout
+from src.noise_layers.resize import Resize
 
 
 def parse_pair(match_groups):

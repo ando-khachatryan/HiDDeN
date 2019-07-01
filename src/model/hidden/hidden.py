@@ -3,11 +3,11 @@ import torch
 import torch.nn as nn
 from collections import OrderedDict
 
-from options import HiDDenConfiguration
-from model.hidden.discriminator import Discriminator
-from model.hidden.encoder_decoder import EncoderDecoder
-from noise_layers.noiser import Noiser
-from loss_names import LossNames
+from src.options import HiDDenConfiguration
+from src.model.hidden.discriminator import Discriminator
+from src.model.hidden.encoder_decoder import EncoderDecoder
+from src.noise_layers.noiser import Noiser
+from src.loss_names import LossNames
 
 
 class Hidden:

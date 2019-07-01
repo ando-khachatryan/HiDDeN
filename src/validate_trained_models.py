@@ -2,12 +2,12 @@ import os
 import argparse
 import torch
 import numpy as np
-import utils
+from src import utils
 import csv
 
-from model.hidden.hidden import Hidden
-from noise_layers.noiser import Noiser
-from average_meter import AverageMeter
+from src.model.hidden.hidden import Hidden
+from src.noise_layers.noiser import Noiser
+from src.average_meter import AverageMeter
 
 
 def write_validation_loss(file_name, losses_accu, experiment_name, epoch, write_header=False):

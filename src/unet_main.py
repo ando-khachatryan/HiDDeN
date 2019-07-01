@@ -1,5 +1,5 @@
-from main_helper import prepare_training
-from train import train
+from src.main_helper import prepare_training
+from src.train import train
 
 
 def main():
