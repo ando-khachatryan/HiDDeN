@@ -3,11 +3,11 @@ import torch
 import torch.nn.functional as f
 from collections import OrderedDict
 
-from src.model.unet.encoder_decoder import UnetEncoderDecoder
-from src.model.unet.discriminator import Discriminator
-from src.noise_layers.noiser import Noiser
-from src.options import UnetConfiguaration
-from src.loss_names import LossNames
+from model.unet.encoder_decoder import UnetEncoderDecoder
+from model.unet.discriminator import Discriminator
+from noise_layers.noiser import Noiser
+from options import UnetConfiguaration
+from loss_names import LossNames
 
 # def repeat_message(message, mult):
 #     shape = message.shape

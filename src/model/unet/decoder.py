@@ -1,5 +1,5 @@
 import torch.nn as nn
-from src.model.conv_bn_relu import ConvBNRelu
+from model.conv_bn_relu import ConvBNRelu
 
 
 class RevealNet(nn.Module):

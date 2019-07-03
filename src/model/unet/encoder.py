@@ -8,7 +8,7 @@ import functools
 import torch
 import torch.nn as nn
 
-from src.utils import expand_message
+from utils import expand_message
 
 
 # Defines the Unet generator.

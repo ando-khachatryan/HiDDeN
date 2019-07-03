@@ -1,8 +1,8 @@
 import torch.nn as nn
-from src.model.unet.encoder import UnetGenerator
-from src.model.unet.decoder import RevealNet
-from src.noise_layers.noiser import Noiser
-from src.options import UnetConfiguaration
+from model.unet.encoder import UnetGenerator
+from model.unet.decoder import RevealNet
+from noise_layers.noiser import Noiser
+from options import UnetConfiguaration
 
 
 class UnetEncoderDecoder(nn.Module):

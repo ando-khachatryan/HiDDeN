@@ -1,6 +1,6 @@
 import torch.nn as nn
-from src.model.conv_bn_relu import ConvBNRelu
-from src.options import UnetConfiguaration
+from model.conv_bn_relu import ConvBNRelu
+from options import UnetConfiguaration
 
 class Discriminator(nn.Module):
     """
