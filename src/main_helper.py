@@ -9,7 +9,7 @@ import sys
 import torch
 
 from noise_argparser import NoiseArgParser
-from src import utils
+import utils
 from options import *
 from model.unet.unet_model import UnetModel, UnetConfiguaration
 from model.hidden.hidden import Hidden, HiDDenConfiguration
@@ -19,7 +19,7 @@ from noise_layers.noiser import Noiser
 def create_new_run_subparser(new_run_parser: ArgumentParser):
     new_run_parser.add_argument('--data-dir', '-d', required=True, type=str,
                                 help='The directory where the data is stored.')
-    new_run_parser.add_argument('--batch-size', '-b', required=True, type=int, help='The batch size.')
+    new_run_parser.add_argument('--batch-size', '-b', default=32, type=int, help='The batch size.')
     new_run_parser.add_argument('--epochs', '-e', default=300, type=int, help='Number of epochs to run the simulation.')
     new_run_parser.add_argument('--name', required=True, type=str, help='The name of the experiment.')
 
@@ -59,7 +59,7 @@ def prepare_training(network_type: str):
 
     parent_parser = argparse.ArgumentParser(description='Training of HiDDeN nets')
 
-    subparsers = parent_parser.add_subparsers(dest='command', required=True, help='New simulation or continue existing')
+    subparsers = parent_parser.add_subparsers(dest='command', help='New simulation or continue existing')
     new_run_parser = subparsers.add_parser('new', help='starts a new run')
     create_new_run_subparser(new_run_parser)
 

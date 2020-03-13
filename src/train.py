@@ -7,7 +7,7 @@ import logging
 import torch
 # from tqdm import tqdm
 
-from src import utils
+import utils
 from options import TrainingOptions
 from model.hidden.hidden import Hidden
 from model.unet.unet_model import UnetModel
