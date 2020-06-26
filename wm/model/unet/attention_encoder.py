@@ -7,7 +7,7 @@ Adapted from https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix/blob/master
 import functools
 import torch
 import torch.nn as nn
-from wm.util.common import expand_message
+from util.common import expand_message
 
 
 class AttentionBlock(nn.Module):
@@ -49,7 +49,7 @@ class UnetAttnGenerator(nn.Module):
         'unet_ngf': 64, 
         'unet_output_function': nn.Tanh,
         'unet_norm_layer': nn.BatchNorm2d,
-        'unet_use_dropout': False,
+        'use_dropout': False,
         'unet_down_blocks': 7
     }
 
@@ -58,7 +58,7 @@ class UnetAttnGenerator(nn.Module):
         ngf = kwargs.pop('unet_ngf', self._kwargs_defaults['unet_ngf'])
         output_function = kwargs.pop('unet_output_function', self._kwargs_defaults['unet_output_function'])
         norm_layer = kwargs.pop('unet_norm_layer', self._kwargs_defaults['unet_norm_layer'])
-        use_dropout = kwargs.pop('unet_use_dropout', self._kwargs_defaults['unet_use_dropout'])
+        use_dropout = kwargs.pop('use_dropout', self._kwargs_defaults['use_dropout'])
         num_downs = kwargs.pop('unet_down_blocks', self._kwargs_defaults['unet_down_blocks'])
 
         unet_block = UnetEmbeddingBlock(input_nc=ngf * 8, inner_nc=ngf * 8, message_length=message_length,
@@ -74,17 +74,18 @@ class UnetAttnGenerator(nn.Module):
         unet_block = UnetEmbeddingBlock(input_nc=ngf * 4, inner_nc=ngf * 8, 
                                             module_name=f'module-{num_downs-3}',
                                             message_length=message_length,
-                                            submodule=unet_block, norm_layer=norm_layer)
+                                            submodule=unet_block, norm_layer=norm_layer, use_dropout=use_dropout)
         unet_block = UnetEmbeddingBlock(input_nc=ngf * 2, inner_nc=ngf * 4, 
                                             module_name=f'module-{num_downs-2}', 
                                             message_length=message_length,
-                                            submodule=unet_block, norm_layer=norm_layer)
+                                            submodule=unet_block, norm_layer=norm_layer, use_dropout=use_dropout)
         unet_block = UnetEmbeddingBlock(input_nc=ngf, inner_nc=ngf * 2, module_name=f'module-{num_downs-1}', 
                                             message_length=message_length,
-                                            submodule=unet_block, norm_layer=norm_layer)
+                                            submodule=unet_block, norm_layer=norm_layer, use_dropout=use_dropout)
         unet_block = UnetEmbeddingBlock(input_nc=3, inner_nc=ngf, outer_nc=3, module_name=f'outermost', 
-                                            message_length=message_length,
-                                            submodule=unet_block, outermost=True, norm_layer=norm_layer)
+                                            message_length=message_length, 
+                                            submodule=unet_block, outermost=True, 
+                                            norm_layer=norm_layer, use_dropout=use_dropout)
 
         self.model = unet_block
 

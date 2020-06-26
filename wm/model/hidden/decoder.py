@@ -1,4 +1,4 @@
-from wm.model.conv_bn_relu import ConvBNRelu
+from model.conv_bn_relu import ConvBNRelu
 import torch.nn as nn
 
 class Decoder(nn.Module):

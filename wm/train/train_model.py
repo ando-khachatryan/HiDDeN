@@ -5,27 +5,31 @@ from collections import defaultdict
 
 import logging
 import torch
+from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
-from wm.model.hidden.hidden_model import Hidden
-from wm.model.unet.unet_model import UnetModel
-from wm.train.loss_names import LossNames
-from wm.train.tensorboard_logger import TensorBoardLogger
-from wm.train.average_meter import AverageMeter
-import wm.util.common as common
+from model.watermarker_base import WatermarkerBase
+from model.hidden.hidden_model import Hidden
+from model.unet.unet_model import UnetModel
+from train.loss_names import LossNames
+from train.tensorboard_logger import TensorBoardLogger
+from train.average_meter import AverageMeter
+import util.common as common
 
 
-def train(model,
+def train(model: WatermarkerBase,
         #   device: torch.device,
-          job_name,
-          job_folder,
+          job_name: str,
+          job_folder: str,
           image_size: int, 
           train_folder: str,
           validation_folder: str, 
           batch_size: int,
           number_of_epochs: int,
           message_length: int,
-          start_epoch: int):
+          start_epoch: int, 
+          tb_writer: SummaryWriter=None, 
+          checkpoint_folder: str=None):
     """
     Trains a watermark embedding-extracting model
     :param model: The model
@@ -38,16 +42,18 @@ def train(model,
 
     train_data, val_data = common.get_data_loaders(image_height=image_size, image_width=image_size, 
                         train_folder=train_folder, validation_folder=validation_folder, batch_size=batch_size)
+    print(f'Loaded train and validation data loaders')
     file_count = len(train_data.dataset)
     if file_count % batch_size == 0:
         steps_in_epoch = file_count // batch_size
     else:
         steps_in_epoch = file_count // batch_size + 1
 
-    print_each = 10
+    image_save_epochs = 10
     images_to_save = 8
     saved_images_size = (512, 512)
-
+    if checkpoint_folder is None:
+        checkpoint_folder = os.path.join(job_folder, 'checkpoints')
     best_validation_error = np.inf
 
     # tqdm_format = '{desc}: {percentage:3.0f}%|{bar}| [ {postfix}]'
@@ -81,24 +87,45 @@ def train(model,
                 d_bce=(training_losses[LossNames.discr_cov_bce.value].avg+training_losses[LossNames.discr_enc_bce.value].avg)/2
             ))
             step += 1
+            # if tb_writer:
+            #     # tensorboard logging is enabled, log last run stats
+            #     encoder_grads = model.encoder_decoder.encoder.get_tensors_for_logging()
+            #     decoder_grads = model.encoder_decoder.decoder.get_grads_for_logging(gradients=True)
+            #     discrim_grads = model.discriminator.data_for_logging(gradients=True)
+            #     for key in encoder_grads:
+            #         tb_writer.add_histogram(tag='grads/encoder/{key}', values=encoder_grads[key], global_step=epoch)
+            #     for key in decoder_grads:
+            #         tb_writer.add_histogram(tag='grads/decoder/{key}', values=decoder_grads[key], global_step=epoch)
+            #     for key in discrim_grads:
+            #         tb_writer.add_histogram(tag='grads/discrim/{key}', values=discrim_grads[key], global_step=epoch)
+
 
         train_duration = time.time() - epoch_start
         logging.info('Epoch {} training duration {:.2f} sec'.format(epoch, train_duration))
         logging.info('-' * 40)
         common.write_losses(os.path.join(job_folder, 'train.csv'), training_losses, epoch, train_duration)
 
-        if model.tb_logger is not None:
-            # create a dummy loss variable 
+        # if model.tb_logger is not None:
+        #     # create a dummy loss variable 
+        #     losses_to_save = {
+        #         f'train/{LossNames.bitwise.value}': training_losses[LossNames.bitwise.value].avg,
+        #         f'train/{LossNames.encoder_mse.value}': training_losses[LossNames.encoder_mse.value].avg,
+        #         f'train/discrim_bce': (training_losses[LossNames.discr_cov_bce.value].avg+training_losses[LossNames.discr_enc_bce.value].avg)/2
+        #     }
+        #     # model.tb_logger.save_losses(losses_to_save, epoch)
+        #     # model.tb_logger.save_grads(epoch)
+        #     # model.tb_logger.save_tensors(epoch)
+
+        if tb_writer:
             losses_to_save = {
-                f'train/{LossNames.bitwise.value}': training_losses[LossNames.bitwise.value].avg,
-                f'train/{LossNames.encoder_mse.value}': training_losses[LossNames.encoder_mse.value].avg,
-                f'train/discrim_bce': (training_losses[LossNames.discr_cov_bce.value].avg+training_losses[LossNames.discr_enc_bce.value].avg)/2
+                LossNames.bitwise.value: training_losses[LossNames.bitwise.value].avg,
+                LossNames.encoder_mse.value: training_losses[LossNames.encoder_mse.value].avg,
+                'discrim_bce': (training_losses[LossNames.discr_cov_bce.value].avg+training_losses[LossNames.discr_enc_bce.value].avg)/2
             }
-            model.tb_logger.save_losses(losses_to_save, epoch)
-            model.tb_logger.save_grads(epoch)
-            model.tb_logger.save_tensors(epoch)
+            for loss_name in losses_to_save:
+                tb_writer.add_scalar(tag=f'train/{loss_name}', scalar_value=losses_to_save[loss_name], global_step=epoch)
 
-
+            
         first_iteration = True
         validation_losses = defaultdict(AverageMeter)
 
@@ -109,20 +136,33 @@ def train(model,
             losses, (encoded_images, noised_images, decoded_messages) = model.validate_on_batch(image, message)
             for name, loss in losses.items():
                 validation_losses[name].update(loss)
-            if first_iteration:
+            if first_iteration and epoch % image_save_epochs == 0:
                 # if model.net_config.enable_fp16:
                 #     image = image.float()
                 #     encoded_images = encoded_images.float()
-                common.save_images(image.cpu()[:images_to_save, :, :, :],
-                                  encoded_images[:images_to_save, :, :, :].cpu(),
+                cover_cpu = (image[:images_to_save, :, :, :].cpu() + 1)/2
+                encoded_cpu = (encoded_images[:images_to_save, :, :, :].cpu() + 1)/2
+                common.save_images(cover_images=cover_cpu,
+                                  processed_images=encoded_cpu,
                                   filename=os.path.join(job_folder, 'images', f'epoch-{epoch}.png'), 
                                   resize_to=saved_images_size)
+                if tb_writer:
+                    common.save_to_tensorboard(cover_images=cover_cpu, encoded_images=encoded_cpu, tb_writer=tb_writer, global_step=epoch)
                 first_iteration = False
+                # if tb_writer: 
+                #     encoder_tensors = model.encoder_decoder.encoder.tensors_for_logging()
+                #     decoder_tensors = model.encoder_decoder.decoder.tensors_for_logging()
+                #     discrim_tensors = model.discriminator.tensors_for_logging()
+                #     for key in encoder_tensors:
+                #         tb_writer.add_histogram(tag='tensors/encoder/{key}', values=encoder_tensors[key], global_step=epoch)
+                #     for key in decoder_tensors:
+                #         tb_writer.add_histogram(tag='tensors/decoder/{key}', values=decoder_tensors[key], global_step=epoch)
+                #     for key in discrim_tensors:
+                #         tb_writer.add_histogram(tag='tensors/decoder/{key}', values=discrim_tensors[key], global_step=epoch)
 
         logging.info(common.losses_to_string(validation_losses))
         logging.info('-' * 40)
-        common.update_checkpoint(model, job_name, epoch,
-                                os.path.join(job_folder, 'checkpoints'), 'last')
+        common.update_checkpoint(model, job_name, epoch, checkpoint_folder, 'last')
 
         if isinstance(model, Hidden):
             network_loss = validation_losses[LossNames.hidden_loss.value].avg
@@ -132,20 +172,27 @@ def train(model,
             raise ValueError('Only "hidden" or "unet" networks are supported')
 
         if network_loss < best_validation_error:
-            common.update_checkpoint(model, job_name, epoch,
-                                    os.path.join(job_folder, 'checkpoints'), 'best')
+            common.update_checkpoint(model, job_name, epoch, checkpoint_folder, 'best')
             best_validation_error = network_loss
 
         common.write_losses(os.path.join(job_folder, 'validation.csv'), validation_losses, epoch,
                            time.time() - epoch_start)
-        if model.tb_logger is not None:
-            # create a dummy loss variable 
+        # if model.tb_logger is not None:
+        #     # create a dummy loss variable 
+        #     losses_to_save = {
+        #         f'validation/{LossNames.bitwise.value}': validation_losses[LossNames.bitwise.value].avg,
+        #         f'validation/{LossNames.encoder_mse.value}': validation_losses[LossNames.encoder_mse.value].avg,
+        #         f'validation/discrim_bce': (validation_losses[LossNames.discr_cov_bce.value].avg+training_losses[LossNames.discr_enc_bce.value].avg)/2
+        #     }
+        #     model.tb_logger.save_losses(losses_to_save, epoch)
+        #     model.tb_logger.save_grads(epoch)
+        #     model.tb_logger.save_tensors(epoch)
+        if tb_writer:
             losses_to_save = {
-                f'validation/{LossNames.bitwise.value}': validation_losses[LossNames.bitwise.value].avg,
-                f'validation/{LossNames.encoder_mse.value}': validation_losses[LossNames.encoder_mse.value].avg,
-                f'validation/discrim_bce': (validation_losses[LossNames.discr_cov_bce.value].avg+training_losses[LossNames.discr_enc_bce.value].avg)/2
+                LossNames.bitwise.value: validation_losses[LossNames.bitwise.value].avg,
+                LossNames.encoder_mse.value: validation_losses[LossNames.encoder_mse.value].avg,
+                'discrim_bce': (validation_losses[LossNames.discr_cov_bce.value].avg+training_losses[LossNames.discr_enc_bce.value].avg)/2
             }
-            model.tb_logger.save_losses(losses_to_save, epoch)
-            model.tb_logger.save_grads(epoch)
-            model.tb_logger.save_tensors(epoch)
-
+            for loss_name in losses_to_save:
+                tb_writer.add_scalar(tag=f'validation/{loss_name}', scalar_value=losses_to_save[loss_name], global_step=epoch)
+            

@@ -1,6 +1,6 @@
 import torch.nn as nn
 import torch.nn.functional as F
-from wm.noise.func import random_float
+from noise.func import random_float
 
 class Resize(nn.Module):
     """

@@ -42,3 +42,6 @@ runs/
 saved-runs/
 jobs/
 tb-logs/
+
+# private config files
+sagemaker_config.py

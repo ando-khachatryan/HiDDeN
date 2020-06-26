@@ -7,7 +7,7 @@ Adapted from https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix/blob/master
 import functools
 import torch
 import torch.nn as nn
-from wm.util.common import expand_message
+from util.common import expand_message
 
 
 # Defines the Unet generator.
@@ -21,7 +21,7 @@ class UnetGenerator(nn.Module):
         'unet_ngf': 64, 
         'unet_output_function': nn.Tanh,
         'unet_norm_layer': nn.BatchNorm2d,
-        'unet_use_dropout': False,
+        'use_dropout': False,
         'unet_down_blocks': 7
     }
 
@@ -30,7 +30,7 @@ class UnetGenerator(nn.Module):
         ngf = kwargs.pop('unet_ngf', self._kwargs_defaults['unet_ngf'])
         output_function = kwargs.pop('unet_output_function', self._kwargs_defaults['unet_output_function'])
         norm_layer = kwargs.pop('unet_norm_layer', self._kwargs_defaults['unet_norm_layer'])
-        use_dropout = kwargs.pop('unet_use_dropout', self._kwargs_defaults['unet_use_dropout'])
+        use_dropout = kwargs.pop('use_dropout', self._kwargs_defaults['use_dropout'])
         num_downs = kwargs.pop('unet_down_blocks', self._kwargs_defaults['unet_down_blocks'])
         input_nc = message_length + 3
         output_nc = 3
@@ -39,7 +39,8 @@ class UnetGenerator(nn.Module):
                                              submodule=None,
                                              norm_layer=norm_layer,
                                              innermost=True, 
-                                             module_name='innermost')
+                                             module_name='innermost', 
+                                             use_dropout=use_dropout)
         for i in range(num_downs - 5):
             unet_block = UnetSkipConnectionBlock(outer_nc=ngf * 8, inner_nc=ngf * 8, input_nc=ngf * 8 + message_length,
                                                  submodule=unet_block,
@@ -47,20 +48,27 @@ class UnetGenerator(nn.Module):
                                                  module_name=f'module-{i+1}')
         unet_block = UnetSkipConnectionBlock(outer_nc=ngf * 4, inner_nc=ngf * 8, input_nc=ngf * 4 + message_length,
                                              submodule=unet_block,
-                                             norm_layer=norm_layer,
+                                             norm_layer=norm_layer, use_dropout=use_dropout,
                                              module_name=f'module-{num_downs-3}')
         unet_block = UnetSkipConnectionBlock(outer_nc=ngf * 2, inner_nc=ngf * 4, input_nc=ngf * 2 + message_length,
-                                             submodule=unet_block, norm_layer=norm_layer, module_name=f'module-{num_downs-2}')
+                                             submodule=unet_block, norm_layer=norm_layer, use_dropout=use_dropout,
+                                             module_name=f'module-{num_downs-2}')
         unet_block = UnetSkipConnectionBlock(outer_nc=ngf, inner_nc=ngf * 2, input_nc=ngf + message_length,
-                                             submodule=unet_block, norm_layer=norm_layer, module_name=f'module-{num_downs-1}')
+                                             submodule=unet_block, norm_layer=norm_layer, use_dropout=use_dropout,
+                                             module_name=f'module-{num_downs-1}')
+
+        # TODO: consider not using dropout in outermost module.
         unet_block = UnetSkipConnectionBlock(outer_nc=output_nc, inner_nc=ngf, input_nc=input_nc, submodule=unet_block,
-                                             outermost=True, norm_layer=norm_layer, output_function=output_function, module_name=f'outermost')
+                                             outermost=True, norm_layer=norm_layer, use_dropout=use_dropout,
+                                             output_function=output_function, module_name=f'outermost')
 
         self.model = unet_block
 
     def forward(self, image, message):
         return self.model(image, message)
 
+    def register_grad_hooks(self, tb_logger):
+        pass
 
 # Defines the submodule with skip connection.
 # X -------------------identity---------------------- X

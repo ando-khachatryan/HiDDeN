@@ -1,6 +1,6 @@
 import torch.nn as nn
 import numpy as np
-from wm.noise.func import get_random_rectangle_inside
+from noise.func import get_random_rectangle_inside
 
 class Crop(nn.Module):
     """
