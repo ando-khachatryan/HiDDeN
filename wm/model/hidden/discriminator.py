@@ -1,5 +1,5 @@
 import torch.nn as nn
-from wm.model.conv_bn_relu import ConvBNRelu
+from model.conv_bn_relu import ConvBNRelu
 
 class Discriminator(nn.Module):
 

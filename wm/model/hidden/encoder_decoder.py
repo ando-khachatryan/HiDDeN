@@ -1,7 +1,7 @@
 import torch.nn as nn
-from wm.model.hidden.encoder import Encoder
-from wm.model.hidden.decoder import Decoder
-from wm.noise.noiser import Noiser
+from model.hidden.encoder import Encoder
+from model.hidden.decoder import Decoder
+from noise.noiser import Noiser
 
 
 class EncoderDecoder(nn.Module):

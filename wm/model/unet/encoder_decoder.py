@@ -1,10 +1,11 @@
 import torch.nn as nn
-from wm.model.unet.encoder import UnetGenerator
-from wm.model.unet.attention_encoder import UnetAttnGenerator
-from wm.model.hidden.decoder import Decoder
-# from wm.model.unet.decoder import UnetDecoder
-from wm.noise.noiser import Noiser
-from wm.util.configuration import BlockType
+from model.unet.encoder import UnetGenerator
+from model.unet.attention_encoder import UnetAttnGenerator
+from model.hidden.decoder import Decoder
+
+from noise.noiser import Noiser
+from util.configuration import BlockType
+
 
 class UnetEncoderDecoder(nn.Module):
     def __init__(self, network_variant: str, noiser: Noiser, message_length: int, encoder_down_blocks: int, 
@@ -12,9 +13,9 @@ class UnetEncoderDecoder(nn.Module):
 
         super(UnetEncoderDecoder, self).__init__()
         if network_variant == 'unet-conv':
-            self.encoder = UnetGenerator(num_downs=encoder_down_blocks, message_length=message_length, kwargs=kwargs)
+            self.encoder = UnetGenerator(num_downs=encoder_down_blocks, message_length=message_length, **kwargs)
         elif network_variant == 'unet-attn':
-            self.encoder = UnetAttnGenerator(num_downs=encoder_down_blocks, message_length=message_length, kwargs=kwargs)
+            self.encoder = UnetAttnGenerator(num_downs=encoder_down_blocks, message_length=message_length, **kwargs)
     
         if network_variant == 'unet-conv' or network_variant == 'unet-attn':
             self.decoder = Decoder(message_length=message_length, inner_channels=decoder_inner_channels, num_blocks=decoder_blocks)
@@ -23,6 +24,7 @@ class UnetEncoderDecoder(nn.Module):
         
         self.network_variant = network_variant
         self.noiser = noiser
+        
 
     def forward(self, image, message):
         encoded_image = self.encoder(image, message)
@@ -33,3 +35,4 @@ class UnetEncoderDecoder(nn.Module):
 
         decoded_wm = self.decoder(noised_image)
         return encoded_image, noised_image, decoded_wm
+

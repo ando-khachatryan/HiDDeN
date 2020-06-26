@@ -11,6 +11,7 @@ import torch
 from torchvision import datasets, transforms
 import torchvision.utils
 from torch.utils import data
+from torch.utils.tensorboard import SummaryWriter
 import torch.nn.functional as F
 
 
@@ -38,21 +39,33 @@ def tensor_to_image(tensor):
     return np.clip(image, 0, 255).astype(np.uint8)
 
 
-def save_images(original_images, processed_images, filename, resize_to=None):
-    images = original_images[:original_images.shape[0], :, :, :].cpu()
-    processed_images = processed_images[:processed_images.shape[0], :, :, :].cpu()
+def save_images(cover_images: torch.Tensor, processed_images: torch.Tensor, filename: str, 
+                    resize_to: int=None, tb_writer: SummaryWriter=None):
+    # images = original_images[:original_images.shape[0], :, :, :].cpu()
+    # proc_images = processed_images[:processed_images.shape[0], :, :, :].cpu()
 
     # scale values to range [0, 1] from original range of [-1, 1]
-    images = (images + 1) / 2
-    processed_images = (processed_images + 1) / 2
+    # images = (images + 1) / 2
+    # proc_images = (proc_images + 1) / 2
 
     if resize_to is not None:
-        images = F.interpolate(images, size=resize_to)
+        cover_images = F.interpolate(cover_images, size=resize_to)
         processed_images = F.interpolate(processed_images, size=resize_to)
 
-    stacked_images = torch.cat([images, processed_images], dim=0)
+    stacked_images = torch.cat([cover_images, processed_images], dim=0)
     # filename = os.path.join(folder, 'epoch-{}.png'.format(epoch))
-    torchvision.utils.save_image(stacked_images, filename, original_images.shape[0], normalize=False)
+    torchvision.utils.save_image(stacked_images, filename, processed_images.shape[0], normalize=False)
+
+
+def save_to_tensorboard(cover_images: torch.Tensor, encoded_images: torch.Tensor, tb_writer: SummaryWriter, 
+                        global_step: int, resize_to: int=None):
+    if resize_to:
+        cover_images = F.interpolate(cover_images, size=resize_to)
+        encoded_images = F.interpolate(encoded_images, size=resize_to)
+
+    diff = cover_images - encoded_images
+    stacked = torch.cat([cover_images, encoded_images, diff * 4, diff * 8], dim=0)
+    tb_writer.add_images(tag=f'images-{global_step}', img_tensor=stacked, global_step=global_step)
 
 
 def sorted_nicely(l):
@@ -165,5 +178,3 @@ def expand_message(message, spatial_height, spatial_width):
     expanded_message = message.unsqueeze(-1)
     expanded_message.unsqueeze_(-1)
     return expanded_message.expand(-1, -1, spatial_height, spatial_width)
-
-

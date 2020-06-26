@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 from pprint import pformat
 import torch
+import shutil
 
 import util.common as common
 from noise.noiser import Noiser
@@ -15,25 +16,26 @@ from model.hidden.hidden_model import Hidden
 from model.unet.unet_model import UnetModel
 
 
-class JobManager:
+class SagemakerJobManager:
     def __init__(self, args):
+        
         self.resume_mode = args.main_command == 'resume'
-        if self.resume_mode:
-            self.config = json.load(open(os.path.join(args.folder, 'config.json')))
-        else:
-            self.config = args.__dict__.copy()
-            self.config['timestamp'] = common.get_timestamp()
-            self.config['noise'] = '+'.join(sorted(self.config['noise'].split('+')))
-            self.config['job_name'] = self._job_name()
-            self.config['job_folder'] = os.path.join(self.config['jobs_folder'], self.config['job_name'])
-            if self.config['tensorboard']:
-                noise_folder = self.config['noise'] if self.config['noise'] else 'no-noise'
-                self.config['tensorboard_folder'] = os.path.join(self.config['tb_folder'], noise_folder, 
-                    f'{self.config["timestamp"]}--{self.config["main_command"].lower()}')
-
-            if 'data' in self.config:
-                self.config['train_folder'] = os.path.join(self.config['data'], 'train')
-                self.config['val_folder'] = os.path.join(self.config['data'], 'val')
+        # if self.resume_mode:
+        #     self.config = json.load(open(os.path.join(args.folder, 'config.json')))
+        # else:
+        self.config = args.__dict__.copy()
+        self.config['timestamp'] = common.get_timestamp()
+        self.config['noise'] = '+'.join(sorted(self.config['noise'].split('+')))
+        self.config['job_name'] = self._job_name()
+        # self.config['job_folder'] = os.path.join(self.config['jobs_folder'], self.config['job_name'])
+        # self.config['job_folder'] = 
+        # if self.config['tensorboard']:
+        #     noise_folder = self.config['noise'] if self.config['noise'] else 'no-noise'
+        #     self.config['tensorboard_folder'] = os.path.join(self.config['tb_folder'], noise_folder, 
+        #         f'{self.config["timestamp"]}--{self.config["main_command"].lower()}')
+        if 'data' in self.config:
+            self.config['train_folder'] = os.path.join(self.config['data'], 'train')
+            self.config['val_folder'] = os.path.join(self.config['data'], 'val')
                     
         self.tb_writer = None
         
@@ -79,13 +81,26 @@ class JobManager:
             message_length=self.config['message'],
             number_of_epochs=self.config['epochs'], 
             start_epoch=start_epoch, 
-            tb_writer=self.tb_writer)
+            tb_writer=self.tb_writer, 
+            checkpoint_folder=self.config['checkpoint_folder'])
+        
+        logging.info(f'Copy the last checkpoint file into {self.config["model_folder"]}')
+        checkpoint_filename = f'{self.config["job_name"]}--last.pyt'
+        print('before trying to copy checkpoint')
+        print(f'checkpoint_filename: {checkpoint_filename}')
+        src = os.path.join(self.config['checkpoint_folder'], checkpoint_filename)
+        dst = os.path.join(self.config['model_folder'], checkpoint_filename)
+        print(f'Attempting to copy source file from {src} to {dst}')
+        # checkpoint_filename = os.path.join(self.config["checkpoint_folder"], checkpoint_filename)
+        shutil.copyfile(src=src, dst=dst)
+        print(f'copy successful')
         
     def _create_job_folders(self):
         job_folder = self.config['job_folder']
         Path(job_folder).mkdir(parents=True, exist_ok=True)
         os.makedirs(os.path.join(job_folder, 'checkpoints'))
         os.makedirs(os.path.join(job_folder, 'images'))
+        Path(self.config['checkpoint_folder']).mkdir(parents=True, exist_ok=True)
         if self.config['tensorboard']:
             print(f'Creating tensorboard folder')
             print(f'Tensorboard folder is: {self.config["tensorboard_folder"]}')
@@ -95,10 +110,9 @@ class JobManager:
             print(f'Path.exists: {Path(self.config["tensorboard_folder"]).exists()}')
 
     def _job_name(self):
-        # job_name = self.config['job_name']
         job_name = f'$$timestamp--$$main-command--$$noise'
-        if self.config['jobname-suffix']:
-            job_name = job_name + '--' + self.config['jobname-suffix']
+        if self.config['jobname_suffix']:
+            job_name = job_name + '--' + self.config['jobname_suffix']
         job_name = job_name.replace('$$timestamp', self.config['timestamp'])
         job_name = job_name.replace('$$main-command', self.config['main_command'].lower())
         if self.config['noise']:
@@ -106,6 +120,7 @@ class JobManager:
         else:
             job_name = job_name.replace('--$$noise', '')
         return job_name
+
 
     def _save_config(self):
         with open(os.path.join(self.config['job_folder'], 'config.json'), 'w') as f:

@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from wm.noise.func import get_random_rectangle_inside
+from noise.func import get_random_rectangle_inside
 
 
 class Cropout(nn.Module):

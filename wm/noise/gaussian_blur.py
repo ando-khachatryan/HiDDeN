@@ -6,10 +6,10 @@ from pathlib import Path
 import torch.nn.functional as F
 
 import os
-
 import math
 import numbers
 
+import util
 
 class GaussianBlur(nn.Module):
     """
@@ -112,8 +112,7 @@ def main():
     folder = './test'
     Path(folder).mkdir(parents=True, exist_ok=True)
     
-    import wm.util
-    wm.util.common.save_images(original_images=batch, processed_images=blurred_images, filename=os.path.join(folder, 'test-blur.jpg'))    
+    util.common.save_images(original_images=batch, processed_images=blurred_images, filename=os.path.join(folder, 'test-blur.jpg'))    
 
 
 if __name__ == "__main__":
