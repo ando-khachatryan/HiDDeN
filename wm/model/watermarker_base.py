@@ -10,9 +10,9 @@ from collections import OrderedDict
 class WatermarkerBase():
     def __init__(self, **kwargs):
         super(WatermarkerBase, self).__init__()
-        # noiser = Noiser(kwargs['noise'])
         self.device = torch.device(kwargs['device'])
-        # self.noiser = noiser.to(self.device)
+        self.noiser =  Noiser(kwargs['noise'])
+        self.noiser.to(self.device)
 
         self.config = kwargs
 
@@ -20,8 +20,8 @@ class WatermarkerBase():
         self.discriminator = self.create_discriminator()
 
         # TODO: add optimizer learning rate here
-        self.optimizer_enc_dec = torch.optim.Adam(self.encoder_decoder.parameters())
-        self.optimizer_discrim = torch.optim.Adam(self.discriminator.parameters())
+        self.optimizer_enc_dec = torch.optim.Adam(self.encoder_decoder.parameters(), lr=kwargs['adam_lr'])
+        self.optimizer_discrim = torch.optim.Adam(self.discriminator.parameters(), lr=kwargs['adam_lr'])
 
         self.image_loss = nn.MSELoss().to(self.device)
         self.message_loss = nn.MSELoss().to(self.device)
@@ -92,13 +92,14 @@ class WatermarkerBase():
                 batch_size * messages.shape[1])
 
         losses = OrderedDict({
-            LossNames.hidden_loss.value: g_loss.item(),
+            LossNames.network_loss.value: g_loss.item(),
             LossNames.encoder_mse.value: g_loss_enc.item(),
             LossNames.decoder_mse.value: g_loss_dec.item(),
             LossNames.bitwise.value: bitwise_avg_err,
             LossNames.gen_adv_bce.value: g_loss_adv.item(),
             LossNames.discr_cov_bce.value: d_loss_on_cover.item(),
-            LossNames.discr_enc_bce.value: d_loss_on_encoded.item()
+            LossNames.discr_enc_bce.value: d_loss_on_encoded.item(),
+            LossNames.discr_avg_bce.value: (d_loss_on_cover.item() + d_loss_on_encoded.item())/2
         })
 
         return losses, (encoded_images, noised_images, decoded_messages)
@@ -150,13 +151,14 @@ class WatermarkerBase():
                 batch_size * messages.shape[1])
 
         losses = OrderedDict({
-            LossNames.hidden_loss.value: g_loss.item(),
+            LossNames.network_loss.value: g_loss.item(),
             LossNames.encoder_mse.value: g_loss_enc.item(),
             LossNames.decoder_mse.value: g_loss_dec.item(),
             LossNames.bitwise.value: bitwise_avg_err,
             LossNames.gen_adv_bce.value: g_loss_adv.item(),
             LossNames.discr_cov_bce.value: d_loss_on_cover.item(),
-            LossNames.discr_enc_bce.value: d_loss_on_encoded.item()
+            LossNames.discr_enc_bce.value: d_loss_on_encoded.item(),
+            LossNames.discr_avg_bce.value: (d_loss_on_cover.item() + d_loss_on_encoded.item())/2
         })
         return losses, (encoded_images, noised_images, decoded_messages)
 

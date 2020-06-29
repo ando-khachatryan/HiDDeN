@@ -40,14 +40,7 @@ def tensor_to_image(tensor):
 
 
 def save_images(cover_images: torch.Tensor, processed_images: torch.Tensor, filename: str, 
-                    resize_to: int=None, tb_writer: SummaryWriter=None):
-    # images = original_images[:original_images.shape[0], :, :, :].cpu()
-    # proc_images = processed_images[:processed_images.shape[0], :, :, :].cpu()
-
-    # scale values to range [0, 1] from original range of [-1, 1]
-    # images = (images + 1) / 2
-    # proc_images = (proc_images + 1) / 2
-
+                resize_to: int=None):
     if resize_to is not None:
         cover_images = F.interpolate(cover_images, size=resize_to)
         processed_images = F.interpolate(processed_images, size=resize_to)
@@ -178,3 +171,25 @@ def expand_message(message, spatial_height, spatial_width):
     expanded_message = message.unsqueeze(-1)
     expanded_message.unsqueeze_(-1)
     return expanded_message.expand(-1, -1, spatial_height, spatial_width)
+
+
+def create_job_name(network_name: str, timestamp: str='', template:str='$$timestamp--$$network_name--$$noise--$$suffix', 
+                    suffix: str='', noise: str=''):
+    job_name = template
+    job_name = job_name.replace('$$network_name', network_name)
+    if timestamp:
+        job_name = job_name.replace('$$timestamp', timestamp)
+    else:
+        job_name = job_name.replace('$$timestamp--', '')
+    
+    if noise:        
+        job_name = job_name.replace('$$noise', noise)
+    else:
+        job_name = job_name.replace(f'--$$noise', '')
+
+    if suffix:
+        job_name = job_name.replace('$$suffix', suffix)
+    else:
+        job_name = job_name.replace('--$$suffix', suffix)
+    return job_name
+

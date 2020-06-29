@@ -8,7 +8,6 @@ import torch
 
 import util.common as common
 from noise.noiser import Noiser
-# from train.tensorboard_logger import TensorBoardLogger
 from torch.utils.tensorboard import SummaryWriter
 from train.train_model import train
 from model.hidden.hidden_model import Hidden
@@ -24,7 +23,7 @@ class JobManager:
             self.config = args.__dict__.copy()
             self.config['timestamp'] = common.get_timestamp()
             self.config['noise'] = '+'.join(sorted(self.config['noise'].split('+')))
-            self.config['job_name'] = self._job_name()
+            self.config['job_name'] = common.create_job_name(self.config['job_name'], timestamp=self.config['timestamp'])
             self.config['job_folder'] = os.path.join(self.config['jobs_folder'], self.config['job_name'])
             if self.config['tensorboard']:
                 noise_folder = self.config['noise'] if self.config['noise'] else 'no-noise'
@@ -36,10 +35,9 @@ class JobManager:
                 self.config['val_folder'] = os.path.join(self.config['data'], 'val')
                     
         self.tb_writer = None
-        
+            
 
     def start_or_resume(self):
-        print(f'Before create model')
         self.model = self._create_model()        
         if not self.resume_mode:
             self._create_job_folders()
@@ -93,19 +91,6 @@ class JobManager:
             print(f'Done')
             print(f'Check if path exists...')
             print(f'Path.exists: {Path(self.config["tensorboard_folder"]).exists()}')
-
-    def _job_name(self):
-        # job_name = self.config['job_name']
-        job_name = f'$$timestamp--$$main-command--$$noise'
-        if self.config['jobname-suffix']:
-            job_name = job_name + '--' + self.config['jobname-suffix']
-        job_name = job_name.replace('$$timestamp', self.config['timestamp'])
-        job_name = job_name.replace('$$main-command', self.config['main_command'].lower())
-        if self.config['noise']:
-            job_name = job_name.replace('$$noise', self.config['noise'])
-        else:
-            job_name = job_name.replace('--$$noise', '')
-        return job_name
 
     def _save_config(self):
         with open(os.path.join(self.config['job_folder'], 'config.json'), 'w') as f:

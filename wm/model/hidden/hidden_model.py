@@ -8,7 +8,6 @@ from model.hidden.encoder_decoder import EncoderDecoder
 from model.watermarker_base import WatermarkerBase
 from noise.noiser import Noiser
 from train.loss_names import LossNames
-from train.tensorboard_logger import TensorBoardLogger
 
 
 class Hidden(WatermarkerBase):
@@ -26,10 +25,9 @@ class Hidden(WatermarkerBase):
     
     def create_encoder_decoder(self):
         config = self.config
-        noiser = Noiser(config['noise'])
         return EncoderDecoder(message_length=config['message'], 
                 encoder_channels=config['encoder_channels'], encoder_blocks=config['encoder_blocks'], 
-                decoder_channels=config['decoder_channels'], decoder_blocks=config['decoder_blocks'], noiser=noiser).to(self.device)
+                decoder_channels=config['decoder_channels'], decoder_blocks=config['decoder_blocks'], noiser=self.noiser).to(self.device)
 
     def create_discriminator(self):
         return Discriminator(inner_channels=self.config['discriminator_channels'], block_count=self.config['discriminator_blocks']).to(self.device)

@@ -19,8 +19,7 @@ class UnetModel(WatermarkerBase):
 
     def create_encoder_decoder(self):
         config = self.config
-        noiser = Noiser(config['noise']).to(self.device)
-        return UnetEncoderDecoder(network_variant=config['main_command'], noiser=noiser, message_length=config['message'],
+        return UnetEncoderDecoder(network_variant=config['main_command'], noiser=self.noiser, message_length=config['message'],
                 encoder_down_blocks=config['encoder_blocks'],
                 decoder_blocks=config['decoder_blocks'],
                 decoder_inner_channels=config['decoder_channels'],
