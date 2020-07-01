@@ -25,6 +25,7 @@ class SagemakerJobManager:
         self.config = args.__dict__.copy()
         self.config['timestamp'] = common.get_timestamp()
         self.config['noise'] = '+'.join(sorted(self.config['noise'].split('+')))
+        self.config['job_folder'] = os.path.join(self.config['output_data_folder'], 'jobs')
         # self.config['job_name'] = common.create_job_name(network_name=self.config['main_command'], 
         #                                                  timestamp=self.config['timestamp'], 
         #                                                  template=self.config['job_name_template'],
@@ -53,8 +54,9 @@ class SagemakerJobManager:
         if self.config['tensorboard']:
             logging.info(f'Create tensorboard')
             logging.info(f'log dir: {self.config["tensorboard_folder"]}')
+            # TODO: If this is a resume, maybe use purge_step parameter.
             self.tb_writer = SummaryWriter(log_dir=self.config['tensorboard_folder'])
-            self.tb_writer.add_text(tag='cmdline-args', text_string=self.command_line_args)
+            # self.tb_writer.add_text(tag='cmdline-args', text_string=self.command_line_args, global_step=None) # TODO: TB_DEBUG
 
 
         if self.resume_mode:
@@ -68,9 +70,9 @@ class SagemakerJobManager:
             logging.info(f'Model:\n{str(self.model)}')
             logging.info(f'Configuration: {pformat(self.config, indent=4)}')
             
-        if self.tb_writer:
-            hparams = {key: self.config[key] for key in ['adam_lr', 'batch_size', 'adv_loss_weight',  'enc_loss_weight', 'epochs', 'noise', 'size']}
-            self.tb_writer.add_hparams(hparam_dict=hparams, metric_dict={})
+        # if self.tb_writer:
+        #     hparams = {key: self.config[key] for key in ['adam_lr', 'batch_size', 'adv_loss_weight',  'enc_loss_weight', 'epochs', 'noise', 'size']}
+        #     self.tb_writer.add_hparams(hparam_dict=hparams, metric_dict={})
     
         train(model=self.model, job_name=self.config['job_name'], job_folder=self.config['job_folder'], 
             image_size=self.config['size'], train_folder=self.config['train_folder'],
@@ -84,14 +86,18 @@ class SagemakerJobManager:
         
         logging.info(f'Copy the last checkpoint file into {self.config["model_folder"]}')
         checkpoint_filename = f'{self.config["job_name"]}--last.pyt'
-        print('before trying to copy checkpoint')
-        print(f'checkpoint_filename: {checkpoint_filename}')
         src = os.path.join(self.config['checkpoint_folder'], checkpoint_filename)
         dst = os.path.join(self.config['model_folder'], checkpoint_filename)
-        print(f'Attempting to copy source file from {src} to {dst}')
-        # checkpoint_filename = os.path.join(self.config["checkpoint_folder"], checkpoint_filename)
         shutil.copyfile(src=src, dst=dst)
-        print(f'copy successful')
+        logging.info(f'Copied source file from {src} to {dst}')
+        # if self.config['copy-tensorboard-data']:
+
+        src = self.config['tensorboard_folder']
+        dst = os.path.join(self.config['output_data_folder'], 'tensorboard')
+        logging.info(f'Copy tensorboard data from {src} to {dst}') 
+        shutil.copytree(src=src, dst=dst)
+        logging.info('Done copying tensorboard data')
+
         
     def _create_job_folders(self):
         job_folder = self.config['job_folder']

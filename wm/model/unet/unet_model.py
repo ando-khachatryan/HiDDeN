@@ -14,7 +14,6 @@ from train.loss_names import LossNames
 class UnetModel(WatermarkerBase):
     def __init__(self, **kwargs):
         super(UnetModel, self).__init__(**kwargs)
-        self._gan_loss = nn.BCEWithLogitsLoss().to(self.device)
     
 
     def create_encoder_decoder(self):
@@ -31,5 +30,3 @@ class UnetModel(WatermarkerBase):
         return Discriminator(inner_channels=self.config['discriminator_channels'], 
                     block_count=self.config['discriminator_blocks']).to(self.device)
 
-    def gan_loss(self, predicted, target_label):
-        return self._gan_loss(predicted, target_label)

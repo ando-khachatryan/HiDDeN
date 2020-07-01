@@ -25,6 +25,7 @@ class WatermarkerBase():
 
         self.image_loss = nn.MSELoss().to(self.device)
         self.message_loss = nn.MSELoss().to(self.device)
+        self.bce_with_logits = nn.BCEWithLogitsLoss().to(self.device)
 
         self.cover_label = 1
         self.encoded_label = 0
@@ -37,7 +38,7 @@ class WatermarkerBase():
         raise NotImplementedError()
 
     def gan_loss(self, predicted, target_label):
-        raise NotImplementedError()    
+        return self.bce_with_logits(input=predicted, target=target_label)
 
 
     def train_on_batch(self, images: torch.Tensor, messages: np.ndarray):

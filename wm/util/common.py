@@ -58,7 +58,7 @@ def save_to_tensorboard(cover_images: torch.Tensor, encoded_images: torch.Tensor
 
     diff = cover_images - encoded_images
     stacked = torch.cat([cover_images, encoded_images, diff * 4, diff * 8], dim=0)
-    tb_writer.add_images(tag=f'images-{global_step}', img_tensor=stacked, global_step=global_step)
+    # tb_writer.add_images(tag=f'images-{global_step}', img_tensor=stacked, global_step=global_step) # TODO: TB_DEBUG
 
 
 def sorted_nicely(l):

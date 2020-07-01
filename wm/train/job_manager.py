@@ -46,7 +46,7 @@ class JobManager:
         if self.config['tensorboard']:
             print(f'Create tensorboard')
             print(f'log dir: {self.config["tensorboard_folder"]}')
-            self.tb_writer = SummaryWriter(log_dir=self.config['tensorboard_folder'])
+            self.tb_writer = SummaryWriter(log_dir=self.config['tensorboard_folder']) # TODO: TB_DEBUG
         
         print('Tensorboard created')
         print('Create loggers')

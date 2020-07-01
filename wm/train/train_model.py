@@ -85,7 +85,8 @@ def train(model: WatermarkerBase,
 
         if tb_writer:
             for loss_name in logging_losses:
-                tb_writer.add_scalar(tag=f'train/{loss_name}', scalar_value=training_losses[loss_name].avg, global_step=epoch)
+                pass
+                # tb_writer.add_scalar(tag=f'train/{loss_name}', scalar_value=training_losses[loss_name].avg, global_step=epoch) # TODO: TB_DEBUG
 
             
         first_iteration = True
@@ -125,18 +126,16 @@ def train(model: WatermarkerBase,
                            time.time() - epoch_start)
         if tb_writer:
             for loss_name in logging_losses:
-                tb_writer.add_scalar(tag=f'validation/{loss_name}', scalar_value=validation_losses[loss_name].avg, 
-                global_step=epoch)
-            tb_writer.flush()
+                pass
+                # tb_writer.add_scalar(tag=f'validation/{loss_name}', scalar_value=validation_losses[loss_name].avg, 
+                # global_step=epoch) # TODO: TB_DEBUG
+            # tb_writer.flush()
 
-    if tb_writer:
-        metrics = {}
-        for key in validation_losses:
-            metrics[key] = validation_losses[key].avg
-        tb_writer.add_hparams(hparam_dict={
-            LossNames.bitwise.value: validation_losses[LossNames.bitwise.value].avg,
-            LossNames.encoder_mse.value: validation_losses[LossNames.encoder_mse.value].avg
-        }, metric_dict=metrics)
-        tb_writer.flush()
-        tb_writer.close()
+    # if tb_writer: # TODO: TB_DEBUG
+    #     metrics = {}
+    #     for key in validation_losses:
+    #         metrics[f'validation--{key}'] = validation_losses[key].avg
+    #     tb_writer.add_hparams(hparam_dict=None, metric_dict=metrics)
+    #     tb_writer.flush()
+    #     tb_writer.close()
             

@@ -18,11 +18,13 @@ def create_sagemaker_run_parser():
     # parser.add_argument('--job_name-suffix', default='', type=str, help='Suffix to add to the job name')
     parser.add_argument('--job-name', type=str, required=True, help='Name of the job, internal')
     # parser.add_argument('--job-folder', type=str, default=os.path.join(os.environ['SM_OUTPUT_DIR'], 'jobs'), help='The root folder of experiments')
-    parser.add_argument('--job-folder', type=str, default=os.path.join(os.environ['SM_OUTPUT_DATA_DIR'], 'jobs'), help='The root folder of experiments')
+    parser.add_argument('--output-data-folder', default=os.environ['SM_OUTPUT_DATA_DIR'], help='The root folder for output data')
+    # parser.add_argument('--job-folder', type=str, default=os.path.join(os.environ['SM_OUTPUT_DATA_DIR'], 'jobs'), help='The root folder of experiments')
+    
     parser.add_argument('--model-folder', type=str, default=os.environ['SM_MODEL_DIR'], help='Trained model directory')
-    # parser.add_argument('--tensorboard-folder', type=str, default=os.path.join(os.environ['SM_OUTPUT_DIR'], 'tb-logs'), help='The root tensorboard folder')
     parser.add_argument('--tensorboard-folder', type=str, default='/tb-logs', help='The root tensorboard folder')
     parser.add_argument('--checkpoint-folder', type=str, default='/opt/ml/checkpoints', help='The path where checkpoints are stored. Sagemaker syncs these to S3')
+    # parser.add_argument('--copy-tensorboard-data', default=0, help='Set to 1 to copy tensorboard data into output data folder in the end of the run.')
 
     parser.add_argument('--size', type=int, help='The size of the images (images are square so this is height and width).')
     parser.add_argument('--message', type=int, help='The length in bits of the watermark.')

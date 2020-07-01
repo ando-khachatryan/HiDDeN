@@ -7,7 +7,6 @@ import json
 import logging
 import sys
 
-import torch
 from pprint import pprint, pformat
 import util.configuration as cfg
 from util.sagemaker_config import EXECUTION_ROLE_ARN
