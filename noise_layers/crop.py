@@ -29,7 +29,7 @@ def get_random_rectangle_inside(image, height_ratio_range, width_ratio_range):
     image_width = image.shape[3]
 
     remaining_height = int(np.rint(random_float(height_ratio_range[0], height_ratio_range[1]) * image_height))
-    remaining_width = int(np.rint(random_float(width_ratio_range[0], width_ratio_range[0]) * image_width))
+    remaining_width = int(np.rint(random_float(width_ratio_range[0], width_ratio_range[1]) * image_width))
 
     if remaining_height == image_height:
         height_start = 0
