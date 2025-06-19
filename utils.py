@@ -54,7 +54,15 @@ def save_images(original_images, watermarked_images, epoch, folder, resize_to=No
 
     stacked_images = torch.cat([images, watermarked_images], dim=0)
     filename = os.path.join(folder, 'epoch-{}.png'.format(epoch))
-    torchvision.utils.save_image(stacked_images, filename, original_images.shape[0], normalize=False)
+    
+    # 修复后的save_image调用
+    torchvision.utils.save_image(
+        stacked_images,
+        filename,
+        nrow=int(original_images.shape[0]),  # 每行显示的图像数量
+        normalize=False,
+        format='png'  # 明确指定格式
+    )
 
 
 def sorted_nicely(l):
