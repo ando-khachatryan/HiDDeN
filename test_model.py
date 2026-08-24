@@ -12,13 +12,14 @@ from PIL import Image
 import torchvision.transforms.functional as TF
 
 
-def randomCrop(img, height, width):
+def centerCrop(img, height, width):
     assert img.shape[0] >= height
     assert img.shape[1] >= width
-    x = np.random.randint(0, img.shape[1] - width)
-    y = np.random.randint(0, img.shape[0] - height)
-    img = img[y:y+height, x:x+width]
-    return img
+
+    x = (img.shape[1] - width) // 2
+    y = (img.shape[0] - height) // 2
+
+    return img[y:y+height, x:x+width]
 
 
 def main():
@@ -31,16 +32,23 @@ def main():
     parser.add_argument('--options-file', '-o', default='options-and-config.pickle', type=str,
                         help='The file where the simulation options are stored.')
     parser.add_argument('--checkpoint-file', '-c', required=True, type=str, help='Model checkpoint file')
-    parser.add_argument('--batch-size', '-b', default=12, type=int, help='The batch size.')
+    parser.add_argument('--batch-size', '-b', default=10, type=int, help='The batch size.')
     parser.add_argument('--source-image', '-s', required=True, type=str,
                         help='The image to watermark')
+    parser.add_argument(
+        '--message',
+        '-m',
+        type=str,
+        default = "010100110100000100101010000000",
+        help='Binary watermark message'
+    )
     # parser.add_argument('--times', '-t', default=10, type=int,
     #                     help='Number iterations (insert watermark->extract).')
 
     args = parser.parse_args()
 
     train_options, hidden_config, noise_config = utils.load_options(args.options_file)
-    noiser = Noiser(noise_config)
+    noiser = Noiser(noise_config, device)
 
     checkpoint = torch.load(args.checkpoint_file)
     hidden_net = Hidden(hidden_config, device, noiser, None)
@@ -48,15 +56,19 @@ def main():
 
 
     image_pil = Image.open(args.source_image)
-    image = randomCrop(np.array(image_pil), hidden_config.H, hidden_config.W)
+    image = centerCrop(np.array(image_pil), hidden_config.H, hidden_config.W)
     image_tensor = TF.to_tensor(image).to(device)
     image_tensor = image_tensor * 2 - 1  # transform from [0, 1] to [-1, 1]
     image_tensor.unsqueeze_(0)
 
     # for t in range(args.times):
-    message = torch.Tensor(np.random.choice([0, 1], (image_tensor.shape[0],
-                                                    hidden_config.message_length))).to(device)
+    message = torch.tensor(
+        [[float(bit) for bit in args.message]],
+        dtype=torch.float32,
+        device=device
+    )
     losses, (encoded_images, noised_images, decoded_messages) = hidden_net.validate_on_batch([image_tensor, message])
+    print('attack : {}'.format(noiser.last_noise_layer))
     decoded_rounded = decoded_messages.detach().cpu().numpy().round().clip(0, 1)
     message_detached = message.detach().cpu().numpy()
     print('original: {}'.format(message_detached))

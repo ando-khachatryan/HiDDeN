@@ -28,5 +28,6 @@ class Noiser(nn.Module):
 
     def forward(self, encoded_and_cover):
         random_noise_layer = np.random.choice(self.noise_layers, 1)[0]
+        self.last_noise_layer = random_noise_layer.__class__.__name__
         return random_noise_layer(encoded_and_cover)
 

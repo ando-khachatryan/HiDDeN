@@ -40,3 +40,13 @@ __pycache__/
 data/
 runs/
 saved-runs/
+
+train_log/
+image_30k/
+dataset/
+official_images/
+sun_org/
+
+__pycache__/
+*.py[cod]
+experiments/

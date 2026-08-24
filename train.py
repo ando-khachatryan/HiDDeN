@@ -29,6 +29,9 @@ def train(model: Hidden,
     :return:
     """
 
+    train_log_dir = utils.create_train_log_dir(
+        os.path.join("train_log", train_options.experiment_name)
+    )
     train_data, val_data = utils.get_data_loaders(hidden_config, train_options)
     file_count = len(train_data.dataset)
     if file_count % train_options.batch_size == 0:
@@ -89,7 +92,17 @@ def train(model: Hidden,
                 first_iteration = False
 
         utils.log_progress(validation_losses)
+        val_loss = validation_losses['loss           '].avg
+        model.scheduler_discrim.step(val_loss)
+        model.scheduler_enc_dec.step(val_loss)
         logging.info('-' * 40)
         utils.save_checkpoint(model, train_options.experiment_name, epoch, os.path.join(this_run_folder, 'checkpoints'))
         utils.write_losses(os.path.join(this_run_folder, 'validation.csv'), validation_losses, epoch,
                            time.time() - epoch_start)
+
+        if epoch % 1 == 0 or epoch == train_options.number_of_epochs:
+            utils.plot_training_metrics(
+                os.path.join(this_run_folder, "train.csv"),
+                os.path.join(this_run_folder, "validation.csv"),
+                train_log_dir
+            )

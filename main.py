@@ -13,7 +13,7 @@ from noise_layers.noiser import Noiser
 from noise_argparser import NoiseArgParser
 
 from train import train
-
+torch.autograd.set_detect_anomaly(True)
 
 def main():
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -24,7 +24,7 @@ def main():
     new_run_parser.add_argument('--data-dir', '-d', required=True, type=str,
                                 help='The directory where the data is stored.')
     new_run_parser.add_argument('--batch-size', '-b', required=True, type=int, help='The batch size.')
-    new_run_parser.add_argument('--epochs', '-e', default=300, type=int, help='Number of epochs to run the simulation.')
+    new_run_parser.add_argument('--epochs', '-e', default=50, type=int, help='Number of epochs to run the simulation.')
     new_run_parser.add_argument('--name', required=True, type=str, help='The name of the experiment.')
 
     new_run_parser.add_argument('--size', '-s', default=128, type=int,

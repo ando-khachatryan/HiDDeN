@@ -48,18 +48,28 @@ def idct_coeff(n, k, N):
         np.pi / N * (k + 1. / 2.) * n)) * np.sqrt(1 / (2. * N))
 
 
-def rgb2yuv(image_rgb, image_yuv_out):
-    """ Transform the image from rgb to yuv """
-    image_yuv_out[:, 0, :, :] = 0.299 * image_rgb[:, 0, :, :].clone() + 0.587 * image_rgb[:, 1, :, :].clone() + 0.114 * image_rgb[:, 2, :, :].clone()
-    image_yuv_out[:, 1, :, :] = -0.14713 * image_rgb[:, 0, :, :].clone() + -0.28886 * image_rgb[:, 1, :, :].clone() + 0.436 * image_rgb[:, 2, :, :].clone()
-    image_yuv_out[:, 2, :, :] = 0.615 * image_rgb[:, 0, :, :].clone() + -0.51499 * image_rgb[:, 1, :, :].clone() + -0.10001 * image_rgb[:, 2, :, :].clone()
+def rgb2yuv(image_rgb):
+    r = image_rgb[:, 0:1, :, :]
+    g = image_rgb[:, 1:2, :, :]
+    b = image_rgb[:, 2:3, :, :]
+
+    y = 0.299 * r + 0.587 * g + 0.114 * b
+    u = -0.14713 * r - 0.28886 * g + 0.436 * b
+    v = 0.615 * r - 0.51499 * g - 0.10001 * b
+
+    return torch.cat([y, u, v], dim=1)
 
 
-def yuv2rgb(image_yuv, image_rgb_out):
-    """ Transform the image from yuv to rgb """
-    image_rgb_out[:, 0, :, :] = image_yuv[:, 0, :, :].clone() + 1.13983 * image_yuv[:, 2, :, :].clone()
-    image_rgb_out[:, 1, :, :] = image_yuv[:, 0, :, :].clone() + -0.39465 * image_yuv[:, 1, :, :].clone() + -0.58060 * image_yuv[:, 2, :, :].clone()
-    image_rgb_out[:, 2, :, :] = image_yuv[:, 0, :, :].clone() + 2.03211 * image_yuv[:, 1, :, :].clone()
+def yuv2rgb(image_yuv):
+    y = image_yuv[:, 0:1, :, :]
+    u = image_yuv[:, 1:2, :, :]
+    v = image_yuv[:, 2:3, :, :]
+
+    r = y + 1.13983 * v
+    g = y - 0.39465 * u - 0.58060 * v
+    b = y + 2.03211 * u
+
+    return torch.cat([r, g, b], dim=1)
 
 
 class JpegCompression(nn.Module):
@@ -78,7 +88,7 @@ class JpegCompression(nn.Module):
         self.jpeg_mask = None
 
         # create a new large mask which we can use by slicing for images which are smaller
-        self.create_mask((1000, 1000))
+        self.create_mask((1024, 1024))
 
 
     def create_mask(self, requested_shape):
@@ -89,7 +99,11 @@ class JpegCompression(nn.Module):
                 self.jpeg_mask[channel] = mask
 
     def get_mask(self, image_shape):
-        if self.jpeg_mask.shape < image_shape:
+        if any(
+            requested > existing
+            for requested, existing
+            in zip(image_shape, self.jpeg_mask.shape[1:])
+        ):
             self.create_mask(image_shape)
         # return the correct slice of it
         return self.jpeg_mask[:, :image_shape[1], :image_shape[2]].clone()
@@ -106,7 +120,7 @@ class JpegCompression(nn.Module):
 
         image_conv_channels = []
         for channel in range(image.shape[1]):
-            image_yuv_ch = image[:, channel, :, :].unsqueeze_(1)
+            image_yuv_ch = image[:, channel, :, :].unsqueeze(1)
             image_conv = F.conv2d(image_yuv_ch, filters, stride=8)
             image_conv = image_conv.permute(0, 2, 3, 1)
             image_conv = image_conv.view(image_conv.shape[0], image_conv.shape[1], image_conv.shape[2], 8, 8)
@@ -115,7 +129,7 @@ class JpegCompression(nn.Module):
                                                   image_conv.shape[1]*image_conv.shape[2],
                                                   image_conv.shape[3]*image_conv.shape[4])
 
-            image_conv.unsqueeze_(1)
+            image_conv = image_conv.unsqueeze(1)
 
             # image_conv = F.conv2d()
             image_conv_channels.append(image_conv)
@@ -128,33 +142,38 @@ class JpegCompression(nn.Module):
     def forward(self, noised_and_cover):
 
         noised_image = noised_and_cover[0]
-        # pad the image so that we can do dct on 8x8 blocks
+
         pad_height = (8 - noised_image.shape[2] % 8) % 8
         pad_width = (8 - noised_image.shape[3] % 8) % 8
 
-        noised_image = nn.ZeroPad2d((0, pad_width, 0, pad_height))(noised_image)
+        noised_image = nn.ZeroPad2d(
+            (0, pad_width, 0, pad_height)
+        )(noised_image)
 
-        # convert to yuv
-        image_yuv = torch.empty_like(noised_image)
-        rgb2yuv(noised_image, image_yuv)
+        image_yuv = rgb2yuv(noised_image)
 
-        assert image_yuv.shape[2] % 8 == 0
-        assert image_yuv.shape[3] % 8 == 0
-
-        # apply dct
         image_dct = self.apply_conv(image_yuv, 'dct')
-        # get the jpeg-compression mask
+
         mask = self.get_mask(image_dct.shape[1:])
-        # multiply the dct-ed image with the mask.
-        image_dct_mask = torch.mul(image_dct, mask)
 
-        # apply inverse dct (idct)
+        image_dct_mask = image_dct * mask
+
         image_idct = self.apply_conv(image_dct_mask, 'idct')
-        # transform from yuv to to rgb
-        image_ret_padded = torch.empty_like(image_dct)
-        yuv2rgb(image_idct, image_ret_padded)
 
-        # un-pad
-        noised_and_cover[0] = image_ret_padded[:, :, :image_ret_padded.shape[2]-pad_height, :image_ret_padded.shape[3]-pad_width].clone()
+        image_ret_padded = yuv2rgb(image_idct)
 
-        return noised_and_cover
+        end_h = (
+            image_ret_padded.shape[2] - pad_height
+            if pad_height > 0
+            else image_ret_padded.shape[2]
+        )
+
+        end_w = (
+            image_ret_padded.shape[3] - pad_width
+            if pad_width > 0
+            else image_ret_padded.shape[3]
+        )
+
+        noised_image = image_ret_padded[:, :, :end_h, :end_w]
+
+        return [noised_image, noised_and_cover[1]]

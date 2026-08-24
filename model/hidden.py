@@ -21,9 +21,22 @@ class Hidden:
 
         self.encoder_decoder = EncoderDecoder(configuration, noiser).to(device)
         self.discriminator = Discriminator(configuration).to(device)
-        self.optimizer_enc_dec = torch.optim.Adam(self.encoder_decoder.parameters())
-        self.optimizer_discrim = torch.optim.Adam(self.discriminator.parameters())
-
+        self.optimizer_enc_dec = torch.optim.Adam(self.encoder_decoder.parameters(), lr = 1e-6)
+        self.optimizer_discrim = torch.optim.Adam(self.discriminator.parameters(), lr = 1e-6)
+        self.scheduler_enc_dec = torch.optim.lr_scheduler.ReduceLROnPlateau(
+            self.optimizer_enc_dec,
+            mode='min',
+            factor=0.5,
+            patience=5,
+            min_lr=1e-8
+        )
+        self.scheduler_discrim = torch.optim.lr_scheduler.ReduceLROnPlateau(
+            self.optimizer_discrim,
+            mode='min',
+            factor=0.5,
+            patience=10,
+            min_lr=1e-8
+        )
         if configuration.use_vgg:
             self.vgg_loss = VGGLoss(3, 1, False)
             self.vgg_loss.to(device)
@@ -66,9 +79,9 @@ class Hidden:
             # ---------------- Train the discriminator -----------------------------
             self.optimizer_discrim.zero_grad()
             # train on cover
-            d_target_label_cover = torch.full((batch_size, 1), self.cover_label, device=self.device)
-            d_target_label_encoded = torch.full((batch_size, 1), self.encoded_label, device=self.device)
-            g_target_label_encoded = torch.full((batch_size, 1), self.cover_label, device=self.device)
+            d_target_label_cover = torch.full((batch_size, 1), self.cover_label, device=self.device, dtype=torch.float32)
+            d_target_label_encoded = torch.full((batch_size, 1), self.encoded_label, device=self.device, dtype=torch.float32)
+            g_target_label_encoded = torch.full((batch_size, 1), self.cover_label, device=self.device, dtype=torch.float32)
 
             d_on_cover = self.discriminator(images)
             d_loss_on_cover = self.bce_with_logits_loss(d_on_cover, d_target_label_cover)
@@ -139,9 +152,9 @@ class Hidden:
         self.encoder_decoder.eval()
         self.discriminator.eval()
         with torch.no_grad():
-            d_target_label_cover = torch.full((batch_size, 1), self.cover_label, device=self.device)
-            d_target_label_encoded = torch.full((batch_size, 1), self.encoded_label, device=self.device)
-            g_target_label_encoded = torch.full((batch_size, 1), self.cover_label, device=self.device)
+            d_target_label_cover = torch.full((batch_size, 1), self.cover_label, device=self.device, dtype=torch.float32)
+            d_target_label_encoded = torch.full((batch_size, 1), self.encoded_label, device=self.device, dtype=torch.float32)
+            g_target_label_encoded = torch.full((batch_size, 1), self.cover_label, device=self.device, dtype=torch.float32)
 
             d_on_cover = self.discriminator(images)
             d_loss_on_cover = self.bce_with_logits_loss(d_on_cover, d_target_label_cover)
@@ -182,3 +195,101 @@ class Hidden:
 
     def to_stirng(self):
         return '{}\n{}'.format(str(self.encoder_decoder), str(self.discriminator))
+
+
+
+    def validate_on_batch_custom_attacks(self, batch, attacks):
+        """
+        Validate HiDDeN using externally supplied attacks.
+
+        Each attack is applied independently to the SAME encoded image.
+
+        Args:
+            batch:
+                [images, messages]
+
+            attacks:
+                Dictionary mapping attack names to attack functions.
+
+                Example:
+                    {
+                        "JPEG": jpeg_attack,
+                        "Crop": crop_attack,
+                        "Resize": resize_attack,
+                    }
+
+                Each attack function receives a tensor of shape
+                [B, C, H, W] and must return a tensor of the same shape.
+
+        Returns:
+            Dictionary containing BER and decoded messages for
+            every attack.
+        """
+
+        images, messages = batch
+
+        self.encoder_decoder.eval()
+
+        with torch.no_grad():
+
+            # ==================================================
+            # Encode ONCE
+            # ==================================================
+
+            encoded_images = self.encoder_decoder.encode(
+                images,
+                messages
+            )
+
+            results = {}
+
+            # ==================================================
+            # Run every attack independently
+            # ==================================================
+
+            for attack_name, attack_fn in attacks.items():
+
+                # IMPORTANT:
+                # Every attack starts from the SAME encoded image.
+                attacked_images = attack_fn(
+                    encoded_images.clone()
+                )
+
+                # Decode attacked image
+                decoded_messages = self.encoder_decoder.decode(
+                    attacked_images
+                )
+
+                # --------------------------------------------------
+                # Calculate BER
+                # --------------------------------------------------
+
+                decoded_rounded = (
+                    decoded_messages
+                    .detach()
+                    .cpu()
+                    .numpy()
+                    .round()
+                    .clip(0, 1)
+                )
+
+                original_messages = (
+                    messages
+                    .detach()
+                    .cpu()
+                    .numpy()
+                )
+
+                bitwise_error = np.mean(
+                    np.abs(
+                        decoded_rounded - original_messages
+                    )
+                )
+
+                results[attack_name] = {
+                    "ber": float(bitwise_error),
+                    "decoded": decoded_rounded,
+                    "attacked_images": attacked_images,
+                }
+
+        return results
